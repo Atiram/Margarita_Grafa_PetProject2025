@@ -1,6 +1,6 @@
 using Microsoft.AspNetCore.Mvc;
 
-namespace Margarita_Grafa_PetProject2025.Controllers
+namespace PetProject.BLL.Controllers
 {
     [ApiController]
     [Route("[controller]")]
@@ -29,7 +29,5 @@ namespace Margarita_Grafa_PetProject2025.Controllers
             })
             .ToArray();
         }
-
-
     }
 }
