@@ -1,8 +1,9 @@
-﻿namespace ClinicService.DAL.Entities
+﻿using ClinicService.DAL.Entities.Enums;
+
+namespace ClinicService.DAL.Entities
 {
     public class DoctorEntity : GenericEntity
     {
-        public int DoctorId { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
         public string MiddleName { get; set; } = string.Empty;
@@ -11,6 +12,6 @@
         public string Specialization { get; set; }
         public string Office { get; set; }
         public int CareerStartYear { get; set; }
-        public string Status { get; set; }
+        public DoctorStatus Status { get; set; }
     }
 }

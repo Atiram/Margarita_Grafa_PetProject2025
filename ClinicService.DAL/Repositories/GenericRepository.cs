@@ -1,11 +1,12 @@
 ﻿using ClinicService.DAL.Data;
+using ClinicService.DAL.Entities;
 using ClinicService.DAL.Repositories.Interfaces;
 
 namespace ClinicService.DAL.Repositories
 {
-    public class GenericRepository<TEntity>(ClinicDbContext context) : IGenericRepository<TEntity> where TEntity : class, new()
+    public class GenericRepository<TEntity>(ClinicDbContext context) : IGenericRepository<TEntity> where TEntity : GenericEntity
     {
-        public async Task<TEntity?> GetByIdAsync(int id)
+        public async Task<TEntity?> GetByIdAsync(Guid id)
         {
             return await context.Set<TEntity>().FindAsync([id]);
         }
@@ -28,7 +29,7 @@ namespace ClinicService.DAL.Repositories
             return entity;
         }
 
-        public async Task<bool> DeleteAsync(int id)
+        public async Task<bool> DeleteAsync(Guid id)
         {
             var entity = await context.Set<TEntity>().FindAsync([id]);
 
