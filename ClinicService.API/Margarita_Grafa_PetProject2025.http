@@ -3,4 +3,7 @@
 GET {{Margarita_Grafa_PetProject2025_HostAddress}}/weatherforecast/
 Accept: application/json
 
+
 ###
+POST {{Margarita_Grafa_PetProject2025_HostAddress}}/weatherforecast/
+Accept: application/json

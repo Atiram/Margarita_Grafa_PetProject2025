@@ -3,10 +3,8 @@ using ClinicService.DAL.Repositories.Interfaces;
 
 namespace ClinicService.DAL.Repositories
 {
-    internal class GenericRepository<TEntity>(ClinicDbContext context) : IGenericRepository<TEntity> where TEntity : class, new()
+    public class GenericRepository<TEntity>(ClinicDbContext context) : IGenericRepository<TEntity> where TEntity : class, new()
     {
-        //private readonly ClinicDbContext _context;
-
         public async Task<TEntity?> GetByIdAsync(int id)
         {
             return await context.Set<TEntity>().FindAsync([id]);

@@ -1,6 +1,6 @@
 ﻿namespace ClinicService.DAL.Entities
 {
-    internal class PatientEntity : GenericEntity
+    public class PatientEntity : GenericEntity
     {
         public int PatientId { get; set; }
         public string FirstName { get; set; }
