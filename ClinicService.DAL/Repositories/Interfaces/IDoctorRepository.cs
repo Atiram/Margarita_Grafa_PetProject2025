@@ -1,6 +1,7 @@
 ﻿using ClinicService.DAL.Entities;
 
-namespace ClinicService.DAL.Repositories.Interfaces
+namespace ClinicService.DAL.Repositories.Interfaces;
+
+public interface IDoctorRepository : IGenericRepository<DoctorEntity>
 {
-    public interface IDoctorRepository : IGenericRepository<DoctorEntity>;
 }

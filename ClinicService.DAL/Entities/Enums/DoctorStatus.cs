@@ -1,13 +1,13 @@
-﻿namespace ClinicService.DAL.Entities.Enums
+﻿namespace ClinicService.DAL.Entities.Enums;
+
+public enum DoctorStatus
 {
-    public enum DoctorStatus
-    {
-        AtWork,
-        OnVacation,
-        SickDay,
-        SickLeave,
-        SelfIsolation,
-        LeaveWithoutPay,
-        Inactive
-    }
+    AtWork,
+    OnVacation,
+    SickDay,
+    SickLeave,
+    SelfIsolation,
+    LeaveWithoutPay,
+    Inactive
 }
+

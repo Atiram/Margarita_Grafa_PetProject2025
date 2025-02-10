@@ -2,37 +2,37 @@ using ClinicService.DAL.Entities;
 using ClinicService.DAL.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Margarita_Grafa_PetProject2025.Controllers
+namespace Margarita_Grafa_PetProject2025.Controllers;
+
+[ApiController]
+[Route("[controller]")]
+public class DoctorController : ControllerBase
 {
-    [ApiController]
-    [Route("[controller]")]
-    public class DoctorController : ControllerBase
+    private readonly ILogger<DoctorController> _logger;
+    private readonly IDoctorRepository _doctorRepository;
+
+
+    public DoctorController(ILogger<DoctorController> logger, IDoctorRepository doctorRepository)
     {
-        private readonly ILogger<DoctorController> _logger;
-        private readonly IDoctorRepository _doctorRepository;
+        _logger = logger;
+        _doctorRepository = doctorRepository;
+    }
 
+    [HttpGet(Name = "GetDoctor")]
+    public async Task<DoctorEntity> Get(int id)
+    {
+        return new DoctorEntity();
+    }
 
-        public DoctorController(ILogger<DoctorController> logger, IDoctorRepository doctorRepository)
-        {
-            _logger = logger;
-            _doctorRepository = doctorRepository;
-        }
+    [HttpPost(Name = "PostDoctor")]
+    public async Task<DoctorEntity> Post(DoctorEntity item)
 
-        [HttpGet(Name = "GetDoctor")]
-        public async Task<DoctorEntity> Get(int id)
-        {
-            return new DoctorEntity();
-        }
+    {
+        var doctor = new DoctorEntity();
 
-        [HttpPost(Name = "PostDoctor")]
-        public async Task<DoctorEntity> Post(DoctorEntity item)
+        var response = await _doctorRepository.CreateAsync(doctor);
 
-        {
-            var doctor = new DoctorEntity();
-
-            var response = await _doctorRepository.CreateAsync(doctor);
-
-            return response;
-        }
+        return response;
     }
 }
+

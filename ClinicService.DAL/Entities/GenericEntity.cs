@@ -1,10 +1,9 @@
-﻿namespace ClinicService.DAL.Entities
-{
-    public class GenericEntity
-    {
-        public Guid Id { get; set; }
-        public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
-        public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+﻿namespace ClinicService.DAL.Entities;
 
-    }
+public class GenericEntity
+{
+    public Guid Id { get; set; }
+    public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+    public DateTime UpdatedAt { get; set; } = DateTime.UtcNow;
+
 }

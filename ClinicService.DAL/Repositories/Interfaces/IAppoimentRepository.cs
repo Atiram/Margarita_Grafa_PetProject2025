@@ -1,8 +1,7 @@
 ﻿using ClinicService.DAL.Entities;
 
-namespace ClinicService.DAL.Repositories.Interfaces
+namespace ClinicService.DAL.Repositories.Interfaces;
+
+public interface IAppoimentRepository : IGenericRepository<AppoimentEntity>
 {
-    public interface IAppoimentRepository : IGenericRepository<AppoimentEntity>
-    {
-    }
 }

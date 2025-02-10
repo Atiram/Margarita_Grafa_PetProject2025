@@ -1,13 +1,12 @@
-﻿namespace ClinicService.DAL.Repositories.Interfaces
+﻿namespace ClinicService.DAL.Repositories.Interfaces;
+
+public interface IGenericRepository<TEntity> where TEntity : class
 {
-    public interface IGenericRepository<TEntity> where TEntity : class
-    {
-        Task<TEntity?> GetByIdAsync(Guid id);
+    Task<TEntity?> GetByIdAsync(Guid id);
 
-        Task<TEntity> CreateAsync(TEntity entity);
+    Task<TEntity> CreateAsync(TEntity entity);
 
-        Task<TEntity> UpdateAsync(TEntity entity);
+    Task<TEntity> UpdateAsync(TEntity entity);
 
-        Task<bool> DeleteAsync(Guid id);
-    }
+    Task<bool> DeleteAsync(Guid id);
 }

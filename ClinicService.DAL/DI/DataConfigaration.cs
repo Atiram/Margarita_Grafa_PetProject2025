@@ -5,18 +5,18 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 
-namespace ClinicService.DAL.DI
-{
-    public static class DataConfigaration
-    {
-        public static void RegisterDataRepositories(this IServiceCollection services, IConfiguration configuration)
-        {
-            services.AddDbContext<ClinicDbContext>(options =>
-                options.UseSqlServer(configuration.GetConnectionString("DBConnection")));
+namespace ClinicService.DAL.DI;
 
-            services.AddScoped<IDoctorRepository, DoctorRepository>()
-                .AddScoped<IPatientRepository, PatientRepository>()
-                .AddScoped<IAppoimentRepository, AppoimentRepository>();
-        }
+public static class DataConfigaration
+{
+    public static void RegisterDataRepositories(this IServiceCollection services, IConfiguration configuration)
+    {
+        services.AddDbContext<ClinicDbContext>(options =>
+            options.UseSqlServer(configuration.GetConnectionString("DBConnection")));
+
+        services.AddScoped<IDoctorRepository, DoctorRepository>()
+            .AddScoped<IPatientRepository, PatientRepository>()
+            .AddScoped<IAppoimentRepository, AppoimentRepository>();
     }
 }
+

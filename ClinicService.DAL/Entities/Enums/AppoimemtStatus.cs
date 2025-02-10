@@ -1,10 +1,10 @@
-﻿namespace ClinicService.DAL.Entities.Enums
+﻿namespace ClinicService.DAL.Entities.Enums;
+
+public enum AppoimemtStatus
 {
-    public enum AppoimemtStatus
-    {
-        Approved,
-        Rejected,
-        Pending,
-        Closed
-    }
+    Approved,
+    Rejected,
+    Pending,
+    Closed
 }
+
