@@ -6,11 +6,11 @@ public class ClinicDbContext : DbContext
 {
     public DbSet<DoctorEntity> Doctors { get; set; }
     public DbSet<PatientEntity> Patients { get; set; }
-    public DbSet<AppoimentEntity> Appoiments { get; set; }
+    public DbSet<AppointmentEntity> Appointments { get; set; }
 
     public ClinicDbContext(DbContextOptions<ClinicDbContext> options) : base(options)
     {
-
+        Database.EnsureCreated();
         if (Database.IsRelational())
         {
             Database.Migrate();
@@ -41,7 +41,7 @@ public class ClinicDbContext : DbContext
             e.Property(b => b.PhoneNumber).HasMaxLength(50).IsRequired();
         });
 
-        modelBuilder.Entity<AppoimentEntity>(e =>
+        modelBuilder.Entity<AppointmentEntity>(e =>
         {
             e.Property(b => b.Id).HasMaxLength(50).IsRequired();
         });
@@ -50,13 +50,13 @@ public class ClinicDbContext : DbContext
             .HasKey(b => b.Id);
         modelBuilder.Entity<PatientEntity>()
             .HasKey(b => b.Id);
-        modelBuilder.Entity<AppoimentEntity>()
+        modelBuilder.Entity<AppointmentEntity>()
             .HasKey(b => b.Id);
         #endregion
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer("Server=localhost;Database=ClinicApplication2;Trusted_Connection=True;Encrypt=False;");
+        optionsBuilder.UseSqlServer("Server=localhost;Database=ClinicApplication3;Trusted_Connection=True;Encrypt=False;");
     }
 }

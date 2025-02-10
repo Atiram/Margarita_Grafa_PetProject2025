@@ -1,14 +1,23 @@
+using System.Reflection;
+using ClinicService.BLL.DI;
 using ClinicService.DAL.DI;
+using ClinicService.BLL.Utilities.Mapping;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+var servises = builder.Services;
+var configuration = builder.Configuration;
 
-builder.Services.AddControllers();
+servises.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.RegisterDataRepositories(builder.Configuration);
+servises.AddEndpointsApiExplorer();
+servises.AddSwaggerGen();
+
+servises.AddAutoMapper(Assembly.GetAssembly(typeof(AutoMapperProfile)));
+servises.RegisterDataRepositories(configuration);
+servises.RegisterBusinessLogicServices();
+
 
 var app = builder.Build();
 

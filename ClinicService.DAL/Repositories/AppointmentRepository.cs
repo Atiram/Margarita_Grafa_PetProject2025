@@ -4,9 +4,9 @@ using ClinicService.DAL.Repositories.Interfaces;
 
 namespace ClinicService.DAL.Repositories;
 
-public class AppoimentRepository : GenericRepository<AppoimentEntity>, IAppoimentRepository
+public class AppointmentRepository : GenericRepository<AppointmentEntity>, IAppointmentRepository
 {
-    public AppoimentRepository(ClinicDbContext context) : base(context)
+    public AppointmentRepository(ClinicDbContext context) : base(context)
     {
     }
 }

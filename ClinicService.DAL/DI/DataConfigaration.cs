@@ -16,7 +16,7 @@ public static class DataConfigaration
 
         services.AddScoped<IDoctorRepository, DoctorRepository>()
             .AddScoped<IPatientRepository, PatientRepository>()
-            .AddScoped<IAppoimentRepository, AppoimentRepository>();
+            .AddScoped<IAppointmentRepository, AppointmentRepository>();
     }
 }
 

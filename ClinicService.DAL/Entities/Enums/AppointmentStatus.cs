@@ -1,6 +1,6 @@
 ﻿namespace ClinicService.DAL.Entities.Enums;
 
-public enum AppoimemtStatus
+public enum AppointmentStatus
 {
     Approved,
     Rejected,
