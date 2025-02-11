@@ -1,4 +1,4 @@
 ﻿namespace ClinicService.BLL.Services.Interfaces;
-public interface IAppointmentService
+public interface IAppointmentService //: IGenericService<AppointmentModel>
 {
 }

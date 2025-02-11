@@ -14,7 +14,7 @@ servises.AddControllers();
 servises.AddEndpointsApiExplorer();
 servises.AddSwaggerGen();
 
-servises.AddAutoMapper(Assembly.GetAssembly(typeof(AutoMapperProfile)));
+servises.AddAutoMapper(Assembly.GetAssembly(typeof(AppMappingProfile)));
 servises.RegisterDataRepositories(configuration);
 servises.RegisterBusinessLogicServices();
 

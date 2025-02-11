@@ -1,10 +1,7 @@
 ﻿using ClinicService.BLL.Models;
+using ClinicService.BLL.Services.Interfaces;
 
 namespace ClinicService.BLL.Services.Interface;
-public interface IPatientService
+public interface IPatientService : IGenericService<PatientModel>
 {
-    Task<PatientModel> GetPatientById(Guid id);
-    Task<PatientModel> CreatePatientAsync(PatientModel patientModel);
-    Task<PatientModel> UpdatePatientAsync(PatientModel patientModel);
-    Task<bool> DeletePatientAsync(Guid id);
 }

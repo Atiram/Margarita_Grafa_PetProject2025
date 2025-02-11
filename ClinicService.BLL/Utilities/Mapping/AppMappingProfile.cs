@@ -8,5 +8,6 @@ public class AppMappingProfile : Profile
     public AppMappingProfile()
     {
         CreateMap<DoctorEntity, DoctorModel>().ReverseMap();
+        CreateMap<PatientEntity, PatientModel>().ReverseMap();
     }
 }
