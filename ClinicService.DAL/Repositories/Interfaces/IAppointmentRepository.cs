@@ -2,6 +2,6 @@
 
 namespace ClinicService.DAL.Repositories.Interfaces;
 
-public interface IAppoimentRepository : IGenericRepository<AppoimentEntity>
+public interface IAppointmentRepository : IGenericRepository<AppointmentEntity>
 {
 }

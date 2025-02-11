@@ -1,6 +1,5 @@
-﻿namespace ClinicService.DAL.Entities;
-
-public class PatientEntity : GenericEntity
+﻿namespace ClinicService.BLL.Models;
+public class PatientModel : GenericModel
 {
     public string FirstName { get; set; }
     public string LastName { get; set; }
@@ -8,4 +7,3 @@ public class PatientEntity : GenericEntity
     public string PhoneNumber { get; set; }
     public DateOnly DateOfBirth { get; set; }
 }
-

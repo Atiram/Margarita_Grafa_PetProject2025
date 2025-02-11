@@ -1,8 +1,7 @@
 ﻿using ClinicService.DAL.Entities.Enums;
 
-namespace ClinicService.DAL.Entities;
-
-public class DoctorEntity : GenericEntity
+namespace ClinicService.BLL.Models;
+public class DoctorModel : GenericModel
 {
     public string FirstName { get; set; }
     public string LastName { get; set; }
@@ -14,4 +13,3 @@ public class DoctorEntity : GenericEntity
     public int CareerStartYear { get; set; }
     public DoctorStatus Status { get; set; }
 }
-

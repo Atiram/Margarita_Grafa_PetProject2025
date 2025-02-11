@@ -43,5 +43,4 @@ public class GenericRepository<TEntity>(ClinicDbContext context) : IGenericRepos
 
         return false;
     }
-
 }

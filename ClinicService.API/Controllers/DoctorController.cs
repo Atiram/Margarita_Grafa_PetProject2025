@@ -1,5 +1,5 @@
-using ClinicService.DAL.Entities;
-using ClinicService.DAL.Repositories.Interfaces;
+using ClinicService.BLL.Models;
+using ClinicService.BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Margarita_Grafa_PetProject2025.Controllers;
@@ -9,30 +9,42 @@ namespace Margarita_Grafa_PetProject2025.Controllers;
 public class DoctorController : ControllerBase
 {
     private readonly ILogger<DoctorController> _logger;
-    private readonly IDoctorRepository _doctorRepository;
+    private readonly IDoctorService _doctorService;
 
-
-    public DoctorController(ILogger<DoctorController> logger, IDoctorRepository doctorRepository)
+    public DoctorController(ILogger<DoctorController> logger, IDoctorService doctorServise)
     {
         _logger = logger;
-        _doctorRepository = doctorRepository;
+        _doctorService = doctorServise;
     }
 
     [HttpGet(Name = "GetDoctor")]
-    public async Task<DoctorEntity> Get(int id)
+    public async Task<DoctorModel> Get(Guid id)
     {
-        return new DoctorEntity();
+        var doctorModel = await _doctorService.GetById(id);
+
+        return doctorModel;
     }
 
     [HttpPost(Name = "PostDoctor")]
-    public async Task<DoctorEntity> Post(DoctorEntity item)
-
+    public async Task<DoctorModel> Post(DoctorModel item)
     {
-        var doctor = new DoctorEntity();
-
-        var response = await _doctorRepository.CreateAsync(doctor);
+        var response = await _doctorService.CreateAsync(item);
 
         return response;
+    }
+
+    [HttpPut(Name = "PutDoctor")]
+    public async Task<DoctorModel> Put(DoctorModel item)
+    {
+        var response = await _doctorService.UpdateAsync(item);
+
+        return response;
+    }
+
+    [HttpDelete(Name = "DeleteDoctor")]
+    public async Task Delete(Guid id)
+    {
+        await _doctorService.DeleteAsync(id);
     }
 }
 

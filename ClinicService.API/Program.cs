@@ -1,14 +1,17 @@
-using ClinicService.DAL.DI;
+using ClinicService.BLL.DI;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
+var services = builder.Services;
+var configuration = builder.Configuration;
 
-builder.Services.AddControllers();
+services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
-builder.Services.RegisterDataRepositories(builder.Configuration);
+services.AddEndpointsApiExplorer();
+services.AddSwaggerGen();
+
+services.RegisterBusinessLogicServices(configuration);
 
 var app = builder.Build();
 
