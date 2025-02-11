@@ -27,10 +27,8 @@ public class DoctorController : ControllerBase
 
     [HttpPost(Name = "PostDoctor")]
     public async Task<DoctorModel> Post(DoctorModel item)
-
     {
-        var doctor = new DoctorModel();
-        var response = await _doctorService.CreateAsync(doctor);
+        var response = await _doctorService.CreateAsync(item);
 
         return response;
     }
@@ -38,9 +36,7 @@ public class DoctorController : ControllerBase
     [HttpPut(Name = "PutDoctor")]
     public async Task<DoctorModel> Put(DoctorModel item)
     {
-        var doctor = new DoctorModel();
-
-        var response = await _doctorService.UpdateAsync(doctor);
+        var response = await _doctorService.UpdateAsync(item);
 
         return response;
     }
