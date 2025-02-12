@@ -1,3 +1,5 @@
+using System.Reflection;
+using ClinicService.API.Utilities.Mapping;
 using ClinicService.BLL.DI;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,6 +14,7 @@ services.AddEndpointsApiExplorer();
 services.AddSwaggerGen();
 
 services.RegisterBusinessLogicServices(configuration);
+services.AddAutoMapper(Assembly.GetAssembly(typeof(AppMappingProfile)));
 
 var app = builder.Build();
 
