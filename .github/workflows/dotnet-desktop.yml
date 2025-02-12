@@ -1,0 +1,28 @@
+name: Clinic Service
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+jobs:
+
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+                             
+    env:
+      Solution_Name: Margarita_Grafa_PetProject2025.sln  
+      
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup .NET
+      uses: actions/setup-dotnet@v4
+      with:
+        dotnet-version: '8.0.x'
+        
+    - name: Build and analyze
+      run: dotnet build --configuration Debug
