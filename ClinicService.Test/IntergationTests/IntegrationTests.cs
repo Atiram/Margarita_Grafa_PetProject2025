@@ -1,12 +1,11 @@
-﻿using ClinicService.BLL.Services;
-using ClinicService.DAL.Data;
+﻿using ClinicService.DAL.Data;
 using ClinicService.DAL.Entities;
-using FakeItEasy;
+using ClinicService.DAL.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.VisualStudio.TestPlatform.TestHost;
+using Moq;
 
 namespace ClinicService.Test.IntergationTests;
 public class IntegrationTests
@@ -21,7 +20,7 @@ public class IntegrationTests
             builder.ConfigureServices(services =>
             {
                 var dbContextService = services.SingleOrDefault(x =>
-                    x.ServiceType == typeof(DbContextOptions<ClinicDbContext>));
+                    x.ServiceType == typeof(ClinicDbContext));
                 services.Remove(dbContextService!);
 
                 services.AddDbContext<ClinicDbContext>(options => options.UseInMemoryDatabase("TestDb"));
@@ -31,7 +30,12 @@ public class IntegrationTests
                 //    x.UsingInMemory();
                 //});
 
-                services.AddScoped(serviceProvider => A.Fake<DoctorService>());
+                //services.AddScoped(serviceProvider => A.Fake<DoctorService>());
+                services.AddScoped(serviceProvider =>
+                {
+                    var mockDoctorRepository = new Mock<IDoctorRepository>();
+                    return mockDoctorRepository.Object;
+                });
             }));
         Server = Factory.Server;
         Client = Server.CreateClient();
