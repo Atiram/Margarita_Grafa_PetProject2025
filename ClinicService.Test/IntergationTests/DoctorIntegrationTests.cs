@@ -51,10 +51,11 @@ public class DoctorIntegrationTests : IntegrationTests
             FirstName = "Test DoctorName",
         };
 
-        //using var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7105/Doctor");
-        using var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7105/Doctor?id=4FA85F64-5717-4562-B3FC-2C963F66AFA6");
+        using var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7105/Doctor");
+        //using var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7105/Doctor?id=4FA85F64-5717-4562-B3FC-2C963F66AFA6");
 
         var v = JsonConvert.SerializeObject(viewModel);
+        var h = new StringContent(JsonConvert.SerializeObject(viewModel), Encoding.UTF8, "application/json");
 
         request.Content = new StringContent(JsonConvert.SerializeObject(viewModel), Encoding.UTF8, "application/json");
 
