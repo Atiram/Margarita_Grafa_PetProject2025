@@ -57,6 +57,6 @@ public class ClinicDbContext : DbContext
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
     {
-        optionsBuilder.UseSqlServer("Server=localhost;Database=ClinicApplication3;Trusted_Connection=True;Encrypt=False;");
+        optionsBuilder.UseSqlServer("Server=localhost;Database=ClinicApplication4;Trusted_Connection=True;Encrypt=False;");
     }
 }
