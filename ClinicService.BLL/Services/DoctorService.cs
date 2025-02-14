@@ -17,10 +17,8 @@ public class DoctorService(IDoctorRepository doctorRepository, IMapper mapper) :
 
     public async Task<DoctorModel> CreateAsync(DoctorModel doctorModel)
     {
-        var doctorEnt = mapper.Map<DoctorEntity>(doctorModel);
-
-        var d = await doctorRepository.CreateAsync(doctorEnt);
-        return doctorModel;
+        var entity = await doctorRepository.CreateAsync(mapper.Map<DoctorEntity>(doctorModel));
+        return mapper.Map<DoctorModel>(entity);
     }
 
     public async Task<DoctorModel> UpdateAsync(DoctorModel doctorModel)

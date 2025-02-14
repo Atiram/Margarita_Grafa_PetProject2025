@@ -1,11 +1,9 @@
-﻿using System.Net;
-using System.Text;
-using ClinicService.API.ViewModels;
-using ClinicService.DAL.Data;
+﻿using ClinicService.API.ViewModels;
 using ClinicService.DAL.Entities;
 using ClinicService.DAL.Entities.Enums;
-using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
+using System.Net;
+using System.Text;
 
 namespace ClinicService.Test.IntergationTests;
 public class DoctorIntegrationTests : IntegrationTests
@@ -78,15 +76,11 @@ public class DoctorIntegrationTests : IntegrationTests
         var actualResult = await Client.SendAsync(request);
         var responseResult = JsonConvert.DeserializeObject<DoctorViewModel>(actualResult.Content.ReadAsStringAsync().Result);
 
-        var doctor = Context.Doctors.Add(en);
+        //Act
 
         using var request2 = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:7105/Doctor?id={responseResult.Id}");
         var actualResult2 = await Client.SendAsync(request2);
         var responseResult2 = JsonConvert.DeserializeObject<DoctorViewModel>(actualResult2.Content.ReadAsStringAsync().Result);
-
-        //Act
-
-        //var responseResult2 = JsonConvert.DeserializeObject<DoctorViewModel>(actualResult.Content.ReadAsStringAsync().Result);
 
         //Assert
         Assert.Equal(HttpStatusCode.OK, actualResult2.StatusCode);
