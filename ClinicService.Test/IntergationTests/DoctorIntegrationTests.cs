@@ -1,42 +1,17 @@
-﻿using System.Text;
-using AutoMapper;
+﻿using System.Net;
+using System.Text;
 using ClinicService.API.ViewModels;
+using ClinicService.DAL.Data;
 using ClinicService.DAL.Entities;
-using ClinicService.DAL.Repositories;
-using ClinicService.DAL.Repositories.Interfaces;
+using ClinicService.DAL.Entities.Enums;
+using Microsoft.Extensions.DependencyInjection;
 using Newtonsoft.Json;
 
 namespace ClinicService.Test.IntergationTests;
 public class DoctorIntegrationTests : IntegrationTests
 {
-    private readonly IDoctorRepository _repository;
-    private readonly IMapper _mapper;
-
-    public DoctorIntegrationTests()
-    {
-        _mapper = Factory.Services.GetService(typeof(IMapper)) as IMapper;
-        _repository = new DoctorRepository(Context);
-    }
-
-    //[Fact]
-    //public async Task Create_Entity_ReturnsEntity()
-    //{
-    //    Guid id = Guid.NewGuid();
-    //    var entity = new DoctorEntity
-    //    {
-    //        Id = id,
-    //        FirstName = "Test DoctorName",
-    //    }; ;
-
-    //    var actualResult = await _repository.CreateAsync(entity);
-
-    //    Assert.Equivalent(actualResult, entity);
-    //    //Context.Products.Last().ShouldBeEquivalentTo(entity);
-    //}
-
-
     [Fact]
-    public async void Create_ValidViewModel_ReturnsViewModel()
+    public async Task Create_ValidViewModel_ReturnsViewModel()
     {
         //Arrange
         Guid id = Guid.NewGuid();
@@ -44,36 +19,77 @@ public class DoctorIntegrationTests : IntegrationTests
         {
             Id = id,
             FirstName = "Test DoctorName",
-        };
-        var entity = new DoctorEntity
-        {
-            Id = id,
-            FirstName = "Test DoctorName",
+            LastName = "Test LastName",
+            MiddleName = "Test MiddleName",
+            DateOfBirth = new DateOnly(1990, 1, 1),
+            Email = "test@email",
+            Specialization = "TestSpec",
+            Office = "TestOffice",
+            CareerStartYear = 2000,
+            Status = DoctorStatus.AtWork
         };
 
         using var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7105/Doctor");
-        //using var request = new HttpRequestMessage(HttpMethod.Get, "https://localhost:7105/Doctor?id=4FA85F64-5717-4562-B3FC-2C963F66AFA6");
-
-        var v = JsonConvert.SerializeObject(viewModel);
-        var h = new StringContent(JsonConvert.SerializeObject(viewModel), Encoding.UTF8, "application/json");
-
         request.Content = new StringContent(JsonConvert.SerializeObject(viewModel), Encoding.UTF8, "application/json");
 
         //Act
         var actualResult = await Client.SendAsync(request);
 
-
         var responseResult = JsonConvert.DeserializeObject<DoctorViewModel>(actualResult.Content.ReadAsStringAsync().Result);
 
-        entity.Id = responseResult.Id;
-        entity.FirstName = responseResult.FirstName;
-        viewModel.Id = responseResult.Id;
-        viewModel.FirstName = responseResult.FirstName;
+        //Assert
+        Assert.Equal(HttpStatusCode.OK, actualResult.StatusCode);
+        Assert.Equivalent(responseResult, viewModel);
+    }
+
+    [Fact]
+    public async Task Get_ValidViewModel_ReturnsViewModel()
+    {
+        //Arrange
+        Guid id = Guid.NewGuid();
+        var viewModel = new DoctorViewModel
+        {
+            Id = id,
+            FirstName = "Test DoctorName",
+            LastName = "Test LastName",
+            MiddleName = "Test MiddleName",
+            DateOfBirth = new DateOnly(1990, 1, 1),
+            Email = "test@email",
+            Specialization = "TestSpec",
+            Office = "TestOffice",
+            CareerStartYear = 2000,
+            Status = DoctorStatus.AtWork
+        };
+        var en = new DoctorEntity
+        {
+            Id = id,
+            FirstName = "Test DoctorName",
+            LastName = "Test LastName",
+            MiddleName = "Test MiddleName",
+            DateOfBirth = new DateOnly(1990, 1, 1),
+            Email = "test@email",
+            Specialization = "TestSpec",
+            Office = "TestOffice",
+            CareerStartYear = 2000,
+            Status = DoctorStatus.AtWork
+        };
+        using var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7105/Doctor");
+        request.Content = new StringContent(JsonConvert.SerializeObject(viewModel), Encoding.UTF8, "application/json");
+        var actualResult = await Client.SendAsync(request);
+        var responseResult = JsonConvert.DeserializeObject<DoctorViewModel>(actualResult.Content.ReadAsStringAsync().Result);
+
+        var doctor = Context.Doctors.Add(en);
+
+        using var request2 = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:7105/Doctor?id={responseResult.Id}");
+        var actualResult2 = await Client.SendAsync(request2);
+        var responseResult2 = JsonConvert.DeserializeObject<DoctorViewModel>(actualResult2.Content.ReadAsStringAsync().Result);
+
+        //Act
+
+        //var responseResult2 = JsonConvert.DeserializeObject<DoctorViewModel>(actualResult.Content.ReadAsStringAsync().Result);
 
         //Assert
-        //actualResult.StatusCode.ShouldBe(HttpStatusCode.OK);
-        //responseResult.FirstName.ShouldNotBe(default);
-        Assert.Equivalent(responseResult, viewModel);
-        //ShipmentCollection.Find(x => x.Id == responseResult.Id).Single().ShouldNotBeNull();
+        Assert.Equal(HttpStatusCode.OK, actualResult2.StatusCode);
+        Assert.Equivalent(responseResult2, viewModel);
     }
 }
