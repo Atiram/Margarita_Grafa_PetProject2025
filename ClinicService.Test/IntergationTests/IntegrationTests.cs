@@ -1,11 +1,10 @@
 ﻿using ClinicService.DAL.Data;
 using ClinicService.DAL.Entities;
-using ClinicService.DAL.Repositories.Interfaces;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
-using Moq;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 
 namespace ClinicService.Test.IntergationTests;
 public class IntegrationTests
@@ -19,23 +18,10 @@ public class IntegrationTests
         Factory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
             builder.ConfigureServices(services =>
             {
-                var dbContextService = services.SingleOrDefault(x =>
-                    x.ServiceType == typeof(ClinicDbContext));
-                services.Remove(dbContextService!);
+                services.RemoveAll<DbContextOptions<ClinicDbContext>>();
 
                 services.AddDbContext<ClinicDbContext>(options => options.UseInMemoryDatabase("TestDb"));
 
-                //services.AddMassTransitTestHarness(x =>
-                //{
-                //    x.UsingInMemory();
-                //});
-
-                //services.AddScoped(serviceProvider => A.Fake<DoctorService>());
-                services.AddScoped(serviceProvider =>
-                {
-                    var mockDoctorRepository = new Mock<IDoctorRepository>();
-                    return mockDoctorRepository.Object;
-                });
             }));
         Server = Factory.Server;
         Client = Server.CreateClient();
