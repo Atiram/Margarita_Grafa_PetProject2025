@@ -1,10 +1,7 @@
 ﻿using System.Net;
-using System.Text;
-using ClinicService.API.ViewModels;
 using ClinicService.DAL.Entities;
 using ClinicService.Test.TestEntities;
 using Microsoft.EntityFrameworkCore;
-using Newtonsoft.Json;
 
 namespace ClinicService.Test.IntergationTests;
 public class DoctorIntegrationTests : IntegrationTests
@@ -16,12 +13,11 @@ public class DoctorIntegrationTests : IntegrationTests
         var viewModel = TestDoctorViewModel.NewDoctorViewModel;
 
         using var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7105/Doctor");
-        request.Content = new StringContent(JsonConvert.SerializeObject(viewModel), Encoding.UTF8, "application/json");
+        var actualRequest = AddContent(viewModel, request);
 
         //Act
-        var actualResult = await Client.SendAsync(request);
-
-        var responseResult = JsonConvert.DeserializeObject<DoctorViewModel>(actualResult.Content.ReadAsStringAsync().Result);
+        var actualResult = await Client.SendAsync(actualRequest);
+        var responseResult = GetResponseResult(actualResult);
 
         //Assert
         Assert.Equal(HttpStatusCode.OK, actualResult.StatusCode);
@@ -34,19 +30,18 @@ public class DoctorIntegrationTests : IntegrationTests
         //Arrange
         var viewModel = TestDoctorViewModel.NewDoctorViewModel;
 
-        using var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7105/Doctor");
-        var r = AddContent(viewModel, request);
-        var actualResult = await Client.SendAsync(r);
-        var responseResult = JsonConvert.DeserializeObject<DoctorViewModel>(actualResult.Content.ReadAsStringAsync().Result);
+
+        var postResponse = await SendPostRequest(viewModel);
+        var postResponseResult = GetResponseResult(postResponse);
 
         //Act
-        using var request2 = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:7105/Doctor?id={responseResult.Id}");
-        var actualResult2 = await Client.SendAsync(request2);
-        var responseResult2 = JsonConvert.DeserializeObject<DoctorViewModel>(actualResult2.Content.ReadAsStringAsync().Result);
+        using var request = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:7105/Doctor?id={postResponseResult.Id}");
+        var actualResult = await Client.SendAsync(request);
+        var responseResult = GetResponseResult(actualResult);
 
         //Assert
-        Assert.Equal(HttpStatusCode.OK, actualResult2.StatusCode);
-        Assert.Equivalent(responseResult2, viewModel);
+        Assert.Equal(HttpStatusCode.OK, actualResult.StatusCode);
+        Assert.Equivalent(responseResult, viewModel);
     }
 
     [Fact]
@@ -55,22 +50,20 @@ public class DoctorIntegrationTests : IntegrationTests
         //Arrange
         var viewModel = TestDoctorViewModel.NewDoctorViewModel;
 
-        var changeViewModel = TestDoctorViewModel.UpdatedDoctorViewModel;
+        var updatedViewModel = TestDoctorViewModel.UpdatedDoctorViewModel;
 
-        using var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7105/Doctor");
-        var r = AddContent(viewModel, request);
-        var actualResult = await Client.SendAsync(r);
-        var responseResult = JsonConvert.DeserializeObject<DoctorViewModel>(actualResult.Content.ReadAsStringAsync().Result);
+        var postResponse = await SendPostRequest(viewModel);
+        var postResponseResult = GetResponseResult(postResponse);
 
         //Act
-        using var request2 = new HttpRequestMessage(HttpMethod.Put, "https://localhost:7105/Doctor");
-        request2.Content = new StringContent(JsonConvert.SerializeObject(changeViewModel), Encoding.UTF8, "application/json");
-        var actualResult2 = await Client.SendAsync(request2);
-        var responseResult2 = JsonConvert.DeserializeObject<DoctorViewModel>(actualResult2.Content.ReadAsStringAsync().Result);
+        using var request = new HttpRequestMessage(HttpMethod.Put, "https://localhost:7105/Doctor");
+        var actualRequest = AddContent(updatedViewModel, request);
+        var actualResult = await Client.SendAsync(actualRequest);
+        var responseResult = GetResponseResult(actualResult);
 
         //Assert
-        Assert.Equal(HttpStatusCode.OK, actualResult2.StatusCode);
-        Assert.Equivalent(responseResult2, changeViewModel);
+        Assert.Equal(HttpStatusCode.OK, actualResult.StatusCode);
+        Assert.Equivalent(responseResult, updatedViewModel);
     }
 
     [Fact]
@@ -80,17 +73,15 @@ public class DoctorIntegrationTests : IntegrationTests
         var viewModel = TestDoctorViewModel.NewDoctorViewModel;
         var entity = TestDoctorEntity.Doctor;
 
-        using var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7105/Doctor");
-        request.Content = new StringContent(JsonConvert.SerializeObject(viewModel), Encoding.UTF8, "application/json");
-        var actualResult = await Client.SendAsync(request);
-        var responseResult = JsonConvert.DeserializeObject<DoctorViewModel>(actualResult.Content.ReadAsStringAsync().Result);
+        var postResponse = await SendPostRequest(viewModel);
+        var postResponseResult = GetResponseResult(postResponse);
 
         //Act
-        using var request2 = new HttpRequestMessage(HttpMethod.Delete, $"https://localhost:7105/Doctor?id={responseResult.Id}");
-        var actualResult2 = await Client.SendAsync(request2);
+        using var request = new HttpRequestMessage(HttpMethod.Delete, $"https://localhost:7105/Doctor?id={postResponseResult.Id}");
+        var actualResult = await Client.SendAsync(request);
 
         //Assert
         Assert.False(Context.Set<DoctorEntity>().Contains(entity));
-        Assert.Equal(HttpStatusCode.OK, actualResult2.StatusCode);
+        Assert.Equal(HttpStatusCode.OK, actualResult.StatusCode);
     }
 }
