@@ -6,6 +6,8 @@ using Microsoft.EntityFrameworkCore;
 namespace ClinicService.Test.IntergationTests;
 public class DoctorIntegrationTests : IntegrationTests
 {
+    private const string BasetUrl = "https://localhost:7105/Doctor";
+
     [Fact]
     public async Task Create_ValidViewModel_ReturnsViewModel()
     {
@@ -13,7 +15,7 @@ public class DoctorIntegrationTests : IntegrationTests
         var viewModel = TestDoctorViewModel.DoctorViewModel;
 
         viewModel.Id = Guid.NewGuid();
-        using var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7105/Doctor");
+        using var request = new HttpRequestMessage(HttpMethod.Post, BasetUrl);
         var actualRequest = AddContent(viewModel, request);
 
         //Act
@@ -36,7 +38,7 @@ public class DoctorIntegrationTests : IntegrationTests
         var postResponseResult = GetResponseResult(postResponse);
 
         //Act
-        using var request = new HttpRequestMessage(HttpMethod.Get, $"https://localhost:7105/Doctor?id={postResponseResult.Id}");
+        using var request = new HttpRequestMessage(HttpMethod.Get, $"{BasetUrl}?id={postResponseResult.Id}");
         var actualResult = await Client.SendAsync(request);
         var responseResult = GetResponseResult(actualResult);
 
@@ -58,7 +60,7 @@ public class DoctorIntegrationTests : IntegrationTests
         var postResponseResult = GetResponseResult(postResponse);
 
         //Act
-        using var request = new HttpRequestMessage(HttpMethod.Put, "https://localhost:7105/Doctor");
+        using var request = new HttpRequestMessage(HttpMethod.Put, BasetUrl);
         var actualRequest = AddContent(updatedViewModel, request);
         var actualResult = await Client.SendAsync(actualRequest);
         var responseResult = GetResponseResult(actualResult);
@@ -79,7 +81,7 @@ public class DoctorIntegrationTests : IntegrationTests
         var postResponseResult = GetResponseResult(postResponse);
 
         //Act
-        using var request = new HttpRequestMessage(HttpMethod.Delete, $"https://localhost:7105/Doctor?id={postResponseResult.Id}");
+        using var request = new HttpRequestMessage(HttpMethod.Delete, $"{BasetUrl}?id={postResponseResult.Id}");
         var actualResult = await Client.SendAsync(request);
 
         //Assert

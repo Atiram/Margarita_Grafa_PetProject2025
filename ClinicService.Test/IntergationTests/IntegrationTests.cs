@@ -16,6 +16,8 @@ public class IntegrationTests
     protected ClinicDbContext Context { get; }
     protected WebApplicationFactory<Program> Factory { get; }
     private const string JsonContentType = "application/json";
+    private const string UrlPost = "https://localhost:7105/Doctor";
+
     public IntegrationTests()
     {
         Factory = new WebApplicationFactory<Program>().WithWebHostBuilder(builder =>
@@ -24,7 +26,6 @@ public class IntegrationTests
                 services.RemoveAll<DbContextOptions<ClinicDbContext>>();
 
                 services.AddDbContext<ClinicDbContext>(options => options.UseInMemoryDatabase("TestDb"));
-
             }));
         Server = Factory.Server;
         Client = Server.CreateClient();
@@ -38,7 +39,7 @@ public class IntegrationTests
     }
     public async Task<HttpResponseMessage> SendPostRequest(DoctorViewModel viewModel)
     {
-        using var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7105/Doctor");
+        using var request = new HttpRequestMessage(HttpMethod.Post, UrlPost);
         var actualRequest = AddContent(viewModel, request);
         return await Client.SendAsync(request);
     }
