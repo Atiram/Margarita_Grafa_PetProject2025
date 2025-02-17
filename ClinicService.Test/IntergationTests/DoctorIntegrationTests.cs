@@ -4,13 +4,14 @@ using ClinicService.Test.TestEntities;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClinicService.Test.IntergationTests;
+[Collection("Sequential")]
 public class DoctorIntegrationTests : IntegrationTests
 {
     [Fact]
     public async Task Create_ValidViewModel_ReturnsViewModel()
     {
         //Arrange
-        var viewModel = TestDoctorViewModel.NewDoctorViewModel;
+        var viewModel = TestDoctorViewModel.DoctorViewModel;
 
         using var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7105/Doctor");
         var actualRequest = AddContent(viewModel, request);
@@ -28,8 +29,7 @@ public class DoctorIntegrationTests : IntegrationTests
     public async Task Get_ValidViewModel_ReturnsViewModel()
     {
         //Arrange
-        var viewModel = TestDoctorViewModel.NewDoctorViewModel;
-
+        var viewModel = TestDoctorViewModel.DoctorViewModel;
 
         var postResponse = await SendPostRequest(viewModel);
         var postResponseResult = GetResponseResult(postResponse);
@@ -48,10 +48,8 @@ public class DoctorIntegrationTests : IntegrationTests
     public async Task Put_ValidViewModel_ReturnsViewModel()
     {
         //Arrange
-        var viewModel = TestDoctorViewModel.NewDoctorViewModel;
-
+        var viewModel = TestDoctorViewModel.DoctorViewModel;
         var updatedViewModel = TestDoctorViewModel.UpdatedDoctorViewModel;
-
         var postResponse = await SendPostRequest(viewModel);
         var postResponseResult = GetResponseResult(postResponse);
 
@@ -70,9 +68,8 @@ public class DoctorIntegrationTests : IntegrationTests
     public async Task Delete_ValidViewModel_ReturnsViewModel()
     {
         //Arrange
-        var viewModel = TestDoctorViewModel.NewDoctorViewModel;
-        var entity = TestDoctorEntity.Doctor;
-
+        var viewModel = TestDoctorViewModel.DoctorViewModel;
+        var entity = TestDoctorEntity.DoctorEntity;
         var postResponse = await SendPostRequest(viewModel);
         var postResponseResult = GetResponseResult(postResponse);
 

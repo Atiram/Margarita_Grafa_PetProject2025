@@ -1,13 +1,11 @@
-﻿using ClinicService.API.ViewModels;
+﻿using ClinicService.BLL.Models;
 using ClinicService.DAL.Entities.Enums;
 
 namespace ClinicService.Test.TestEntities;
-public static class TestDoctorViewModel
+public static class TestDoctorModel
 {
-    public static Guid id = Guid.NewGuid();
-    public static DoctorViewModel DoctorViewModel => new()
+    public static DoctorModel DoctorModel => new()
     {
-        Id = id,
         FirstName = "Test DoctorName",
         LastName = "Test LastName",
         MiddleName = "Test MiddleName",
@@ -18,10 +16,8 @@ public static class TestDoctorViewModel
         CareerStartYear = 2000,
         Status = DoctorStatus.AtWork
     };
-
-    public static DoctorViewModel UpdatedDoctorViewModel => new()
+    public static DoctorModel UpdatedDoctorModel => new()
     {
-        Id = id,
         FirstName = "ChangedTest DoctorName",
         LastName = "ChangedTest LastName",
         MiddleName = null,

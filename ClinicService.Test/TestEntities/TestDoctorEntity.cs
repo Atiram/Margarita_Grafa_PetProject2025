@@ -4,9 +4,8 @@ using ClinicService.DAL.Entities.Enums;
 namespace ClinicService.Test.TestEntities;
 public static class TestDoctorEntity
 {
-    public static DoctorEntity Doctor => new()
+    public static DoctorEntity DoctorEntity => new()
     {
-
         FirstName = "Test DoctorName",
         LastName = "Test LastName",
         MiddleName = "Test MiddleName",
