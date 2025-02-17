@@ -26,4 +26,4 @@ jobs:
         
     - name: Build and analyze
       run: dotnet build --configuration Debug
-           dotnet test --no-restore --no-build --configuration Debug --verbosity normal --logger
+           dotnet test --no-restore --no-build --configuration Debug --verbosity
