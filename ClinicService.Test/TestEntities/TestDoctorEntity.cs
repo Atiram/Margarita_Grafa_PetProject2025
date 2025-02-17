@@ -6,6 +6,7 @@ public static class TestDoctorEntity
 {
     public static DoctorEntity DoctorEntity => new()
     {
+        Id = Guid.NewGuid(),
         FirstName = "Test DoctorName",
         LastName = "Test LastName",
         MiddleName = "Test MiddleName",

@@ -4,10 +4,9 @@ using ClinicService.DAL.Entities.Enums;
 namespace ClinicService.Test.TestEntities;
 public static class TestDoctorViewModel
 {
-    public static Guid id = Guid.NewGuid();
     public static DoctorViewModel DoctorViewModel => new()
     {
-        Id = id,
+        Id = Guid.NewGuid(),
         FirstName = "Test DoctorName",
         LastName = "Test LastName",
         MiddleName = "Test MiddleName",
@@ -21,7 +20,7 @@ public static class TestDoctorViewModel
 
     public static DoctorViewModel UpdatedDoctorViewModel => new()
     {
-        Id = id,
+        Id = Guid.NewGuid(),
         FirstName = "ChangedTest DoctorName",
         LastName = "ChangedTest LastName",
         MiddleName = null,

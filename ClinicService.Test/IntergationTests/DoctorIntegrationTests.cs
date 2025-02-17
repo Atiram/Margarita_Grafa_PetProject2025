@@ -4,7 +4,6 @@ using ClinicService.Test.TestEntities;
 using Microsoft.EntityFrameworkCore;
 
 namespace ClinicService.Test.IntergationTests;
-[Collection("Sequential")]
 public class DoctorIntegrationTests : IntegrationTests
 {
     [Fact]
@@ -13,6 +12,7 @@ public class DoctorIntegrationTests : IntegrationTests
         //Arrange
         var viewModel = TestDoctorViewModel.DoctorViewModel;
 
+        viewModel.Id = Guid.NewGuid();
         using var request = new HttpRequestMessage(HttpMethod.Post, "https://localhost:7105/Doctor");
         var actualRequest = AddContent(viewModel, request);
 
@@ -30,6 +30,7 @@ public class DoctorIntegrationTests : IntegrationTests
     {
         //Arrange
         var viewModel = TestDoctorViewModel.DoctorViewModel;
+        viewModel.Id = Guid.NewGuid();
 
         var postResponse = await SendPostRequest(viewModel);
         var postResponseResult = GetResponseResult(postResponse);
@@ -50,6 +51,9 @@ public class DoctorIntegrationTests : IntegrationTests
         //Arrange
         var viewModel = TestDoctorViewModel.DoctorViewModel;
         var updatedViewModel = TestDoctorViewModel.UpdatedDoctorViewModel;
+        viewModel.Id = Guid.NewGuid();
+        updatedViewModel.Id = viewModel.Id;
+
         var postResponse = await SendPostRequest(viewModel);
         var postResponseResult = GetResponseResult(postResponse);
 
@@ -70,6 +74,7 @@ public class DoctorIntegrationTests : IntegrationTests
         //Arrange
         var viewModel = TestDoctorViewModel.DoctorViewModel;
         var entity = TestDoctorEntity.DoctorEntity;
+
         var postResponse = await SendPostRequest(viewModel);
         var postResponseResult = GetResponseResult(postResponse);
 

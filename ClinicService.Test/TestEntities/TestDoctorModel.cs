@@ -6,6 +6,7 @@ public static class TestDoctorModel
 {
     public static DoctorModel DoctorModel => new()
     {
+        Id = Guid.NewGuid(),
         FirstName = "Test DoctorName",
         LastName = "Test LastName",
         MiddleName = "Test MiddleName",
@@ -18,9 +19,10 @@ public static class TestDoctorModel
     };
     public static DoctorModel UpdatedDoctorModel => new()
     {
+        Id = Guid.NewGuid(),
         FirstName = "ChangedTest DoctorName",
         LastName = "ChangedTest LastName",
-        MiddleName = null,
+        MiddleName = "ChangedTest MiddleName",
         DateOfBirth = new DateOnly(1999, 1, 1),
         Email = "Ctchangedtest@email",
         Specialization = "ChangedTestSpec",
