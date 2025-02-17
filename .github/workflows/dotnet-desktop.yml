@@ -26,4 +26,5 @@ jobs:
         
     - name: Build and analyze
       run: dotnet build --configuration Debug
-           dotnet test --no-restore
+    - name: Test
+      run: dotnet test ${{ env.Solution_Name }} --configuration Debug --no-build
