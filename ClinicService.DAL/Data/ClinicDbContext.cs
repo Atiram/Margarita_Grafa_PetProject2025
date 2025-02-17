@@ -10,7 +10,6 @@ public class ClinicDbContext : DbContext
 
     public ClinicDbContext(DbContextOptions<ClinicDbContext> options) : base(options)
     {
-        //Database.EnsureCreated();
         //if (Database.IsRelational())
         //{
         //    Database.Migrate();
