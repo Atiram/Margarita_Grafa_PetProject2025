@@ -50,4 +50,4 @@ jobs:
           dotnet build --configuration Debug
           .sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
       - name: Test
-        run: dotnet test ${{ env.Solution_Name }} --configuration Debug --no-build --verbosity normal --logger trx --collect:"XPlat Code Coverage" -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+        run: dotnet test ${{ env.Solution_Name }} --configuration Debug --no-build --verbosity normal --logger trx --collect:"XPlat Code Coverage;Format=opencover"
