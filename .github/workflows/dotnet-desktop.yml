@@ -58,8 +58,7 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           EXCLUDE_FROM_COVERAGE: "**/Quickstart/**/*,**/program.cs"
           EXCLUDE_FROM_ANALYS: "**/Quickstart/**/*"
-      run:        
-        dotnet build --configuration Debug
+      run: dotnet build --configuration Debug
     - name: Test
       run: dotnet test ${{ env.Solution_Name }} --configuration Debug --no-build
           
