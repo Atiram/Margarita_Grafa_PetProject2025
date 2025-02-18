@@ -21,6 +21,24 @@ jobs:
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
+      - name: Cache SonarQube Cloud packages
+        uses: actions/cache@v4
+        with:
+          path: ~\sonar\cache
+          key: ${{ runner.os }}-sonar
+          restore-keys: ${{ runner.os }}-sonar
+      - name: Cache SonarQube Cloud scanner
+        id: cache-sonar-scanner
+        uses: actions/cache@v4
+        with:
+          path: .\.sonar\scanner
+          key: ${{ runner.os }}-sonar-scanner
+          restore-keys: ${{ runner.os }}-sonar-scanner
+      - name: Install SonarQube Cloud scanner
+        if: steps.cache-sonar-scanner.outputs.cache-hit!= 'true'
+        run: |
+          mkdir -p./.sonar/scanner
+          dotnet tool update dotnet-sonarscanner --tool-path./.sonar/scanner
       - name: Build and analyze
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -28,9 +46,8 @@ jobs:
           EXCLUDE_FROM_COVERAGE: "**/Quickstart/**/*,**/program.cs"
           EXCLUDE_FROM_ANALYS: "**/Quickstart/**/*"
         run: |
-          dotnet-sonarscanner begin /k:"Margarita_Grafa_PetProject2025" /o:"Atiram" /d:sonar.login="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx" /d:sonar.coverage.exclusions="${{ env.EXCLUDE_FROM_COVERAGE }}" /d:sonar.exclusions="${{ env.EXCLUDE_FROM_ANALYS }}"
+          .sonar/scanner/dotnet-sonarscanner begin /k:"Atiram_Margarita_Grafa_PetProject2025" /o:"Atiram" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
           dotnet build --configuration Debug
+          .sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
       - name: Test
-        run: |
-          dotnet test Margarita_Grafa_PetProject2025.sln --configuration Debug --no-build # Использование имени решения напрямую
-          dotnet-sonarscanner end /d:sonar.login="${{ secrets.SONAR_TOKEN }}"
+        run: dotnet test ${{ env.Solution_Name }} --configuration Debug --no-build
