@@ -38,7 +38,7 @@ jobs:
         path: .\.sonar\scanner
         key: ${{ runner.os }}-sonar-scanner
         restore-keys: ${{ runner.os }}-sonar-scanner
-        
+
     - name: Install SonarQube Cloud scanner
       if: steps.cache-sonar-scanner.outputs.cache-hit != 'true'
       shell: powershell
@@ -52,7 +52,12 @@ jobs:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           EXCLUDE_FROM_COVERAGE: "**/Quickstart/**/*,**/program.cs"
           EXCLUDE_FROM_ANALYS: "**/Quickstart/**/*"
+          shell: powershell
+          run: |
+            .\.sonar\scanner\dotnet-sonarscanner begin /k:"Atiram_Margarita_Grafa_PetProject2025" /o:"atiram" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io"
+            dotnet build
+            .\.sonar\scanner\dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
       run: dotnet build --configuration Debug
     - name: Test
       run: dotnet test ${{ env.Solution_Name }} --configuration Debug --no-build
-          
+      
