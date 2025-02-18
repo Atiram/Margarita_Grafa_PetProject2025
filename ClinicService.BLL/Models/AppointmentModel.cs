@@ -3,8 +3,8 @@
 namespace ClinicService.BLL.Models;
 public class AppointmentModel : GenericEntity
 {
-    public DoctorEntity Doctor { get; set; }
-    public PatientEntity Patient { get; set; }
-    public DateOnly Date { get; set; }
-    public TimeOnly Slots { get; set; }
+    public required DoctorEntity Doctor { get; set; }
+    public required PatientEntity Patient { get; set; }
+    public required DateOnly Date { get; set; }
+    public required TimeOnly Slots { get; set; }
 }

@@ -10,11 +10,10 @@ public class ClinicDbContext : DbContext
 
     public ClinicDbContext(DbContextOptions<ClinicDbContext> options) : base(options)
     {
-        Database.EnsureCreated();
-        if (Database.IsRelational())
-        {
-            Database.Migrate();
-        }
+        //if (Database.IsRelational())
+        //{
+        //    Database.Migrate();
+        //}
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {
@@ -53,10 +52,5 @@ public class ClinicDbContext : DbContext
         modelBuilder.Entity<AppointmentEntity>()
             .HasKey(b => b.Id);
         #endregion
-    }
-
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.UseSqlServer("Server=localhost;Database=ClinicApplication3;Trusted_Connection=True;Encrypt=False;");
     }
 }
