@@ -46,7 +46,7 @@ jobs:
           EXCLUDE_FROM_COVERAGE: "**/Quickstart/**/*,**/program.cs"
           EXCLUDE_FROM_ANALYS: "**/Quickstart/**/*"
         run: |
-          .sonar/scanner/dotnet-sonarscanner begin /k:"atiram_Margarita_Grafa_PetProject2025" /o:"atiram" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
+          .sonar/scanner/dotnet-sonarscanner begin /k:"Atiram_Margarita_Grafa_PetProject2025" /o:"atiram" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
           dotnet build --configuration Debug
           .sonar/scanner/dotnet-sonarscanner end /d:sonar.token="${{ secrets.SONAR_TOKEN }}"
       - name: Test
