@@ -17,18 +17,17 @@ public class PatientService(IPatientRepository patientRepository, IMapper mapper
 
     public async Task<PatientModel> CreateAsync(PatientModel patientModel)
     {
-        var patientEntity = mapper.Map<PatientEntity>(patientModel);
-        var p = await patientRepository.CreateAsync(patientEntity);
+        var patientEntity = await patientRepository.CreateAsync(mapper.Map<PatientEntity>(patientModel)); ;
 
-        return patientModel;
+        return mapper.Map<PatientModel>(patientEntity);
     }
 
     public async Task<PatientModel> UpdateAsync(PatientModel patientModel)
     {
         var patientEntity = mapper.Map<PatientEntity>(patientModel);
-        var p = await patientRepository.UpdateAsync(patientEntity);
+        var updatedPatientEntity = await patientRepository.UpdateAsync(patientEntity);
 
-        return patientModel;
+        return mapper.Map<PatientModel>(updatedPatientEntity);
     }
 
     public async Task<bool> DeleteAsync(Guid id)

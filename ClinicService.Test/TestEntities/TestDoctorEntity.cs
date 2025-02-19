@@ -4,7 +4,7 @@ using ClinicService.DAL.Entities.Enums;
 namespace ClinicService.Test.TestEntities;
 public static class TestDoctorEntity
 {
-    public static DoctorEntity DoctorEntity => new()
+    public static DoctorEntity NewDoctorEntity => new()
     {
         Id = Guid.NewGuid(),
         FirstName = "Test DoctorName",
@@ -16,5 +16,18 @@ public static class TestDoctorEntity
         Office = "TestOffice",
         CareerStartYear = 2000,
         Status = DoctorStatus.AtWork
+    };
+    public static DoctorEntity UpdatedDoctorEntity => new()
+    {
+        Id = Guid.NewGuid(),
+        FirstName = "ChangedTest DoctorName",
+        LastName = "ChangedTest LastName",
+        MiddleName = "ChangedTest MiddleName",
+        DateOfBirth = new DateOnly(1999, 1, 1),
+        Email = "Ctchangedtest@email",
+        Specialization = "ChangedTestSpec",
+        Office = "ChangedTestOffice",
+        CareerStartYear = 2010,
+        Status = DoctorStatus.SickDay
     };
 }
