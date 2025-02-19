@@ -46,8 +46,6 @@ public class IntegrationTests
     }
     public static DoctorViewModel? GetResponseResult(HttpResponseMessage responseMessage)
     {
-
-
-        return JsonConvert.DeserializeObject<DoctorViewModel>(responseMessage.Content.ReadAsStringAsync().Result);
+        return JsonConvert.DeserializeObject<DoctorViewModel>(responseMessage.Content.ReadAsStringAsync().Result) ?? null;
     }
 }

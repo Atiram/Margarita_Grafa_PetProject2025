@@ -11,7 +11,7 @@ public class DoctorService(IDoctorRepository doctorRepository, IMapper mapper) :
     {
         var doctorEntity = await doctorRepository.GetByIdAsync(id);
 
-        return mapper.Map<DoctorModel>(doctorEntity); ;
+        return mapper.Map<DoctorModel>(doctorEntity);
     }
 
     public async Task<DoctorModel> CreateAsync(DoctorModel doctorModel)

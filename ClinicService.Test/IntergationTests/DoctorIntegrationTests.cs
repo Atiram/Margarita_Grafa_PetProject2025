@@ -37,6 +37,8 @@ public class DoctorIntegrationTests : IntegrationTests
         var postResponse = await SendPostRequest(viewModel);
         var postResponseResult = GetResponseResult(postResponse);
 
+        Assert.NotNull(postResponseResult);
+
         //Act
         using var request = new HttpRequestMessage(HttpMethod.Get, $"{BasetUrl}?id={postResponseResult.Id}");
         var actualResult = await Client.SendAsync(request);
@@ -79,6 +81,8 @@ public class DoctorIntegrationTests : IntegrationTests
 
         var postResponse = await SendPostRequest(viewModel);
         var postResponseResult = GetResponseResult(postResponse);
+
+        Assert.NotNull(postResponseResult);
 
         //Act
         using var request = new HttpRequestMessage(HttpMethod.Delete, $"{BasetUrl}?id={postResponseResult.Id}");

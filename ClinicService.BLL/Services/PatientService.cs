@@ -17,7 +17,7 @@ public class PatientService(IPatientRepository patientRepository, IMapper mapper
 
     public async Task<PatientModel> CreateAsync(PatientModel patientModel)
     {
-        var patientEntity = await patientRepository.CreateAsync(mapper.Map<PatientEntity>(patientModel)); ;
+        var patientEntity = await patientRepository.CreateAsync(mapper.Map<PatientEntity>(patientModel));
 
         return mapper.Map<PatientModel>(patientEntity);
     }
