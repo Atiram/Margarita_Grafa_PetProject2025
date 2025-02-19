@@ -1,7 +1,6 @@
 ﻿using ClinicService.BLL.Models;
-using ClinicService.BLL.Services.Interfaces;
 
-namespace ClinicService.BLL.Services.Interface;
+namespace ClinicService.BLL.Services.Interfaces;
 public interface IPatientService : IGenericService<PatientModel>
 {
 }

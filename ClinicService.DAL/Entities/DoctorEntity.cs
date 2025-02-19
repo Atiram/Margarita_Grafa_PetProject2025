@@ -13,5 +13,6 @@ public class DoctorEntity : GenericEntity
     public required string Office { get; set; }
     public required int CareerStartYear { get; set; }
     public required DoctorStatus Status { get; set; }
+    public List<AppointmentEntity>? Appointments { get; set; }
 }
 

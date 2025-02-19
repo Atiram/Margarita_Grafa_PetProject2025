@@ -1,6 +1,5 @@
 ﻿using System.Reflection;
 using ClinicService.BLL.Services;
-using ClinicService.BLL.Services.Interface;
 using ClinicService.BLL.Services.Interfaces;
 using ClinicService.BLL.Utilities.Mapping;
 using ClinicService.DAL.DI;

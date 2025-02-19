@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using ClinicService.BLL.Models;
-using ClinicService.BLL.Services.Interface;
+using ClinicService.BLL.Services.Interfaces;
 using ClinicService.DAL.Entities;
 using ClinicService.DAL.Repositories.Interfaces;
 
@@ -10,9 +10,8 @@ public class PatientService(IPatientRepository patientRepository, IMapper mapper
     public async Task<PatientModel> GetById(Guid id)
     {
         var patientEntity = await patientRepository.GetByIdAsync(id);
-        var patientModel = mapper.Map<PatientModel>(patientEntity);
 
-        return patientModel;
+        return mapper.Map<PatientModel>(patientEntity);
     }
 
     public async Task<PatientModel> CreateAsync(PatientModel patientModel)
