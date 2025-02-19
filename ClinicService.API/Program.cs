@@ -6,7 +6,7 @@ namespace ClinicServiceApi
 {
     public partial class Program
     {
-        private protected static void Main(string[] args)
+        private static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
 
