@@ -10,10 +10,10 @@ public class ClinicDbContext : DbContext
 
     public ClinicDbContext(DbContextOptions<ClinicDbContext> options) : base(options)
     {
-        //if (Database.IsRelational())
-        //{
-        //    Database.Migrate();
-        //}
+        if (Database.IsRelational())
+        {
+            Database.Migrate();
+        }
     }
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

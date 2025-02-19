@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using ClinicService.API.ViewModels;
 using ClinicService.DAL.Data;
+using ClinicServiceApi;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
@@ -32,7 +33,7 @@ public class IntegrationTests
         Context = Factory.Services.CreateScope().ServiceProvider.GetService<ClinicDbContext>()!;
     }
 
-    public HttpRequestMessage AddContent(DoctorViewModel viewModel, HttpRequestMessage requestMessage)
+    public static HttpRequestMessage AddContent(DoctorViewModel viewModel, HttpRequestMessage requestMessage)
     {
         requestMessage.Content = new StringContent(JsonConvert.SerializeObject(viewModel), Encoding.UTF8, JsonContentType);
         return requestMessage;
@@ -43,8 +44,8 @@ public class IntegrationTests
         var actualRequest = AddContent(viewModel, request);
         return await Client.SendAsync(request);
     }
-    public DoctorViewModel GetResponseResult(HttpResponseMessage responseMessage)
+    public static DoctorViewModel? GetResponseResult(HttpResponseMessage responseMessage)
     {
-        return JsonConvert.DeserializeObject<DoctorViewModel>(responseMessage.Content.ReadAsStringAsync().Result);
+        return JsonConvert.DeserializeObject<DoctorViewModel>(responseMessage.Content.ReadAsStringAsync().Result) ?? null;
     }
 }

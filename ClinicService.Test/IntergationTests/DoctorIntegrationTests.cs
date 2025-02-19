@@ -12,7 +12,7 @@ public class DoctorIntegrationTests : IntegrationTests
     public async Task Create_ValidViewModel_ReturnsViewModel()
     {
         //Arrange
-        var viewModel = TestDoctorViewModel.DoctorViewModel;
+        var viewModel = TestDoctorViewModel.NewDoctorViewModel;
 
         viewModel.Id = Guid.NewGuid();
         using var request = new HttpRequestMessage(HttpMethod.Post, BasetUrl);
@@ -31,11 +31,13 @@ public class DoctorIntegrationTests : IntegrationTests
     public async Task Get_ValidViewModel_ReturnsViewModel()
     {
         //Arrange
-        var viewModel = TestDoctorViewModel.DoctorViewModel;
+        var viewModel = TestDoctorViewModel.NewDoctorViewModel;
         viewModel.Id = Guid.NewGuid();
 
         var postResponse = await SendPostRequest(viewModel);
         var postResponseResult = GetResponseResult(postResponse);
+
+        Assert.NotNull(postResponseResult);
 
         //Act
         using var request = new HttpRequestMessage(HttpMethod.Get, $"{BasetUrl}?id={postResponseResult.Id}");
@@ -51,7 +53,7 @@ public class DoctorIntegrationTests : IntegrationTests
     public async Task Put_ValidViewModel_ReturnsViewModel()
     {
         //Arrange
-        var viewModel = TestDoctorViewModel.DoctorViewModel;
+        var viewModel = TestDoctorViewModel.NewDoctorViewModel;
         var updatedViewModel = TestDoctorViewModel.UpdatedDoctorViewModel;
         viewModel.Id = Guid.NewGuid();
         updatedViewModel.Id = viewModel.Id;
@@ -74,11 +76,13 @@ public class DoctorIntegrationTests : IntegrationTests
     public async Task Delete_ValidViewModel_ReturnsViewModel()
     {
         //Arrange
-        var viewModel = TestDoctorViewModel.DoctorViewModel;
-        var entity = TestDoctorEntity.DoctorEntity;
+        var viewModel = TestDoctorViewModel.NewDoctorViewModel;
+        var entity = TestDoctorEntity.NewDoctorEntity;
 
         var postResponse = await SendPostRequest(viewModel);
         var postResponseResult = GetResponseResult(postResponse);
+
+        Assert.NotNull(postResponseResult);
 
         //Act
         using var request = new HttpRequestMessage(HttpMethod.Delete, $"{BasetUrl}?id={postResponseResult.Id}");

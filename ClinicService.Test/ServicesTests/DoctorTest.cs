@@ -13,8 +13,8 @@ public class DoctorTest
     public async Task GetDoctorById_Exist_ReturnDoctorModel()
     {
         //Arrange 
-        var doctorModel = TestDoctorModel.DoctorModel;
-        var doctorEntity = TestDoctorEntity.DoctorEntity;
+        var doctorModel = TestDoctorModel.NewDoctorModel;
+        var doctorEntity = TestDoctorEntity.NewDoctorEntity;
         doctorEntity.Id = doctorModel.Id;
 
         var mockRepository = new Mock<IDoctorRepository>();
@@ -45,7 +45,7 @@ public class DoctorTest
 
         var mockRepository = new Mock<IDoctorRepository>();
         mockRepository.Setup(repo => repo.GetByIdAsync(doctorId))
-                      .ReturnsAsync((DoctorEntity)null);
+                      .ReturnsAsync((DoctorEntity?)null);
 
         var mockMapper = new Mock<IMapper>();
         var doctorService = new DoctorService(mockRepository.Object, mockMapper.Object);
@@ -79,8 +79,8 @@ public class DoctorTest
     public async Task CreateDoctor_ValidDoctorModel_ReturnsCreatedDoctorModel()
     {
         //Arrange 
-        var doctorModel = TestDoctorModel.DoctorModel;
-        var doctorEntity = TestDoctorEntity.DoctorEntity;
+        var doctorModel = TestDoctorModel.NewDoctorModel;
+        var doctorEntity = TestDoctorEntity.NewDoctorEntity;
         doctorEntity.Id = doctorModel.Id;
 
         var mockRepository = new Mock<IDoctorRepository>();
@@ -104,9 +104,9 @@ public class DoctorTest
     public async Task UpdateDoctor_ValidDoctorModel_ReturnsUpdatedDoctorModel()
     {
         //Arrange 
-        var doctorModel = TestDoctorModel.DoctorModel;
+        var doctorModel = TestDoctorModel.NewDoctorModel;
         var updatedDoctorModel = TestDoctorModel.UpdatedDoctorModel;
-        var doctorEntity = TestDoctorEntity.DoctorEntity;
+        var doctorEntity = TestDoctorEntity.UpdatedDoctorEntity;
         updatedDoctorModel.Id = doctorModel.Id;
         doctorEntity.Id = doctorModel.Id;
 
@@ -115,7 +115,7 @@ public class DoctorTest
 
         var mockMapper = new Mock<IMapper>();
         mockMapper.Setup(m => m.Map<DoctorModel>(doctorEntity))
-                  .Returns(doctorModel);
+                  .Returns(updatedDoctorModel);
 
         var doctorService = new DoctorService(mockRepository.Object, mockMapper.Object);
 
@@ -131,8 +131,8 @@ public class DoctorTest
     public async Task DeleteDoctor_ValidDoctorModel_ReturnsTrue()
     {
         //Arrange 
-        var doctorModel = TestDoctorModel.DoctorModel;
-        var doctorEntity = TestDoctorEntity.DoctorEntity;
+        var doctorModel = TestDoctorModel.NewDoctorModel;
+        var doctorEntity = TestDoctorEntity.NewDoctorEntity;
         doctorEntity.Id = doctorModel.Id;
 
         var mockRepository = new Mock<IDoctorRepository>();

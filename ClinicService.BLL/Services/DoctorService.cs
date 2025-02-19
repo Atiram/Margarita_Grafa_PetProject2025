@@ -10,23 +10,22 @@ public class DoctorService(IDoctorRepository doctorRepository, IMapper mapper) :
     public async Task<DoctorModel> GetById(Guid id)
     {
         var doctorEntity = await doctorRepository.GetByIdAsync(id);
-        var doctorModel = mapper.Map<DoctorModel>(doctorEntity);
 
-        return doctorModel;
+        return mapper.Map<DoctorModel>(doctorEntity);
     }
 
     public async Task<DoctorModel> CreateAsync(DoctorModel doctorModel)
     {
-        var entity = await doctorRepository.CreateAsync(mapper.Map<DoctorEntity>(doctorModel));
-        return mapper.Map<DoctorModel>(entity);
+        var doctorEntity = await doctorRepository.CreateAsync(mapper.Map<DoctorEntity>(doctorModel));
+        return mapper.Map<DoctorModel>(doctorEntity);
     }
 
     public async Task<DoctorModel> UpdateAsync(DoctorModel doctorModel)
     {
         var doctorEntity = mapper.Map<DoctorEntity>(doctorModel);
-        var d = await doctorRepository.UpdateAsync(doctorEntity);
+        var updatedDoctorEntity = await doctorRepository.UpdateAsync(doctorEntity);
 
-        return doctorModel;
+        return mapper.Map<DoctorModel>(updatedDoctorEntity);
     }
 
     public async Task<bool> DeleteAsync(Guid id)
