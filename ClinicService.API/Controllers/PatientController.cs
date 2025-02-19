@@ -9,7 +9,7 @@ namespace ClinicService.API.Controllers;
 [ApiController]
 public class PatientController(IPatientService patientService, IMapper mapper) : ControllerBase
 {
-    [HttpGet(Name = "GetPatient")]
+    [HttpGet]
     public async Task<PatientViewModel> Get(Guid id)
     {
         var patientModel = await patientService.GetById(id);
@@ -18,7 +18,7 @@ public class PatientController(IPatientService patientService, IMapper mapper) :
         return patientViewModel;
     }
 
-    [HttpPost(Name = "PostPatient")]
+    [HttpPost]
     public async Task<PatientViewModel> Post(PatientViewModel item)
     {
         var patientModel = await patientService.CreateAsync(mapper.Map<PatientModel>(item));
@@ -27,7 +27,7 @@ public class PatientController(IPatientService patientService, IMapper mapper) :
         return patientViewModel;
     }
 
-    [HttpPut(Name = "PutPatient")]
+    [HttpPut]
     public async Task<PatientViewModel> Put(PatientViewModel item)
     {
         var patientModel = await patientService.UpdateAsync(mapper.Map<PatientModel>(item));
@@ -36,7 +36,7 @@ public class PatientController(IPatientService patientService, IMapper mapper) :
         return patientViewModel;
     }
 
-    [HttpDelete(Name = "DeletePatient")]
+    [HttpDelete]
     public async Task Delete(Guid id)
     {
         await patientService.DeleteAsync(id);
