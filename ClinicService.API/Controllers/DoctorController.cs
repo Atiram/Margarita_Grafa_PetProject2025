@@ -8,7 +8,7 @@ namespace Margarita_Grafa_PetProject2025.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class DoctorController(ILogger<DoctorController> logger, IDoctorService doctorService, IMapper mapper) : ControllerBase
+public class DoctorController(IDoctorService doctorService, IMapper mapper) : ControllerBase
 {
 
     [HttpGet(Name = "GetDoctor")]
