@@ -15,5 +15,7 @@ public class AppMappingProfile : Profile
         CreateMap<AppointmentEntity, AppointmentModel>().ReverseMap();
 
         CreateMap<CreateAppointmentRequest, AppointmentEntity>();
+
+        CreateMap<UpdateAppointmentRequest, AppointmentEntity>();
     }
 }

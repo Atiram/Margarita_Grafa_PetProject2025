@@ -8,28 +8,28 @@ using ClinicService.DAL.Repositories.Interfaces;
 namespace ClinicService.BLL.Services;
 public class AppointmentService(IAppointmentRepository appointmentRepository, IMapper mapper) : IAppointmentService
 {
-    public async Task<AppointmentModel> GetById(Guid id)
+    public async Task<AppointmentModel> GetById(Guid id, CancellationToken cancellationToken)
     {
-        var appointmentEntity = await appointmentRepository.GetByIdAsync(id);
+        var appointmentEntity = await appointmentRepository.GetByIdAsync(id, cancellationToken);
         return mapper.Map<AppointmentModel>(appointmentEntity);
     }
 
-    public async Task<AppointmentModel> CreateAsync(CreateAppointmentRequest request, CancellationToken ct)
+    public async Task<AppointmentModel> CreateAsync(CreateAppointmentRequest request, CancellationToken cancellationToken)
     {
-        var appointmentEntity = await appointmentRepository.CreateAsync(mapper.Map<AppointmentEntity>(request));
+        var appointmentEntity = await appointmentRepository.CreateAsync(mapper.Map<AppointmentEntity>(request), cancellationToken);
         return mapper.Map<AppointmentModel>(appointmentEntity);
     }
 
-    public async Task<AppointmentModel> UpdateAsync(AppointmentModel appointmentModel)
+    public async Task<AppointmentModel> UpdateAsync(UpdateAppointmentRequest request, CancellationToken cancellationToken)
     {
-        var appointmentEntity = mapper.Map<AppointmentEntity>(appointmentModel);
-        var updatedAppointmentEntity = await appointmentRepository.UpdateAsync(appointmentEntity);
+        var appointmentEntity = mapper.Map<AppointmentEntity>(request);
+        var updatedAppointmentEntity = await appointmentRepository.UpdateAsync(appointmentEntity, cancellationToken);
 
         return mapper.Map<AppointmentModel>(updatedAppointmentEntity);
     }
 
-    public Task<bool> DeleteAsync(Guid id)
+    public Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
-        return appointmentRepository.DeleteAsync(id);
+        return appointmentRepository.DeleteAsync(id, cancellationToken);
     }
 }

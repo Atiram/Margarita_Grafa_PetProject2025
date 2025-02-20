@@ -10,36 +10,36 @@ namespace ClinicService.API.Controllers;
 public class PatientController(IPatientService patientService, IMapper mapper) : ControllerBase
 {
     [HttpGet]
-    public async Task<PatientViewModel> Get(Guid id)
+    public async Task<PatientViewModel> Get(Guid id, CancellationToken cancellationToken)
     {
-        var patientModel = await patientService.GetById(id);
+        var patientModel = await patientService.GetById(id, cancellationToken);
         var patientViewModel = mapper.Map<PatientViewModel>(patientModel);
 
         return patientViewModel;
     }
 
     [HttpPost]
-    public async Task<PatientViewModel> Post(PatientViewModel item, CancellationToken ct)
+    public async Task<PatientViewModel> Post(PatientViewModel item, CancellationToken cancellationToken)
     {
-        var patientModel = await patientService.CreateAsync(mapper.Map<PatientModel>(item), ct);
+        var patientModel = await patientService.CreateAsync(mapper.Map<PatientModel>(item), cancellationToken);
         var patientViewModel = mapper.Map<PatientViewModel>(patientModel);
 
         return patientViewModel;
     }
 
     [HttpPut]
-    public async Task<PatientViewModel> Put(PatientViewModel item)
+    public async Task<PatientViewModel> Put(PatientViewModel item, CancellationToken cancellationToken)
     {
-        var patientModel = await patientService.UpdateAsync(mapper.Map<PatientModel>(item));
+        var patientModel = await patientService.UpdateAsync(mapper.Map<PatientModel>(item), cancellationToken);
         var patientViewModel = mapper.Map<PatientViewModel>(patientModel);
 
         return patientViewModel;
     }
 
     [HttpDelete]
-    public async Task Delete(Guid id)
+    public async Task Delete(Guid id, CancellationToken cancellationToken)
     {
-        await patientService.DeleteAsync(id);
+        await patientService.DeleteAsync(id, cancellationToken);
     }
 }
 

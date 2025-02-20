@@ -8,11 +8,12 @@ namespace ClinicService.DAL.Repositories;
 public class AppointmentRepository(ClinicDbContext context)
     : GenericRepository<AppointmentEntity>(context), IAppointmentRepository
 {
-    public new Task<AppointmentEntity?> GetByIdAsync(Guid id)
+    public new ValueTask<AppointmentEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        return context.Set<AppointmentEntity>()
-            .Include(a => a.Doctor)
-            .Include(a => a.Patient)
-            .FirstOrDefaultAsync(a => a.Id == id);
+        var task = context.Set<AppointmentEntity>()
+             .Include(a => a.Doctor)
+             .Include(a => a.Patient)
+             .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
+        return new ValueTask<AppointmentEntity?>(task);
     }
 }
