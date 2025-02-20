@@ -13,4 +13,5 @@ public class DoctorViewModel : GeneralViewModel
     public required string Office { get; set; }
     public required int CareerStartYear { get; set; }
     public required DoctorStatus Status { get; set; }
+    public required List<AppointmentViewModel>? Appointments { get; set; }
 }

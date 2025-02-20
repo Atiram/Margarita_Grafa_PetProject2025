@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text.Json.Serialization;
 using ClinicService.API.Utilities.Mapping;
 using ClinicService.BLL.DI;
 
@@ -21,6 +22,12 @@ namespace ClinicServiceApi
 
             services.RegisterBusinessLogicServices(configuration);
             services.AddAutoMapper(Assembly.GetAssembly(typeof(AppMappingProfile)));
+            builder.Services.AddControllers()
+                .AddJsonOptions(opts =>
+                {
+                    var enumConverter = new JsonStringEnumConverter();
+                    opts.JsonSerializerOptions.Converters.Add(enumConverter);
+                });
 
             var app = builder.Build();
 

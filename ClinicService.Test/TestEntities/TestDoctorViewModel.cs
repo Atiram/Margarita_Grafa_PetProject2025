@@ -15,7 +15,9 @@ public static class TestDoctorViewModel
         Specialization = "TestSpec",
         Office = "TestOffice",
         CareerStartYear = 2000,
-        Status = DoctorStatus.AtWork
+        Status = DoctorStatus.AtWork,
+        Appointments = null
+
     };
 
     public static DoctorViewModel UpdatedDoctorViewModel => new()
@@ -29,6 +31,7 @@ public static class TestDoctorViewModel
         Specialization = "ChangedTestSpec",
         Office = "ChangedTestOffice",
         CareerStartYear = 2010,
-        Status = DoctorStatus.SickDay
+        Status = DoctorStatus.SickDay,
+        Appointments = null
     };
 }

@@ -1,10 +1,11 @@
-﻿using ClinicService.DAL.Entities;
+﻿namespace ClinicService.BLL.Models;
 
-namespace ClinicService.BLL.Models;
-public class AppointmentModel : GenericEntity
+public class AppointmentModel : GenericModel
 {
-    public required DoctorEntity Doctor { get; set; }
-    public required PatientEntity Patient { get; set; }
+    public Guid DoctorId { get; set; }
+    public required DoctorModel Doctor { get; set; }
+    public Guid PatientId { get; set; }
+    public required PatientModel Patient { get; set; }
     public required DateOnly Date { get; set; }
     public required TimeOnly Slots { get; set; }
 }

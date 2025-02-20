@@ -6,4 +6,5 @@ public class PatientModel : GenericModel
     public string MiddleName { get; set; } = string.Empty;
     public required string PhoneNumber { get; set; }
     public required DateOnly DateOfBirth { get; set; }
+    public List<AppointmentModel>? Appointments { get; set; }
 }

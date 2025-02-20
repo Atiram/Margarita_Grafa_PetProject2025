@@ -10,5 +10,22 @@ public class AppMappingProfile : Profile
     {
         CreateMap<DoctorModel, DoctorViewModel>().ReverseMap();
         CreateMap<PatientModel, PatientViewModel>().ReverseMap();
+        CreateMap<AppointmentModel, AppointmentViewModel>()
+            .ForMember(dest => dest.DoctorId, opt => opt.MapFrom(src => src.Doctor.Id))
+            .ForMember(dest => dest.PatientId, opt => opt.MapFrom(src => src.Patient.Id))
+            .ReverseMap();
+
+        //      CreateMap<DoctorModel, DoctorViewModel>()
+        //.ReverseMap()
+        //.ForMember(dest => dest.Appointments, opt => opt.Ignore()); 
+
+        //      CreateMap<PatientModel, PatientViewModel>()
+        //        .ReverseMap()
+        //        .ForMember(dest => dest.Appointments, opt => opt.Ignore()); 
+
+        //      CreateMap<AppointmentModel, AppointmentViewModel>()
+        //        .ForMember(dest => dest.DoctorId, opt => opt.MapFrom(src => src.Doctor.Id))
+        //        .ForMember(dest => dest.PatientId, opt => opt.MapFrom(src => src.Patient.Id))
+        //        .ReverseMap();
     }
 }

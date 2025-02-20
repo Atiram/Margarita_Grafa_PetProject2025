@@ -8,5 +8,5 @@ public class DoctorRepository : GenericRepository<DoctorEntity>, IDoctorReposito
 {
     public DoctorRepository(ClinicDbContext context) : base(context)
     {
-    }
+    }   
 }

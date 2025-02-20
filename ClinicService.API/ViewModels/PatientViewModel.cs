@@ -1,4 +1,6 @@
-﻿namespace ClinicService.API.ViewModels;
+﻿using ClinicService.DAL.Entities;
+
+namespace ClinicService.API.ViewModels;
 
 public class PatientViewModel : GeneralViewModel
 {
@@ -7,4 +9,5 @@ public class PatientViewModel : GeneralViewModel
     public string MiddleName { get; set; } = string.Empty;
     public required string PhoneNumber { get; set; }
     public required DateOnly DateOfBirth { get; set; }
+    public required List<AppointmentViewModel> Appointments { get; set; }
 }
