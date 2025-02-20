@@ -11,7 +11,7 @@ namespace Margarita_Grafa_PetProject2025.Controllers;
 public class DoctorController(IDoctorService doctorService, IMapper mapper) : ControllerBase
 {
 
-    [HttpGet(Name = "GetDoctor")]
+    [HttpGet]
     public async Task<DoctorViewModel> Get(Guid id)
     {
         var doctorModel = await doctorService.GetById(id);
@@ -20,7 +20,7 @@ public class DoctorController(IDoctorService doctorService, IMapper mapper) : Co
         return doctorViewModel;
     }
 
-    [HttpPost(Name = "PostDoctor")]
+    [HttpPost]
     public async Task<DoctorViewModel> Post(DoctorViewModel item)
     {
         var doctorModel = await doctorService.CreateAsync(mapper.Map<DoctorModel>(item));
@@ -29,7 +29,7 @@ public class DoctorController(IDoctorService doctorService, IMapper mapper) : Co
         return doctorViewModel;
     }
 
-    [HttpPut(Name = "PutDoctor")]
+    [HttpPut]
     public async Task<DoctorViewModel> Put(DoctorViewModel item)
     {
         var doctorModel = await doctorService.UpdateAsync(mapper.Map<DoctorModel>(item));
@@ -38,7 +38,7 @@ public class DoctorController(IDoctorService doctorService, IMapper mapper) : Co
         return doctorViewModel;
     }
 
-    [HttpDelete(Name = "DeleteDoctor")]
+    [HttpDelete]
     public async Task Delete(Guid id)
     {
         await doctorService.DeleteAsync(id);
