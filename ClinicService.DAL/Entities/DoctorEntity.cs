@@ -1,4 +1,4 @@
-﻿using ClinicService.DAL.Entities.Enums;
+﻿using ClinicService.DAL.Enums;
 
 namespace ClinicService.DAL.Entities;
 

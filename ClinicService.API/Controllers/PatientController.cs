@@ -19,9 +19,9 @@ public class PatientController(IPatientService patientService, IMapper mapper) :
     }
 
     [HttpPost]
-    public async Task<PatientViewModel> Post(PatientViewModel item)
+    public async Task<PatientViewModel> Post(PatientViewModel item, CancellationToken ct)
     {
-        var patientModel = await patientService.CreateAsync(mapper.Map<PatientModel>(item));
+        var patientModel = await patientService.CreateAsync(mapper.Map<PatientModel>(item), ct);
         var patientViewModel = mapper.Map<PatientViewModel>(patientModel);
 
         return patientViewModel;

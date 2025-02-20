@@ -1,5 +1,6 @@
 ﻿using ClinicService.DAL.Entities;
 using ClinicService.DAL.Entities.Enums;
+using ClinicService.DAL.Enums;
 
 namespace ClinicService.Test.TestEntities;
 public static class TestDoctorEntity

@@ -5,16 +5,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ClinicService.DAL.Repositories;
 
-public class AppointmentRepository : GenericRepository<AppointmentEntity>, IAppointmentRepository
+public class AppointmentRepository(ClinicDbContext context)
+    : GenericRepository<AppointmentEntity>(context), IAppointmentRepository
 {
-    private readonly ClinicDbContext _context;
-    public AppointmentRepository(ClinicDbContext context) : base(context)
+    public new Task<AppointmentEntity?> GetByIdAsync(Guid id)
     {
-        _context = context;
-    }
-    public new async Task<AppointmentEntity?> GetByIdAsync(Guid id)
-    {
-        return await _context.Set<AppointmentEntity>()
+        return context.Set<AppointmentEntity>()
             .Include(a => a.Doctor)
             .Include(a => a.Patient)
             .FirstOrDefaultAsync(a => a.Id == id);

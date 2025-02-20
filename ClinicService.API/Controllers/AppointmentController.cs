@@ -1,6 +1,7 @@
 ﻿using AutoMapper;
 using ClinicService.API.ViewModels;
 using ClinicService.BLL.Models;
+using ClinicService.BLL.Models.Requests;
 using ClinicService.BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -9,7 +10,6 @@ namespace ClinicService.API.Controllers;
 [ApiController]
 public class AppointmentController(IAppointmentService appointmentService, IMapper mapper) : ControllerBase
 {
-
     [HttpGet]
     public async Task<AppointmentViewModel> Get(Guid id)
     {
@@ -20,9 +20,9 @@ public class AppointmentController(IAppointmentService appointmentService, IMapp
     }
 
     [HttpPost]
-    public async Task<AppointmentViewModel> Post(AppointmentViewModel item)
+    public async Task<AppointmentViewModel> Post(CreateAppointmentRequest request, CancellationToken ct)
     {
-        var appointmentModel = await appointmentService.CreateAsync(mapper.Map<AppointmentModel>(item));
+        var appointmentModel = await appointmentService.CreateAsync(request, ct);
         var appointmentViewModel = mapper.Map<AppointmentViewModel>(appointmentModel);
 
         return appointmentViewModel;
@@ -43,4 +43,3 @@ public class AppointmentController(IAppointmentService appointmentService, IMapp
         await appointmentService.DeleteAsync(id);
     }
 }
-

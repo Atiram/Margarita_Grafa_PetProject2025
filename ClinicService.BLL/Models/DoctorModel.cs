@@ -1,4 +1,4 @@
-﻿using ClinicService.DAL.Entities.Enums;
+﻿using ClinicService.DAL.Enums;
 
 namespace ClinicService.BLL.Models;
 public class DoctorModel : GenericModel

@@ -1,5 +1,6 @@
 ﻿using ClinicService.API.ViewModels;
 using ClinicService.DAL.Entities.Enums;
+using ClinicService.DAL.Enums;
 
 namespace ClinicService.Test.TestEntities;
 public static class TestDoctorViewModel

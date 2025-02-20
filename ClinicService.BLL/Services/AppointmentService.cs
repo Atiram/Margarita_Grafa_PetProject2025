@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using ClinicService.BLL.Models;
+using ClinicService.BLL.Models.Requests;
 using ClinicService.BLL.Services.Interfaces;
 using ClinicService.DAL.Entities;
 using ClinicService.DAL.Repositories.Interfaces;
@@ -13,9 +14,9 @@ public class AppointmentService(IAppointmentRepository appointmentRepository, IM
         return mapper.Map<AppointmentModel>(appointmentEntity);
     }
 
-    public async Task<AppointmentModel> CreateAsync(AppointmentModel appointmentModel)
+    public async Task<AppointmentModel> CreateAsync(CreateAppointmentRequest request, CancellationToken ct)
     {
-        var appointmentEntity = await appointmentRepository.CreateAsync(mapper.Map<AppointmentEntity>(appointmentModel));
+        var appointmentEntity = await appointmentRepository.CreateAsync(mapper.Map<AppointmentEntity>(request));
         return mapper.Map<AppointmentModel>(appointmentEntity);
     }
 
@@ -27,8 +28,8 @@ public class AppointmentService(IAppointmentRepository appointmentRepository, IM
         return mapper.Map<AppointmentModel>(updatedAppointmentEntity);
     }
 
-    public async Task<bool> DeleteAsync(Guid id)
+    public Task<bool> DeleteAsync(Guid id)
     {
-        return await appointmentRepository.DeleteAsync(id);
+        return appointmentRepository.DeleteAsync(id);
     }
 }

@@ -1,6 +1,4 @@
-﻿using ClinicService.DAL.Entities;
-
-namespace ClinicService.API.ViewModels;
+﻿namespace ClinicService.API.ViewModels;
 
 public class PatientViewModel : GeneralViewModel
 {

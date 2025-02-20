@@ -4,9 +4,4 @@ using ClinicService.DAL.Repositories.Interfaces;
 
 namespace ClinicService.DAL.Repositories;
 
-public class PatientRepository : GenericRepository<PatientEntity>, IPatientRepository
-{
-    public PatientRepository(ClinicDbContext context) : base(context)
-    {
-    }
-}
+public class PatientRepository(ClinicDbContext context) : GenericRepository<PatientEntity>(context), IPatientRepository;

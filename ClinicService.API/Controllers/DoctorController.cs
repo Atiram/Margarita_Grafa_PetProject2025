@@ -4,7 +4,7 @@ using ClinicService.BLL.Models;
 using ClinicService.BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Margarita_Grafa_PetProject2025.Controllers;
+namespace ClinicService.API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
@@ -21,9 +21,9 @@ public class DoctorController(IDoctorService doctorService, IMapper mapper) : Co
     }
 
     [HttpPost]
-    public async Task<DoctorViewModel> Post(DoctorViewModel item)
+    public async Task<DoctorViewModel> Post(DoctorViewModel item, CancellationToken ct)
     {
-        var doctorModel = await doctorService.CreateAsync(mapper.Map<DoctorModel>(item));
+        var doctorModel = await doctorService.CreateAsync(mapper.Map<DoctorModel>(item), ct);
         var doctorViewModel = mapper.Map<DoctorViewModel>(doctorModel);
 
         return doctorViewModel;

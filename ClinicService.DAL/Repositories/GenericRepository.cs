@@ -6,9 +6,9 @@ namespace ClinicService.DAL.Repositories;
 
 public class GenericRepository<TEntity>(ClinicDbContext context) : IGenericRepository<TEntity> where TEntity : GenericEntity
 {
-    public async Task<TEntity?> GetByIdAsync(Guid id)
+    public ValueTask<TEntity?> GetByIdAsync(Guid id)
     {
-        return await context.Set<TEntity>().FindAsync([id]);
+        return context.Set<TEntity>().FindAsync([id]);
     }
 
     public async Task<TEntity> CreateAsync(TEntity entity)
