@@ -16,22 +16,20 @@ namespace ClinicServiceApi
             var configuration = builder.Configuration;
 
             services.AddControllers()
-            .AddJsonOptions(options =>
-             {
-                 options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
-             });
+                .AddJsonOptions(options =>
+                    {
+                        var enumConverter = new JsonStringEnumConverter();
+                        var jsonOptions = options.JsonSerializerOptions;
+                        jsonOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+                        jsonOptions.Converters.Add(enumConverter);
+                    });
+
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 
             services.RegisterBusinessLogicServices(configuration);
             services.AddAutoMapper(Assembly.GetAssembly(typeof(AppMappingProfile)));
-            builder.Services.AddControllers()
-                .AddJsonOptions(opts =>
-                {
-                    var enumConverter = new JsonStringEnumConverter();
-                    opts.JsonSerializerOptions.Converters.Add(enumConverter);
-                });
 
             var app = builder.Build();
 
