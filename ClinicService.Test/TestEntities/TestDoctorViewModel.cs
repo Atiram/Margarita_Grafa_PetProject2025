@@ -1,5 +1,4 @@
 ﻿using ClinicService.API.ViewModels;
-using ClinicService.DAL.Entities.Enums;
 using ClinicService.DAL.Enums;
 
 namespace ClinicService.Test.TestEntities;
@@ -17,8 +16,7 @@ public static class TestDoctorViewModel
         Office = "TestOffice",
         CareerStartYear = 2000,
         Status = DoctorStatus.AtWork,
-        Appointments = null
-
+        Appointments = new List<AppointmentViewModel>()
     };
 
     public static DoctorViewModel UpdatedDoctorViewModel => new()
@@ -33,6 +31,6 @@ public static class TestDoctorViewModel
         Office = "ChangedTestOffice",
         CareerStartYear = 2010,
         Status = DoctorStatus.SickDay,
-        Appointments = null
+        Appointments = new List<AppointmentViewModel>()
     };
 }

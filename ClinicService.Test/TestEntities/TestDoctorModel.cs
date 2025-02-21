@@ -1,5 +1,4 @@
 ﻿using ClinicService.BLL.Models;
-using ClinicService.DAL.Entities.Enums;
 using ClinicService.DAL.Enums;
 
 namespace ClinicService.Test.TestEntities;
@@ -16,7 +15,8 @@ public static class TestDoctorModel
         Specialization = "TestSpec",
         Office = "TestOffice",
         CareerStartYear = 2000,
-        Status = DoctorStatus.AtWork
+        Status = DoctorStatus.AtWork,
+        Appointments = new List<AppointmentModel>()
     };
     public static DoctorModel UpdatedDoctorModel => new()
     {
@@ -29,6 +29,7 @@ public static class TestDoctorModel
         Specialization = "ChangedTestSpec",
         Office = "ChangedTestOffice",
         CareerStartYear = 2010,
-        Status = DoctorStatus.SickDay
+        Status = DoctorStatus.SickDay,
+        Appointments = new List<AppointmentModel>()
     };
 }
