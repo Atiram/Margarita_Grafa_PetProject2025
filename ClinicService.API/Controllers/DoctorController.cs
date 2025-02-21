@@ -11,13 +11,22 @@ namespace ClinicService.API.Controllers;
 public class DoctorController(IDoctorService doctorService, IMapper mapper) : ControllerBase
 {
 
-    [HttpGet]
+    [HttpGet("{id}")]
     public async Task<DoctorViewModel> Get(Guid id, CancellationToken cancellationToken)
     {
         var doctorModel = await doctorService.GetById(id, cancellationToken);
         var doctorViewModel = mapper.Map<DoctorViewModel>(doctorModel);
 
         return doctorViewModel;
+    }
+
+    [HttpGet]
+    public async Task<List<DoctorViewModel>> GetAll(bool isDescending, int pageNumber, int pageSize, string s, CancellationToken cancellationToken)
+    {
+        var doctorModels = await doctorService.GetAll(isDescending, pageNumber, pageSize, s, cancellationToken);
+        var doctorViewModels = mapper.Map<List<DoctorViewModel>>(doctorModels);
+
+        return doctorViewModels;
     }
 
     [HttpPost]
