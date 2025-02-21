@@ -11,12 +11,14 @@ public class AppointmentService(IAppointmentRepository appointmentRepository, IM
     public async Task<AppointmentModel> GetById(Guid id, CancellationToken cancellationToken)
     {
         var appointmentEntity = await appointmentRepository.GetByIdAsync(id, cancellationToken);
+
         return mapper.Map<AppointmentModel>(appointmentEntity);
     }
 
     public async Task<AppointmentModel> CreateAsync(CreateAppointmentRequest request, CancellationToken cancellationToken)
     {
         var appointmentEntity = await appointmentRepository.CreateAsync(mapper.Map<AppointmentEntity>(request), cancellationToken);
+
         return mapper.Map<AppointmentModel>(appointmentEntity);
     }
 

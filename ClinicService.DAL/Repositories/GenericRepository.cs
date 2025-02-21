@@ -8,8 +8,7 @@ public class GenericRepository<TEntity>(ClinicDbContext context) : IGenericRepos
 {
     public ValueTask<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        var t = context.Set<TEntity>().FindAsync([id], cancellationToken);
-        return t;
+        return context.Set<TEntity>().FindAsync([id], cancellationToken);
     }
 
     public async Task<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken)
