@@ -14,7 +14,7 @@ public class GenericRepository<TEntity>(ClinicDbContext context) : IGenericRepos
     public async Task<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken)
     {
         await context.Set<TEntity>().AddAsync(entity, cancellationToken);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken);
 
         return entity;
     }
@@ -36,7 +36,7 @@ public class GenericRepository<TEntity>(ClinicDbContext context) : IGenericRepos
         if (entity is not null)
         {
             context.Set<TEntity>().Remove(entity);
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(cancellationToken);
 
             return true;
         }
