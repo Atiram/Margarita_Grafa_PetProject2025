@@ -9,6 +9,9 @@ public class AppMappingProfile : Profile
     public AppMappingProfile()
     {
         CreateMap<DoctorModel, DoctorViewModel>().ReverseMap();
+
         CreateMap<PatientModel, PatientViewModel>().ReverseMap();
+
+        CreateMap<AppointmentModel, AppointmentViewModel>().ReverseMap();
     }
 }

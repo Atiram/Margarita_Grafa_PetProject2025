@@ -6,37 +6,37 @@ namespace ClinicService.DAL.Repositories;
 
 public class GenericRepository<TEntity>(ClinicDbContext context) : IGenericRepository<TEntity> where TEntity : GenericEntity
 {
-    public async Task<TEntity?> GetByIdAsync(Guid id)
+    public ValueTask<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        return await context.Set<TEntity>().FindAsync([id]);
+        return context.Set<TEntity>().FindAsync([id], cancellationToken);
     }
 
-    public async Task<TEntity> CreateAsync(TEntity entity)
+    public async Task<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken)
     {
-        await context.Set<TEntity>().AddAsync(entity);
-        await context.SaveChangesAsync();
+        await context.Set<TEntity>().AddAsync(entity, cancellationToken);
+        await context.SaveChangesAsync(cancellationToken);
 
         return entity;
     }
 
-    public async Task<TEntity> UpdateAsync(TEntity entity)
+    public async Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken)
     {
         context.Update(entity);
-        await context.SaveChangesAsync();
+        await context.SaveChangesAsync(cancellationToken);
 
-        await context.Entry(entity).ReloadAsync();
+        await context.Entry(entity).ReloadAsync(cancellationToken);
 
         return entity;
     }
 
-    public async Task<bool> DeleteAsync(Guid id)
+    public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
-        var entity = await context.Set<TEntity>().FindAsync([id]);
+        var entity = await context.Set<TEntity>().FindAsync([id], cancellationToken);
 
         if (entity is not null)
         {
             context.Set<TEntity>().Remove(entity);
-            await context.SaveChangesAsync();
+            await context.SaveChangesAsync(cancellationToken);
 
             return true;
         }

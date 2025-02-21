@@ -1,4 +1,4 @@
-﻿namespace ClinicService.DAL.Entities.Enums;
+﻿namespace ClinicService.DAL.Enums;
 
 public enum DoctorStatus
 {
@@ -10,4 +10,3 @@ public enum DoctorStatus
     LeaveWithoutPay,
     Inactive
 }
-

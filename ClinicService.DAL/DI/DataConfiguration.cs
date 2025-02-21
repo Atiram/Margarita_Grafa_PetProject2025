@@ -7,7 +7,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace ClinicService.DAL.DI;
 
-public static class DataConfigaration
+public static class DataConfiguration
 {
     public static void RegisterDataRepositories(this IServiceCollection services, IConfiguration configuration)
     {
@@ -19,4 +19,3 @@ public static class DataConfigaration
             .AddScoped<IAppointmentRepository, AppointmentRepository>();
     }
 }
-

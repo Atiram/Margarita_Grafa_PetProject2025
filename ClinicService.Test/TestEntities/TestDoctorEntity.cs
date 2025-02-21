@@ -1,5 +1,5 @@
 ﻿using ClinicService.DAL.Entities;
-using ClinicService.DAL.Entities.Enums;
+using ClinicService.DAL.Enums;
 
 namespace ClinicService.Test.TestEntities;
 public static class TestDoctorEntity
@@ -15,7 +15,9 @@ public static class TestDoctorEntity
         Specialization = "TestSpec",
         Office = "TestOffice",
         CareerStartYear = 2000,
-        Status = DoctorStatus.AtWork
+        Status = DoctorStatus.AtWork,
+        Appointments = new List<AppointmentEntity>()
+
     };
     public static DoctorEntity UpdatedDoctorEntity => new()
     {
@@ -28,6 +30,7 @@ public static class TestDoctorEntity
         Specialization = "ChangedTestSpec",
         Office = "ChangedTestOffice",
         CareerStartYear = 2010,
-        Status = DoctorStatus.SickDay
+        Status = DoctorStatus.SickDay,
+        Appointments = new List<AppointmentEntity>()
     };
 }

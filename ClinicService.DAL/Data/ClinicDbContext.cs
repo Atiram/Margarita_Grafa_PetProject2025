@@ -52,19 +52,5 @@ public class ClinicDbContext : DbContext
         modelBuilder.Entity<AppointmentEntity>()
             .HasKey(b => b.Id);
         #endregion
-
-        #region Setup Relations
-        modelBuilder.Entity<AppointmentEntity>()
-            .HasOne(x => x.Doctor)
-            .WithMany(x => x.Appointments)
-            .HasForeignKey(x => x.Id)
-            .OnDelete(DeleteBehavior.Cascade);
-
-        modelBuilder.Entity<AppointmentEntity>()
-            .HasOne(x => x.Patient)
-            .WithMany(x => x.Appointments)
-            .HasForeignKey(x => x.Id)
-            .OnDelete(DeleteBehavior.Cascade);
-        #endregion
     }
 }

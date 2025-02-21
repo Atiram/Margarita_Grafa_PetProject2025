@@ -1,4 +1,4 @@
-﻿using ClinicService.DAL.Entities.Enums;
+﻿using ClinicService.DAL.Enums;
 
 namespace ClinicService.BLL.Models;
 public class DoctorModel : GenericModel
@@ -12,4 +12,5 @@ public class DoctorModel : GenericModel
     public required string Office { get; set; }
     public required int CareerStartYear { get; set; }
     public required DoctorStatus Status { get; set; }
+    public List<AppointmentModel>? Appointments { get; set; }
 }
