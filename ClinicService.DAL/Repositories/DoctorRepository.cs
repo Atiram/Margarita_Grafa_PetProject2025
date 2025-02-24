@@ -1,5 +1,4 @@
 ﻿using System.Linq.Expressions;
-using Amazon.SecretsManager;
 using ClinicService.DAL.Data;
 using ClinicService.DAL.Entities;
 using ClinicService.DAL.Enums;
