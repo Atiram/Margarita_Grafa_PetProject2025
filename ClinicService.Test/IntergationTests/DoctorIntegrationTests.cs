@@ -1,4 +1,5 @@
 ﻿using System.Net;
+using ClinicService.API.ViewModels;
 using ClinicService.DAL.Entities;
 using ClinicService.Test.TestEntities;
 using Microsoft.EntityFrameworkCore;
@@ -40,7 +41,35 @@ public class DoctorIntegrationTests : IntegrationTests
         Assert.NotNull(postResponseResult);
 
         //Act
-        using var request = new HttpRequestMessage(HttpMethod.Get, $"{BasetUrl}?id={postResponseResult.Id}");
+        using var request = new HttpRequestMessage(HttpMethod.Get, $"{BasetUrl}/{postResponseResult.Id}");
+        var actualResult = await Client.SendAsync(request);
+        var responseResult = GetResponseResult(actualResult);
+
+        //Assert
+        Assert.Equal(HttpStatusCode.OK, actualResult.StatusCode);
+        Assert.Equivalent(responseResult, viewModel);
+    }
+
+    public async Task GetAll_ValidViewModel_ReturnsViewModels()
+    {
+        //Arrange
+        var doctorViewModels = new List<DoctorViewModel>();
+
+        for (int i = 0; i < 10; i++) 
+        {
+            var viewModel = TestDoctorViewModel.NewDoctorViewModel;
+            doctorViewModels.Add(viewModel);
+        }
+        //var viewModel = TestDoctorViewModel.NewDoctorViewModel;
+        //viewModel.Id = Guid.NewGuid();
+
+        var postResponse = await SendPostRequest(viewModel);
+        var postResponseResult = GetResponseResult(postResponse);
+
+        Assert.NotNull(postResponseResult);
+
+        //Act
+        using var request = new HttpRequestMessage(HttpMethod.Get, $"{BasetUrl}/{postResponseResult.Id}");
         var actualResult = await Client.SendAsync(request);
         var responseResult = GetResponseResult(actualResult);
 

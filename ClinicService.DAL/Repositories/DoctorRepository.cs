@@ -1,5 +1,4 @@
-﻿using System.Linq.Expressions;
-using ClinicService.DAL.Data;
+﻿using ClinicService.DAL.Data;
 using ClinicService.DAL.Entities;
 using ClinicService.DAL.Enums;
 using ClinicService.DAL.Repositories.Interfaces;
@@ -77,30 +76,46 @@ public class DoctorRepository(ClinicDbContext context) : GenericRepository<Docto
 
         SortOrderType sortOrder = getAllDoctorsParams.IsDescending ? SortOrderType.Desc : SortOrderType.Asc;
         var sortedEntities = AddOrdering(entities, getAllDoctorsParams.SortParameter, sortOrder);
-
         if (getAllDoctorsParams.SearchValue != null)
         {
-            var parameter = Expression.Parameter(typeof(DoctorEntity), "e");
-            var property = Expression.Property(parameter, getAllDoctorsParams.SearchField);
-            var value = Expression.Constant(getAllDoctorsParams.SearchValue);
-            var comparison = Expression.Equal(property, value);
-            var lambda = Expression.Lambda<Func<DoctorEntity, bool>>(comparison, parameter);
+            //var parameter = Expression.Parameter(typeof(DoctorEntity), "e");
+            //var property = Expression.Property(parameter, getAllDoctorsParams.SearchField);
+            //var value = Expression.Constant(getAllDoctorsParams.SearchValue);
+            //var comparison = Expression.Equal(property, value);
+            //var lambda = Expression.Lambda<Func<DoctorEntity, bool>>(comparison, parameter);
 
-            sortedEntities = sortedEntities.Where(lambda);
+            //sortedEntities = sortedEntities.Where(lambda);
+
+            var doctors = sortedEntities
+               .Where(doctor => doctor.FirstName.Contains(getAllDoctorsParams.SearchValue))
+               .Where(doctor => doctor.LastName.Contains(getAllDoctorsParams.SearchValue))
+               .ToList();
+            PagedResult<DoctorEntity> pagedResult = new PagedResult<DoctorEntity>()
+            {
+                PageSize = getAllDoctorsParams.PageSize,
+                TotalCount = totalCount,
+                TotalPages = (int)Math.Ceiling((double)totalCount / getAllDoctorsParams.PageSize),
+                Results = doctors.ToList()
+            };
+
+            return pagedResult;
         }
 
-        var paginatedEntities = sortedEntities
-            .Skip((getAllDoctorsParams.PageNumber - 1) * getAllDoctorsParams.PageSize)
-            .Take(getAllDoctorsParams.PageSize);
-
-        PagedResult<DoctorEntity> pagedResult = new PagedResult<DoctorEntity>()
+        else
         {
-            PageSize = getAllDoctorsParams.PageSize,
-            TotalCount = totalCount,
-            TotalPages = (int)Math.Ceiling((double)totalCount / getAllDoctorsParams.PageSize),
-            Results = await paginatedEntities.ToListAsync()
-        };
+            var paginatedEntities = sortedEntities
+                .Skip((getAllDoctorsParams.PageNumber - 1) * getAllDoctorsParams.PageSize)
+                .Take(getAllDoctorsParams.PageSize);
 
-        return pagedResult;
+            PagedResult<DoctorEntity> pagedResult = new PagedResult<DoctorEntity>()
+            {
+                PageSize = getAllDoctorsParams.PageSize,
+                TotalCount = totalCount,
+                TotalPages = (int)Math.Ceiling((double)totalCount / getAllDoctorsParams.PageSize),
+                Results = await paginatedEntities.ToListAsync()
+            };
+
+            return pagedResult;
+        }
     }
 }
