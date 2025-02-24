@@ -22,10 +22,10 @@ public class DoctorController(IDoctorService doctorService, IMapper mapper) : Co
     }
 
     [HttpGet]
-    public async Task<List<DoctorViewModel>> GetAll(GetAllDoctorsParams getAllDoctorsParams, CancellationToken cancellationToken)
+    public async Task<PagedResult<DoctorViewModel>> GetAll(GetAllDoctorsParams getAllDoctorsParams, CancellationToken cancellationToken)
     {
         var doctorModels = await doctorService.GetAll(getAllDoctorsParams, cancellationToken);
-        var doctorViewModels = mapper.Map<List<DoctorViewModel>>(doctorModels);
+        var doctorViewModels = mapper.Map<PagedResult<DoctorViewModel>>(doctorModels);
 
         return doctorViewModels;
     }

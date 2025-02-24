@@ -14,10 +14,10 @@ public class DoctorService(IDoctorRepository doctorRepository, IMapper mapper) :
         return mapper.Map<DoctorModel>(doctorEntity);
     }
 
-    public async Task<List<DoctorModel>> GetAll(GetAllDoctorsParams getAllDoctorsParams, CancellationToken cancellationToken)
+    public async Task<PagedResult<DoctorModel>> GetAll(GetAllDoctorsParams getAllDoctorsParams, CancellationToken cancellationToken)
     {
         var doctorEntities = await doctorRepository.GetAllAsync(getAllDoctorsParams, cancellationToken);
-        return mapper.Map<List<DoctorModel>>(doctorEntities);
+        return mapper.Map<PagedResult<DoctorModel>>(doctorEntities);
     }
 
     public async Task<DoctorModel> CreateAsync(DoctorModel doctorModel, CancellationToken cancellationToken)

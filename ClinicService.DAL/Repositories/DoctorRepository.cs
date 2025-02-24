@@ -70,7 +70,7 @@ public class DoctorRepository(ClinicDbContext context) : GenericRepository<Docto
         }
     }
 
-    public async Task<List<DoctorEntity>> GetAllAsync(GetAllDoctorsParams getAllDoctorsParams, CancellationToken cancellationToken)
+    public async Task<PagedResult<DoctorEntity>> GetAllAsync(GetAllDoctorsParams getAllDoctorsParams, CancellationToken cancellationToken)
     {
         var totalCount = context.Set<DoctorEntity>().Count();
 
@@ -94,14 +94,14 @@ public class DoctorRepository(ClinicDbContext context) : GenericRepository<Docto
             .Skip((getAllDoctorsParams.PageNumber - 1) * getAllDoctorsParams.PageSize)
             .Take(getAllDoctorsParams.PageSize);
 
-        //PagedResult<DoctorEntity> p = new PagedResult<DoctorEntity>()
-        //{
-        //    PageSize = pageSize,
-        //    TotalCount = totalCount,
-        //    TotalPages = (int)Math.Ceiling((double)totalCount / pageSize),
-        //    Result = r.ToList()
-        //};
+        PagedResult<DoctorEntity> pagedResult = new PagedResult<DoctorEntity>()
+        {
+            PageSize = getAllDoctorsParams.PageSize,
+            TotalCount = totalCount,
+            TotalPages = (int)Math.Ceiling((double)totalCount / getAllDoctorsParams.PageSize),
+            Results = await paginatedEntities.ToListAsync()
+        };
 
-        return await paginatedEntities.ToListAsync();
+        return pagedResult;
     }
 }

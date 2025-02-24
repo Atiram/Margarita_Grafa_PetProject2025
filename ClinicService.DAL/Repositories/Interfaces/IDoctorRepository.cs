@@ -5,5 +5,5 @@ namespace ClinicService.DAL.Repositories.Interfaces;
 
 public interface IDoctorRepository : IGenericRepository<DoctorEntity>
 {
-    Task<List<DoctorEntity>> GetAllAsync(GetAllDoctorsParams getAllDoctorsParams, CancellationToken cancellationToken);
+    Task<PagedResult<DoctorEntity>> GetAllAsync(GetAllDoctorsParams getAllDoctorsParams, CancellationToken cancellationToken);
 }
