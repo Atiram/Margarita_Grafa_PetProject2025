@@ -1,5 +1,4 @@
 ﻿namespace ClinicService.DAL.Enums;
-
 public enum DoctorStatus
 {
     AtWork,

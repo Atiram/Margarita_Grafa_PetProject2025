@@ -2,6 +2,7 @@ using AutoMapper;
 using ClinicService.API.ViewModels;
 using ClinicService.BLL.Models;
 using ClinicService.BLL.Services.Interfaces;
+using ClinicService.DAL.Utilities.Pagination;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicService.API.Controllers;
@@ -21,9 +22,9 @@ public class DoctorController(IDoctorService doctorService, IMapper mapper) : Co
     }
 
     [HttpGet]
-    public async Task<List<DoctorViewModel>> GetAll(bool isDescending, int pageNumber, int pageSize, string s, CancellationToken cancellationToken)
+    public async Task<List<DoctorViewModel>> GetAll(GetAllDoctorsParams getAllDoctorsParams, CancellationToken cancellationToken)
     {
-        var doctorModels = await doctorService.GetAll(isDescending, pageNumber, pageSize, s, cancellationToken);
+        var doctorModels = await doctorService.GetAll(getAllDoctorsParams, cancellationToken);
         var doctorViewModels = mapper.Map<List<DoctorViewModel>>(doctorModels);
 
         return doctorViewModels;

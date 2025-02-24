@@ -3,6 +3,7 @@ using ClinicService.BLL.Models;
 using ClinicService.BLL.Services.Interfaces;
 using ClinicService.DAL.Entities;
 using ClinicService.DAL.Repositories.Interfaces;
+using ClinicService.DAL.Utilities.Pagination;
 
 namespace ClinicService.BLL.Services;
 public class DoctorService(IDoctorRepository doctorRepository, IMapper mapper) : IDoctorService
@@ -13,9 +14,9 @@ public class DoctorService(IDoctorRepository doctorRepository, IMapper mapper) :
         return mapper.Map<DoctorModel>(doctorEntity);
     }
 
-    public async Task<List<DoctorModel>> GetAll(bool isDescending, int pageNumber, int pageSize, string s, CancellationToken cancellationToken)
+    public async Task<List<DoctorModel>> GetAll(GetAllDoctorsParams getAllDoctorsParams, CancellationToken cancellationToken)
     {
-        var doctorEntities = await doctorRepository.GetAllAsync(isDescending, pageNumber, pageSize, s, cancellationToken);
+        var doctorEntities = await doctorRepository.GetAllAsync(getAllDoctorsParams, cancellationToken);
         return mapper.Map<List<DoctorModel>>(doctorEntities);
     }
 
