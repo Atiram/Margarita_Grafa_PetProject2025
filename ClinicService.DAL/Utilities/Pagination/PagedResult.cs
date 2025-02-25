@@ -1,10 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ClinicService.DAL.Utilities.Pagination;
+﻿namespace ClinicService.DAL.Utilities.Pagination;
 public class PagedResult<T>
 {
     public int PageSize { get; set; }

@@ -11,11 +11,6 @@ public class GenericRepository<TEntity>(ClinicDbContext context) : IGenericRepos
         return context.Set<TEntity>().FindAsync([id], cancellationToken);
     }
 
-    //public async Task<List<TEntity>> GetAllAsync(CancellationToken cancellationToken)
-    //{
-    //    return await context.Set<TEntity>().ToListAsync(cancellationToken);
-    //}
-
     public async Task<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken)
     {
         await context.Set<TEntity>().AddAsync(entity, cancellationToken);
