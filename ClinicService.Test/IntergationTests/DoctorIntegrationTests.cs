@@ -171,11 +171,12 @@ public class DoctorIntegrationTests : IntegrationTests
         PagedResult<DoctorViewModel> expectedPagedResult = new PagedResult<DoctorViewModel>()
         {
             PageSize = getAllDoctorsParams.PageSize,
-            TotalCount = doctorViewModels.Count,
+            TotalCount = doctorViewModels
+                .Where(doctor => doctor.FirstName.Contains(searchValue))
+                .Count(),
             TotalPages = (int)Math.Ceiling((double)doctorViewModels.Count / getAllDoctorsParams.PageSize),
             Results = doctorViewModels
                 .Where(doctor => doctor.FirstName.Contains(searchValue))
-                // .Where(FirstName.Contains(getAllDoctorsParams.SearchValue)
                 .Skip((getAllDoctorsParams.PageNumber - 1) * getAllDoctorsParams.PageSize)
                 .Take(getAllDoctorsParams.PageSize)
                 .ToList()
