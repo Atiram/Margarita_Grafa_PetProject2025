@@ -13,7 +13,7 @@ public class DoctorController(IDoctorService doctorService, IMapper mapper) : Co
 {
 
     [HttpGet("{id}")]
-    public async Task<DoctorViewModel> Get(Guid id, CancellationToken cancellationToken)
+    public async Task<DoctorViewModel> Get([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var doctorModel = await doctorService.GetById(id, cancellationToken);
         var doctorViewModel = mapper.Map<DoctorViewModel>(doctorModel);
@@ -21,8 +21,8 @@ public class DoctorController(IDoctorService doctorService, IMapper mapper) : Co
         return doctorViewModel;
     }
 
-    [HttpGet]
-    public async Task<PagedResult<DoctorViewModel>> GetAll(GetAllDoctorsParams getAllDoctorsParams, CancellationToken cancellationToken)
+    [HttpPost("GetAll")]
+    public async Task<PagedResult<DoctorViewModel>> GetAll([FromBody] GetAllDoctorsParams getAllDoctorsParams, CancellationToken cancellationToken)
     {
         var doctorModels = await doctorService.GetAll(getAllDoctorsParams, cancellationToken);
         var doctorViewModels = mapper.Map<PagedResult<DoctorViewModel>>(doctorModels);

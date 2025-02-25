@@ -70,52 +70,31 @@ public class DoctorRepository(ClinicDbContext context) : GenericRepository<Docto
 
     public async Task<PagedResult<DoctorEntity>> GetAllAsync(GetAllDoctorsParams getAllDoctorsParams, CancellationToken cancellationToken)
     {
-        var totalCount = context.Set<DoctorEntity>().Count();
-
         var entities = context.Set<DoctorEntity>();
 
         SortOrderType sortOrder = getAllDoctorsParams.IsDescending ? SortOrderType.Desc : SortOrderType.Asc;
         var sortedEntities = AddOrdering(entities, getAllDoctorsParams.SortParameter, sortOrder);
-        if (getAllDoctorsParams.SearchValue != null)
+
+        var filteredEntities = getAllDoctorsParams.SearchValue != null
+          ? sortedEntities.Where(doctor =>
+                  doctor.FirstName.Contains(getAllDoctorsParams.SearchValue) ||
+                  doctor.LastName.Contains(getAllDoctorsParams.SearchValue))
+          : sortedEntities;
+
+        var totalCount = await filteredEntities.CountAsync();
+
+        PagedResult<DoctorEntity> pagedResult = new PagedResult<DoctorEntity>()
         {
-            //var parameter = Expression.Parameter(typeof(DoctorEntity), "e");
-            //var property = Expression.Property(parameter, getAllDoctorsParams.SearchField);
-            //var value = Expression.Constant(getAllDoctorsParams.SearchValue);
-            //var comparison = Expression.Equal(property, value);
-            //var lambda = Expression.Lambda<Func<DoctorEntity, bool>>(comparison, parameter);
+            PageSize = getAllDoctorsParams.PageSize,
+            TotalCount = totalCount,
+            TotalPages = (int)Math.Ceiling((double)totalCount / getAllDoctorsParams.PageSize),
+        };
 
-            //sortedEntities = sortedEntities.Where(lambda);
+        pagedResult.Results = await filteredEntities
+          .Skip((getAllDoctorsParams.PageNumber - 1) * getAllDoctorsParams.PageSize)
+          .Take(getAllDoctorsParams.PageSize)
+          .ToListAsync();
 
-            var doctors = sortedEntities
-               .Where(doctor => doctor.FirstName.Contains(getAllDoctorsParams.SearchValue))
-               .Where(doctor => doctor.LastName.Contains(getAllDoctorsParams.SearchValue))
-               .ToList();
-            PagedResult<DoctorEntity> pagedResult = new PagedResult<DoctorEntity>()
-            {
-                PageSize = getAllDoctorsParams.PageSize,
-                TotalCount = totalCount,
-                TotalPages = (int)Math.Ceiling((double)totalCount / getAllDoctorsParams.PageSize),
-                Results = doctors.ToList()
-            };
-
-            return pagedResult;
-        }
-
-        else
-        {
-            var paginatedEntities = sortedEntities
-                .Skip((getAllDoctorsParams.PageNumber - 1) * getAllDoctorsParams.PageSize)
-                .Take(getAllDoctorsParams.PageSize);
-
-            PagedResult<DoctorEntity> pagedResult = new PagedResult<DoctorEntity>()
-            {
-                PageSize = getAllDoctorsParams.PageSize,
-                TotalCount = totalCount,
-                TotalPages = (int)Math.Ceiling((double)totalCount / getAllDoctorsParams.PageSize),
-                Results = await paginatedEntities.ToListAsync()
-            };
-
-            return pagedResult;
-        }
+        return pagedResult;
     }
 }
