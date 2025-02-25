@@ -1,5 +1,6 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
+using ClinicService.API.Middleware;
 using ClinicService.API.Utilities.Mapping;
 using ClinicService.BLL.DI;
 
@@ -41,6 +42,8 @@ namespace ClinicServiceApi
             }
 
             app.UseHttpsRedirection();
+
+            app.UseMiddleware<ExceptionMiddleware>();
 
             app.UseAuthorization();
 
