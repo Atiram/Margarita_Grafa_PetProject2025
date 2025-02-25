@@ -1,6 +1,8 @@
 ﻿using System.Text;
 using ClinicService.API.ViewModels;
 using ClinicService.DAL.Data;
+using ClinicService.DAL.Utilities.Pagination;
+using ClinicService.Test.TestEntities;
 using ClinicServiceApi;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.TestHost;
@@ -33,9 +35,9 @@ public class IntegrationTests
         Context = Factory.Services.CreateScope().ServiceProvider.GetService<ClinicDbContext>()!;
     }
 
-    public static HttpRequestMessage AddContent(DoctorViewModel viewModel, HttpRequestMessage requestMessage)
+    public static HttpRequestMessage AddContent<T>(T entity, HttpRequestMessage requestMessage)
     {
-        requestMessage.Content = new StringContent(JsonConvert.SerializeObject(viewModel), Encoding.UTF8, JsonContentType);
+        requestMessage.Content = new StringContent(JsonConvert.SerializeObject(entity), Encoding.UTF8, JsonContentType);
         return requestMessage;
     }
     public async Task<HttpResponseMessage> SendPostRequest(DoctorViewModel viewModel)
@@ -44,8 +46,49 @@ public class IntegrationTests
         var actualRequest = AddContent(viewModel, request);
         return await Client.SendAsync(request);
     }
-    public static DoctorViewModel? GetResponseResult(HttpResponseMessage responseMessage)
+
+    public static T? GetResponseResult<T>(HttpResponseMessage responseMessage)
     {
-        return JsonConvert.DeserializeObject<DoctorViewModel>(responseMessage.Content.ReadAsStringAsync().Result) ?? null;
+        var content = responseMessage.Content.ReadAsStringAsync().Result;
+        return JsonConvert.DeserializeObject<T>(content) ?? default;
+    }
+
+    public List<DoctorViewModel> CreateDoctorList(string searchPrefix)
+    {
+        var doctorViewModels = new List<DoctorViewModel>();
+        for (int i = 0; i < 5; i++)
+        {
+            var viewModel = TestDoctorViewModel.NewDoctorViewModel;
+            viewModel.Id = Guid.NewGuid();
+            viewModel.FirstName = searchPrefix + viewModel.FirstName;
+            doctorViewModels.Add(viewModel);
+        }
+        return doctorViewModels;
+
+    }
+    public GetAllDoctorsParams CreateGetAllDoctorsParams(string searchPrefix)
+    {
+        return new GetAllDoctorsParams()
+        {
+            IsDescending = false,
+            PageNumber = 1,
+            PageSize = 10,
+            SortParameter = null,
+            SearchValue = searchPrefix,
+        };
+    }
+
+    public PagedResult<DoctorViewModel> CreatePagedResult(GetAllDoctorsParams getAllDoctorsParams, List<DoctorViewModel> doctorViewModels)
+    {
+        return new PagedResult<DoctorViewModel>()
+        {
+            PageSize = getAllDoctorsParams.PageSize,
+            TotalCount = doctorViewModels.Count,
+            TotalPages = (int)Math.Ceiling((double)doctorViewModels.Count / getAllDoctorsParams.PageSize),
+            Results = doctorViewModels
+               .Skip((getAllDoctorsParams.PageNumber - 1) * getAllDoctorsParams.PageSize)
+               .Take(getAllDoctorsParams.PageSize)
+               .ToList()
+        };
     }
 }
