@@ -10,7 +10,7 @@ namespace ClinicService.Test.IntergationTests;
 public class DoctorIntegrationTests : IntegrationTests
 {
     private const string BaseUrl = "https://localhost:7105/Doctor";
-    private const string GetAllUrl = "/GetAll";
+    private const string GetAllUrl = "/Filter";
 
     [Fact]
     public async Task Create_ValidViewModel_ReturnsViewModel()
