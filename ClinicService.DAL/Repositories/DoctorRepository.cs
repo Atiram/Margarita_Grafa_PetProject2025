@@ -1,4 +1,5 @@
-﻿using ClinicService.DAL.Data;
+﻿using System.Linq.Expressions;
+using ClinicService.DAL.Data;
 using ClinicService.DAL.Entities;
 using ClinicService.DAL.Enums;
 using ClinicService.DAL.Repositories.Interfaces;
@@ -11,61 +12,30 @@ public class DoctorRepository(ClinicDbContext context) : GenericRepository<Docto
 {
     private static IQueryable<DoctorEntity> AddOrdering(IQueryable<DoctorEntity> query, DoctorSortingParams? sortBy, SortOrderType? sortOrder)
     {
-        switch (sortBy)
+        return sortBy switch
         {
-            case DoctorSortingParams.FirstName:
-                {
-                    if (sortOrder is null || sortOrder == SortOrderType.Asc) return query.OrderBy(x => x.FirstName);
-                    return query.OrderByDescending(x => x.FirstName);
-                }
-            case DoctorSortingParams.LastName:
-                {
-                    if (sortOrder is null || sortOrder == SortOrderType.Asc) return query.OrderBy(x => x.LastName);
-                    return query.OrderByDescending(x => x.LastName);
-                }
-            case DoctorSortingParams.MiddleName:
-                {
-                    if (sortOrder is null || sortOrder == SortOrderType.Asc) return query.OrderBy(x => x.MiddleName);
-                    return query.OrderByDescending(x => x.MiddleName);
-                }
-            case DoctorSortingParams.DateOfBirth:
-                {
-                    if (sortOrder is null || sortOrder == SortOrderType.Asc) return query.OrderBy(x => x.DateOfBirth);
-                    return query.OrderByDescending(x => x.DateOfBirth);
-                }
-            case DoctorSortingParams.Email:
-                {
-                    if (sortOrder is null || sortOrder == SortOrderType.Asc) return query.OrderBy(x => x.Email);
-                    return query.OrderByDescending(x => x.Email);
-                }
-            case DoctorSortingParams.Specialization:
-                {
-                    if (sortOrder is null || sortOrder == SortOrderType.Asc) return query.OrderBy(x => x.Specialization);
-                    return query.OrderByDescending(x => x.Specialization);
-                }
-            case DoctorSortingParams.Office:
-                {
-                    if (sortOrder is null || sortOrder == SortOrderType.Asc) return query.OrderBy(x => x.Office);
-                    return query.OrderByDescending(x => x.Office);
-                }
-            case DoctorSortingParams.CareerStartYear:
-                {
-                    if (sortOrder is null || sortOrder == SortOrderType.Asc) return query.OrderBy(x => x.CareerStartYear);
-                    return query.OrderByDescending(x => x.CareerStartYear);
-                }
-            case DoctorSortingParams.Status:
-                {
-                    if (sortOrder is null || sortOrder == SortOrderType.Asc) return query.OrderBy(x => x.Status);
-                    return query.OrderByDescending(x => x.Status);
-                }
-            case DoctorSortingParams.CreatedAt:
-                {
-                    if (sortOrder is null || sortOrder == SortOrderType.Asc) return query.OrderBy(x => x.CreatedAt);
-                    return query.OrderByDescending(x => x.CreatedAt);
-                }
-            case null: return query.OrderByDescending(x => x.CreatedAt);
-            default: return query;
-        }
+            DoctorSortingParams.FirstName => ApplyOrdering(query, x => x.FirstName, sortOrder),
+            DoctorSortingParams.LastName => ApplyOrdering(query, x => x.LastName, sortOrder),
+            DoctorSortingParams.MiddleName => ApplyOrdering(query, x => x.MiddleName, sortOrder),
+            DoctorSortingParams.DateOfBirth => ApplyOrdering(query, x => x.DateOfBirth, sortOrder),
+            DoctorSortingParams.Email => ApplyOrdering(query, x => x.Email, sortOrder),
+            DoctorSortingParams.Specialization => ApplyOrdering(query, x => x.Specialization, sortOrder),
+            DoctorSortingParams.Office => ApplyOrdering(query, x => x.Office, sortOrder),
+            DoctorSortingParams.CareerStartYear => ApplyOrdering(query, x => x.CareerStartYear, sortOrder),
+            DoctorSortingParams.Status => ApplyOrdering(query, x => x.Status, sortOrder),
+            DoctorSortingParams.CreatedAt => ApplyOrdering(query, x => x.CreatedAt, sortOrder),
+            null => query.OrderByDescending(x => x.CreatedAt),
+            _ => query
+        };
+    }
+    private static IQueryable<DoctorEntity> ApplyOrdering(
+        IQueryable<DoctorEntity> query,
+        Expression<Func<DoctorEntity, object>> keySelector,
+        SortOrderType? sortOrder)
+    {
+        return sortOrder is null || sortOrder == SortOrderType.Asc
+            ? query.OrderBy(keySelector)
+            : query.OrderByDescending(keySelector);
     }
 
     public async Task<PagedResult<DoctorEntity>> GetAllAsync(GetAllDoctorsParams getAllDoctorsParams, CancellationToken cancellationToken)
