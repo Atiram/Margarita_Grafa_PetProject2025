@@ -1,9 +1,13 @@
-﻿using AutoMapper;
+﻿using System.ComponentModel.DataAnnotations;
+using System.Net;
+using AutoMapper;
+using ClinicService.API.Middleware;
 using ClinicService.BLL.Models;
 using ClinicService.BLL.Services;
 using ClinicService.DAL.Entities;
 using ClinicService.DAL.Repositories.Interfaces;
 using ClinicService.Test.TestEntities;
+using Microsoft.AspNetCore.Http;
 using Moq;
 
 namespace ClinicService.Test.ServicesTests;
@@ -100,6 +104,33 @@ public class DoctorTest
         Assert.Equal(result.Id, doctorEntity.Id);
         Assert.Equal(result.FirstName, doctorEntity.FirstName);
     }
+
+    [Fact]
+    public async Task InvokeAsync_ValidationException_ReturnsBadRequest()
+    {
+        // Arrange
+        var context = new DefaultHttpContext();
+        var nextMock = new Mock<RequestDelegate>();
+        var exceptionMiddleware = new ExceptionMiddleware(nextMock.Object);
+        var validationException = new ValidationException("Length must be at least three characters");
+
+        nextMock.Setup(next => next(context)).ThrowsAsync(validationException);
+
+        // Act
+        await exceptionMiddleware.InvokeAsync(context);
+
+        // Assert
+        Assert.Equal((int)HttpStatusCode.BadRequest, context.Response.StatusCode);
+        Assert.Equal("application/json; charset=utf-8", context.Response.ContentType);
+
+        //context.Response.Body.Seek(0, SeekOrigin.Begin);
+        //using (var reader = new StreamReader(context.Response.Body))
+        //{
+        //    var body = await reader.ReadToEndAsync();
+        //    Assert.Contains(validationException.Message, body);
+        //}
+    }
+
     [Fact]
     public async Task UpdateDoctor_ValidDoctorModel_ReturnsUpdatedDoctorModel()
     {
