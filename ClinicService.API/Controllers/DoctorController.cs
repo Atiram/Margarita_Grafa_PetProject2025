@@ -21,8 +21,8 @@ public class DoctorController(IDoctorService doctorService, IMapper mapper) : Co
         return doctorViewModel;
     }
 
-    [HttpPost("Filter")]
-    public async Task<PagedResult<DoctorViewModel>> GetAll([FromBody] GetAllDoctorsParams getAllDoctorsParams, CancellationToken cancellationToken)
+    [HttpGet]
+    public async Task<PagedResult<DoctorViewModel>> GetAll([FromQuery] GetAllDoctorsParams getAllDoctorsParams, CancellationToken cancellationToken)
     {
         var doctorModels = await doctorService.GetAll(getAllDoctorsParams, cancellationToken);
         var doctorViewModels = mapper.Map<PagedResult<DoctorViewModel>>(doctorModels);
