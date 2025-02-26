@@ -10,7 +10,6 @@ namespace ClinicService.Test.IntergationTests;
 public class DoctorIntegrationTests : IntegrationTests
 {
     private const string BaseUrl = "https://localhost:7105/Doctor";
-    private const string GetAllUrl = "/Filter";
 
     [Fact]
     public async Task Create_ValidViewModel_ReturnsViewModel()
@@ -67,10 +66,10 @@ public class DoctorIntegrationTests : IntegrationTests
         var expectedPagedResult = CreatePagedResult(getAllDoctorsParams, doctorViewModels);
 
         //Act
-        using var request = new HttpRequestMessage(HttpMethod.Post, BaseUrl + GetAllUrl);
-        var actualRequest = AddContent(getAllDoctorsParams, request);
+        string actualUrl = CreateActualUrl(getAllDoctorsParams);
+        using var request = new HttpRequestMessage(HttpMethod.Get, actualUrl);
 
-        var actualResult = await Client.SendAsync(actualRequest);
+        var actualResult = await Client.SendAsync(request);
         var responseResult = GetResponseResult<PagedResult<DoctorViewModel>>(actualResult);
 
         //Assert
@@ -100,10 +99,10 @@ public class DoctorIntegrationTests : IntegrationTests
                 .ToList();
 
         //Act
-        using var request = new HttpRequestMessage(HttpMethod.Post, BaseUrl + GetAllUrl);
-        var actualRequest = AddContent(getAllDoctorsParams, request);
+        string actualUrl = CreateActualUrl(getAllDoctorsParams);
+        using var request = new HttpRequestMessage(HttpMethod.Get, actualUrl);
 
-        var actualResult = await Client.SendAsync(actualRequest);
+        var actualResult = await Client.SendAsync(request);
         var responseResult = GetResponseResult<PagedResult<DoctorViewModel>>(actualResult);
 
         //Assert
@@ -136,10 +135,10 @@ public class DoctorIntegrationTests : IntegrationTests
                 .Where(doctor => doctor.LastName.Contains(searchValue))
                 .Count();
         //Act
-        using var request = new HttpRequestMessage(HttpMethod.Post, BaseUrl + GetAllUrl);
-        var actualRequest = AddContent(getAllDoctorsParams, request);
+        string actualUrl = CreateActualUrl(getAllDoctorsParams);
+        using var request = new HttpRequestMessage(HttpMethod.Get, actualUrl);
 
-        var actualResult = await Client.SendAsync(actualRequest);
+        var actualResult = await Client.SendAsync(request);
         var responseResult = GetResponseResult<PagedResult<DoctorViewModel>>(actualResult);
 
         //Assert

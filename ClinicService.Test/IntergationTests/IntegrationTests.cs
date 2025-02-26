@@ -1,4 +1,5 @@
 ﻿using System.Text;
+using System.Web;
 using ClinicService.API.ViewModels;
 using ClinicService.DAL.Data;
 using ClinicService.DAL.Utilities.Pagination;
@@ -90,5 +91,14 @@ public class IntegrationTests
                .Take(getAllDoctorsParams.PageSize)
                .ToList()
         };
+    }
+    public string CreateActualUrl(GetAllDoctorsParams getAllDoctorsParams)
+    {
+        var queryString = HttpUtility.ParseQueryString(string.Empty);
+        foreach (var property in typeof(GetAllDoctorsParams).GetProperties())
+        {
+            queryString[property.Name] = property.GetValue(getAllDoctorsParams)?.ToString();
+        }
+        return UrlPost + "?" + queryString.ToString();
     }
 }
