@@ -13,7 +13,10 @@ public class AppMappingProfile : Profile
 
         CreateMap<CreateDoctorRequest, DoctorEntity>();
 
-        CreateMap<UpdateDoctorRequest, DoctorEntity>();
+        CreateMap<UpdateDoctorRequest, DoctorEntity>()           
+            .ForMember(dto => dto.CreatedAt, opt => opt.MapFrom((src, upd) => upd.CreatedAt))
+            .ForMember(dto => dto.UpdatedAt, opt => opt.MapFrom((src, upd) => upd.UpdatedAt));
+
 
         CreateMap<PatientEntity, PatientModel>().ReverseMap();
 

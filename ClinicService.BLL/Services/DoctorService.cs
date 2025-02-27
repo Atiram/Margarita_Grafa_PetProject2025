@@ -39,7 +39,9 @@ public class DoctorService(IDoctorRepository doctorRepository, IMapper mapper) :
         {
             throw new ValidationException(NotificationMessages.validationExeptionMessage);
         }
-        var doctorEntity = mapper.Map<DoctorEntity>(request);
+        var doctor = await doctorRepository.GetByIdAsync(request.Id, cancellationToken);
+        var doctorEntity = mapper.Map(request, doctor);
+
         var updatedDoctorEntity = await doctorRepository.UpdateAsync(doctorEntity, cancellationToken);
 
         return mapper.Map<DoctorModel>(updatedDoctorEntity);

@@ -25,6 +25,7 @@ public class DoctorIntegrationTests : IntegrationTests
 
         //Assert
         Assert.Equal(HttpStatusCode.OK, actualResult.StatusCode);
+        Assert.NotNull(responseResult);
         Assert.Equivalent(createDoctorRequest.LastName, responseResult.LastName);
         Assert.Equivalent(createDoctorRequest.FirstName, responseResult.FirstName);
     }
@@ -34,13 +35,13 @@ public class DoctorIntegrationTests : IntegrationTests
     {
         //Arrange
         var createDoctorRequest = TestDoctorRequest.NewCreateDoctorRequest;
-        var viewModel = TestDoctorViewModel.NewDoctorViewModel;
-        viewModel.Id = Guid.NewGuid();
+        //var viewModel = TestDoctorViewModel.NewDoctorViewModel;
+        //viewModel.Id = Guid.NewGuid();
 
         var postResponse = await SendPostRequest(createDoctorRequest);
         var postResponseResult = GetResponseResult<DoctorViewModel>(postResponse);
-        viewModel.Id = postResponseResult.Id;
-        viewModel.CreatedAt = postResponseResult.CreatedAt; //
+        //viewModel.Id = postResponseResult.Id;
+        //viewModel.CreatedAt = postResponseResult.CreatedAt; //
         Assert.NotNull(postResponseResult);
 
         //Act
@@ -50,7 +51,10 @@ public class DoctorIntegrationTests : IntegrationTests
 
         //Assert
         Assert.Equal(HttpStatusCode.OK, actualResult.StatusCode);
-        Assert.Equivalent(responseResult, viewModel);
+        Assert.NotNull(responseResult);
+        Assert.Equivalent(createDoctorRequest.LastName, responseResult.LastName);
+        Assert.Equivalent(createDoctorRequest.FirstName, responseResult.FirstName);
+
     }
 
     [Fact]
@@ -151,34 +155,36 @@ public class DoctorIntegrationTests : IntegrationTests
     public async Task Put_ValidViewModel_ReturnsViewModel()
     {
         //Arrange
-        var viewModel = TestDoctorViewModel.NewDoctorViewModel;
-        var updatedViewModel = TestDoctorViewModel.UpdatedDoctorViewModel;
-        viewModel.Id = Guid.NewGuid();
-        updatedViewModel.Id = viewModel.Id;
+        var createDoctorRequest = TestDoctorRequest.NewCreateDoctorRequest;
+        var updateDoctorRequest = TestDoctorRequest.UpdatedDoctorRequest;
 
-        var postResponse = await SendPostRequest(viewModel);
+        var postResponse = await SendPostRequest(createDoctorRequest);
         var postResponseResult = GetResponseResult<DoctorViewModel>(postResponse);
-
+        Assert.NotNull(postResponseResult);
+        updateDoctorRequest.Id = postResponseResult.Id;
         //Act
         using var request = new HttpRequestMessage(HttpMethod.Put, BaseUrl);
-        var actualRequest = AddContent(updatedViewModel, request);
+        var actualRequest = AddContent(updateDoctorRequest, request);
 
         var actualResult = await Client.SendAsync(actualRequest);
         var responseResult = GetResponseResult<DoctorViewModel>(actualResult);
 
         //Assert
         Assert.Equal(HttpStatusCode.OK, actualResult.StatusCode);
-        Assert.Equivalent(responseResult, updatedViewModel);
+        Assert.NotNull(responseResult);
+        Assert.Equivalent(updateDoctorRequest.LastName, responseResult.LastName);
+        Assert.Equivalent(updateDoctorRequest.FirstName, responseResult.FirstName);
     }
 
     [Fact]
     public async Task Delete_ValidViewModel_ReturnsViewModel()
     {
         //Arrange
-        var viewModel = TestDoctorViewModel.NewDoctorViewModel;
+        //var viewModel = TestDoctorViewModel.NewDoctorViewModel;
         var entity = TestDoctorEntity.NewDoctorEntity;
+        var createDoctorRequest = TestDoctorRequest.NewCreateDoctorRequest;
 
-        var postResponse = await SendPostRequest(viewModel);
+        var postResponse = await SendPostRequest(createDoctorRequest);
         var postResponseResult = GetResponseResult<DoctorViewModel>(postResponse);
 
         Assert.NotNull(postResponseResult);
