@@ -1,4 +1,5 @@
-﻿using AutoMapper;
+﻿using System.ComponentModel.DataAnnotations;
+using AutoMapper;
 using ClinicService.BLL.Models;
 using ClinicService.BLL.Services.Interfaces;
 using ClinicService.DAL.Entities;
@@ -16,6 +17,10 @@ public class PatientService(IPatientRepository patientRepository, IMapper mapper
 
     public async Task<PatientModel> CreateAsync(PatientModel patientModel, CancellationToken cancellationToken)
     {
+        if (patientModel.FirstName.Length <= 3 || patientModel.LastName.Length <= 3)
+        {
+            throw new ValidationException("Length must be at least three characters");
+        }
         var patientEntity = await patientRepository.CreateAsync(mapper.Map<PatientEntity>(patientModel), cancellationToken);
 
         return mapper.Map<PatientModel>(patientEntity);
@@ -23,6 +28,10 @@ public class PatientService(IPatientRepository patientRepository, IMapper mapper
 
     public async Task<PatientModel> UpdateAsync(PatientModel patientModel, CancellationToken cancellationToken)
     {
+        if (patientModel.FirstName.Length <= 3 || patientModel.LastName.Length <= 3)
+        {
+            throw new ValidationException("Length must be at least three characters");
+        }
         var patientEntity = mapper.Map<PatientEntity>(patientModel);
         var updatedPatientEntity = await patientRepository.UpdateAsync(patientEntity, cancellationToken);
 

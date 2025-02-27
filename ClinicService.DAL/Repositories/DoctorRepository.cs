@@ -51,7 +51,7 @@ public class DoctorRepository(ClinicDbContext context) : GenericRepository<Docto
                   doctor.LastName.Contains(getAllDoctorsParams.SearchValue))
           : sortedEntities;
 
-        var totalCount = await filteredEntities.CountAsync();
+        var totalCount = await filteredEntities.CountAsync(cancellationToken);
 
         PagedResult<DoctorEntity> pagedResult = new PagedResult<DoctorEntity>()
         {
@@ -63,7 +63,7 @@ public class DoctorRepository(ClinicDbContext context) : GenericRepository<Docto
         pagedResult.Results = await filteredEntities
           .Skip((getAllDoctorsParams.PageNumber - 1) * getAllDoctorsParams.PageSize)
           .Take(getAllDoctorsParams.PageSize)
-          .ToListAsync();
+          .ToListAsync(cancellationToken);
 
         return pagedResult;
     }
