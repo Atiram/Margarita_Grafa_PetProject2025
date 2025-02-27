@@ -16,6 +16,8 @@ public static class TestDoctorViewModel
         Office = "TestOffice",
         CareerStartYear = 2000,
         Status = DoctorStatus.AtWork,
+        CreatedAt = DateTime.Now,
+        UpdatedAt = DateTime.Now,
         Appointments = new List<AppointmentViewModel>()
     };
 
@@ -31,6 +33,8 @@ public static class TestDoctorViewModel
         Office = "ChangedTestOffice",
         CareerStartYear = 2010,
         Status = DoctorStatus.SickDay,
+        CreatedAt = DateTime.Now,
+        UpdatedAt = DateTime.Now,
         Appointments = new List<AppointmentViewModel>()
     };
 }
