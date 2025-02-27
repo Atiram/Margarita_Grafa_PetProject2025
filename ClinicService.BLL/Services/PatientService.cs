@@ -1,7 +1,9 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using AutoMapper;
 using ClinicService.BLL.Models;
+using ClinicService.BLL.Models.Requests;
 using ClinicService.BLL.Services.Interfaces;
+using ClinicService.BLL.Utilities.Messages;
 using ClinicService.DAL.Entities;
 using ClinicService.DAL.Repositories.Interfaces;
 
@@ -15,24 +17,24 @@ public class PatientService(IPatientRepository patientRepository, IMapper mapper
         return mapper.Map<PatientModel>(patientEntity);
     }
 
-    public async Task<PatientModel> CreateAsync(PatientModel patientModel, CancellationToken cancellationToken)
+    public async Task<PatientModel> CreateAsync(CreatePatientRequest request, CancellationToken cancellationToken)
     {
-        if (patientModel.FirstName.Length <= 3 || patientModel.LastName.Length <= 3)
+        if (request.FirstName.Length <= 3 || request.LastName.Length <= 3)
         {
-            throw new ValidationException("Length must be at least three characters");
+            throw new ValidationException(NotificationMessages.validationExeptionMessage);
         }
-        var patientEntity = await patientRepository.CreateAsync(mapper.Map<PatientEntity>(patientModel), cancellationToken);
+        var patientEntity = await patientRepository.CreateAsync(mapper.Map<PatientEntity>(request), cancellationToken);
 
         return mapper.Map<PatientModel>(patientEntity);
     }
 
-    public async Task<PatientModel> UpdateAsync(PatientModel patientModel, CancellationToken cancellationToken)
+    public async Task<PatientModel> UpdateAsync(UpdatePatientRequest request, CancellationToken cancellationToken)
     {
-        if (patientModel.FirstName.Length <= 3 || patientModel.LastName.Length <= 3)
+        if (request.FirstName.Length <= 3 || request.LastName.Length <= 3)
         {
-            throw new ValidationException("Length must be at least three characters");
+            throw new ValidationException(NotificationMessages.validationExeptionMessage);
         }
-        var patientEntity = mapper.Map<PatientEntity>(patientModel);
+        var patientEntity = mapper.Map<PatientEntity>(request);
         var updatedPatientEntity = await patientRepository.UpdateAsync(patientEntity, cancellationToken);
 
         return mapper.Map<PatientModel>(updatedPatientEntity);

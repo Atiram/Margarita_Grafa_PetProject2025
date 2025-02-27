@@ -1,6 +1,6 @@
 ﻿using System.Text;
 using System.Web;
-using ClinicService.API.ViewModels;
+using ClinicService.BLL.Models.Requests;
 using ClinicService.DAL.Data;
 using ClinicService.DAL.Utilities.Pagination;
 using ClinicService.Test.TestEntities;
@@ -41,10 +41,10 @@ public class IntegrationTests
         requestMessage.Content = new StringContent(JsonConvert.SerializeObject(entity), Encoding.UTF8, JsonContentType);
         return requestMessage;
     }
-    public async Task<HttpResponseMessage> SendPostRequest(DoctorViewModel viewModel)
+    public async Task<HttpResponseMessage> SendPostRequest<T>(T entity)
     {
         using var request = new HttpRequestMessage(HttpMethod.Post, UrlPost);
-        var actualRequest = AddContent(viewModel, request);
+        var actualRequest = AddContent(entity, request);
         return await Client.SendAsync(request);
     }
 
@@ -54,17 +54,17 @@ public class IntegrationTests
         return JsonConvert.DeserializeObject<T>(content) ?? default;
     }
 
-    public static List<DoctorViewModel> CreateDoctorList(string searchPrefix)
+    public static List<CreateDoctorRequest> CreateDoctorList(string searchPrefix)
     {
-        var doctorViewModels = new List<DoctorViewModel>();
+        var createDoctorRequests = new List<CreateDoctorRequest>();
         for (int i = 0; i < 5; i++)
         {
-            var viewModel = TestDoctorViewModel.NewDoctorViewModel;
-            viewModel.Id = Guid.NewGuid();
-            viewModel.FirstName = searchPrefix + viewModel.FirstName;
-            doctorViewModels.Add(viewModel);
+            var request = TestDoctorRequest.NewCreateDoctorRequest;
+            //request.Id = Guid.NewGuid();
+            request.FirstName = searchPrefix + request.FirstName;
+            createDoctorRequests.Add(request);
         }
-        return doctorViewModels;
+        return createDoctorRequests;
 
     }
     public static GetAllDoctorsParams CreateGetAllDoctorsParams(string searchPrefix)
@@ -79,9 +79,9 @@ public class IntegrationTests
         };
     }
 
-    public static PagedResult<DoctorViewModel> CreatePagedResult(GetAllDoctorsParams getAllDoctorsParams, List<DoctorViewModel> doctorViewModels)
+    public static PagedResult<T> CreatePagedResult<T>(GetAllDoctorsParams getAllDoctorsParams, List<T> doctorViewModels)
     {
-        return new PagedResult<DoctorViewModel>()
+        return new PagedResult<T>()
         {
             PageSize = getAllDoctorsParams.PageSize,
             TotalCount = doctorViewModels.Count,

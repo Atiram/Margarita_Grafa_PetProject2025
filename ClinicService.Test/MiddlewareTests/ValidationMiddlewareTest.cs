@@ -1,6 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 using System.Net;
 using ClinicService.API.Middleware;
+using ClinicService.BLL.Utilities.Messages;
 using Microsoft.AspNetCore.Http;
 using Moq;
 
@@ -14,7 +15,7 @@ public class ValidationMiddlewareTest
         var context = new DefaultHttpContext();
         var nextMock = new Mock<RequestDelegate>();
         var exceptionMiddleware = new ExceptionMiddleware(nextMock.Object);
-        var validationException = new ValidationException("Length must be at least three characters");
+        var validationException = new ValidationException(NotificationMessages.validationExeptionMessage);
 
         nextMock.Setup(next => next(context)).ThrowsAsync(validationException);
 

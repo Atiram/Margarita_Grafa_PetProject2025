@@ -11,15 +11,23 @@ public class AppMappingProfile : Profile
     {
         CreateMap<DoctorEntity, DoctorModel>().ReverseMap();
 
+        CreateMap<CreateDoctorRequest, DoctorEntity>();
+
+        CreateMap<UpdateDoctorRequest, DoctorEntity>();
+
         CreateMap<PatientEntity, PatientModel>().ReverseMap();
 
-        CreateMap<AppointmentEntity, AppointmentModel>().ReverseMap();
+        CreateMap<CreatePatientRequest, PatientEntity>();
 
-        CreateMap(typeof(PagedResult<>), typeof(PagedResult<>))
-            .ForMember(nameof(PagedResult<object>.Results), opt => opt.MapFrom(nameof(PagedResult<object>.Results)));
+        CreateMap<UpdatePatientRequest, PatientEntity>();//.ForMember(dest => dest.CreatedAt, opt => opt.Ignore());
+
+        CreateMap<AppointmentEntity, AppointmentModel>().ReverseMap();
 
         CreateMap<CreateAppointmentRequest, AppointmentEntity>();
 
         CreateMap<UpdateAppointmentRequest, AppointmentEntity>();
+
+        CreateMap(typeof(PagedResult<>), typeof(PagedResult<>))
+            .ForMember(nameof(PagedResult<object>.Results), opt => opt.MapFrom(nameof(PagedResult<object>.Results)));
     }
 }
