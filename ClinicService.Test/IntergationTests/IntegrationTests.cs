@@ -54,7 +54,7 @@ public class IntegrationTests
         return JsonConvert.DeserializeObject<T>(content) ?? default;
     }
 
-    public List<DoctorViewModel> CreateDoctorList(string searchPrefix)
+    public static List<DoctorViewModel> CreateDoctorList(string searchPrefix)
     {
         var doctorViewModels = new List<DoctorViewModel>();
         for (int i = 0; i < 5; i++)
@@ -67,7 +67,7 @@ public class IntegrationTests
         return doctorViewModels;
 
     }
-    public GetAllDoctorsParams CreateGetAllDoctorsParams(string searchPrefix)
+    public static GetAllDoctorsParams CreateGetAllDoctorsParams(string searchPrefix)
     {
         return new GetAllDoctorsParams()
         {
@@ -79,7 +79,7 @@ public class IntegrationTests
         };
     }
 
-    public PagedResult<DoctorViewModel> CreatePagedResult(GetAllDoctorsParams getAllDoctorsParams, List<DoctorViewModel> doctorViewModels)
+    public static PagedResult<DoctorViewModel> CreatePagedResult(GetAllDoctorsParams getAllDoctorsParams, List<DoctorViewModel> doctorViewModels)
     {
         return new PagedResult<DoctorViewModel>()
         {
@@ -92,7 +92,7 @@ public class IntegrationTests
                .ToList()
         };
     }
-    public string CreateActualUrl(GetAllDoctorsParams getAllDoctorsParams)
+    public static string CreateActualUrl(GetAllDoctorsParams getAllDoctorsParams)
     {
         var queryString = HttpUtility.ParseQueryString(string.Empty);
         foreach (var property in typeof(GetAllDoctorsParams).GetProperties())
