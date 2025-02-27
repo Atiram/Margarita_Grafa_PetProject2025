@@ -57,6 +57,7 @@ public class DoctorTest
         Assert.Null(result);
         mockMapper.Verify(m => m.Map<DoctorModel>(It.IsAny<DoctorEntity>()), Times.AtMostOnce);
     }
+
     [Fact]
     public async Task GetById_ExceptionFromRepository_RethrowsException()
     {
@@ -95,7 +96,6 @@ public class DoctorTest
         //Act 
         var result = await doctorService.CreateAsync(doctorModel, CancellationToken.None);
 
-
         //Assert 
         Assert.NotNull(result);
         Assert.Equal(result.Id, doctorEntity.Id);
@@ -129,6 +129,7 @@ public class DoctorTest
         Assert.Equal(result.Id, doctorEntity.Id);
         Assert.Equal(result.FirstName, updatedDoctorModel.FirstName);
     }
+
     [Fact]
     public async Task DeleteDoctor_ValidDoctorModel_ReturnsTrue()
     {
