@@ -13,6 +13,7 @@ public class GenericRepository<TEntity>(ClinicDbContext context) : IGenericRepos
 
     public async Task<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken)
     {
+        entity.CreatedAt = DateTime.UtcNow;
         await context.Set<TEntity>().AddAsync(entity, cancellationToken);
         await context.SaveChangesAsync(cancellationToken);
 
@@ -21,6 +22,7 @@ public class GenericRepository<TEntity>(ClinicDbContext context) : IGenericRepos
 
     public async Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken)
     {
+        entity.UpdatedAt = DateTime.UtcNow;
         context.Update(entity);
         await context.SaveChangesAsync(cancellationToken);
 

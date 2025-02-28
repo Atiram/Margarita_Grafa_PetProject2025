@@ -11,15 +11,29 @@ public class AppMappingProfile : Profile
     {
         CreateMap<DoctorEntity, DoctorModel>().ReverseMap();
 
+        CreateMap<CreateDoctorRequest, DoctorEntity>();
+
+        CreateMap<UpdateDoctorRequest, DoctorEntity>()
+            .ForMember(dto => dto.CreatedAt, opt => opt.MapFrom((src, upd) => upd.CreatedAt))
+            .ForMember(dto => dto.UpdatedAt, opt => opt.MapFrom((src, upd) => upd.UpdatedAt));
+
         CreateMap<PatientEntity, PatientModel>().ReverseMap();
+
+        CreateMap<CreatePatientRequest, PatientEntity>();
+
+        CreateMap<UpdatePatientRequest, PatientEntity>()
+            .ForMember(dto => dto.CreatedAt, opt => opt.MapFrom((src, upd) => upd.CreatedAt))
+            .ForMember(dto => dto.UpdatedAt, opt => opt.MapFrom((src, upd) => upd.UpdatedAt));
 
         CreateMap<AppointmentEntity, AppointmentModel>().ReverseMap();
 
-        CreateMap(typeof(PagedResult<>), typeof(PagedResult<>))
-            .ForMember(nameof(PagedResult<object>.Results), opt => opt.MapFrom(nameof(PagedResult<object>.Results)));
-
         CreateMap<CreateAppointmentRequest, AppointmentEntity>();
 
-        CreateMap<UpdateAppointmentRequest, AppointmentEntity>();
+        CreateMap<UpdateAppointmentRequest, AppointmentEntity>()
+            .ForMember(dto => dto.CreatedAt, opt => opt.MapFrom((src, upd) => upd.CreatedAt))
+            .ForMember(dto => dto.UpdatedAt, opt => opt.MapFrom((src, upd) => upd.UpdatedAt));
+
+        CreateMap(typeof(PagedResult<>), typeof(PagedResult<>))
+            .ForMember(nameof(PagedResult<object>.Results), opt => opt.MapFrom(nameof(PagedResult<object>.Results)));
     }
 }

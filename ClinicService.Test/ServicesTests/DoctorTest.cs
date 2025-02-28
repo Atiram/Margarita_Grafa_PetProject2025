@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using ClinicService.BLL.Models;
 using ClinicService.BLL.Services;
+using ClinicService.BLL.Utilities.Mapping;
 using ClinicService.DAL.Entities;
 using ClinicService.DAL.Repositories.Interfaces;
 using ClinicService.Test.TestEntities;
@@ -13,22 +13,19 @@ public class DoctorTest
     public async Task GetDoctorById_Exist_ReturnDoctorModel()
     {
         //Arrange 
-        var doctorModel = TestDoctorModel.NewDoctorModel;
         var doctorEntity = TestDoctorEntity.NewDoctorEntity;
-        doctorEntity.Id = doctorModel.Id;
 
         var mockRepository = new Mock<IDoctorRepository>();
         mockRepository.Setup(repo => repo.GetByIdAsync(doctorEntity.Id, CancellationToken.None))
                       .ReturnsAsync(doctorEntity);
 
-        var mockMapper = new Mock<IMapper>();
-        mockMapper.Setup(m => m.Map<DoctorModel>(doctorEntity))
-                  .Returns(doctorModel);
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<AppMappingProfile>());
+        var mapper = new Mapper(config);
 
-        var doctorService = new DoctorService(mockRepository.Object, mockMapper.Object);
+        var doctorService = new DoctorService(mockRepository.Object, mapper);
 
         //Act 
-        var result = await doctorService.GetById(doctorModel.Id, CancellationToken.None);
+        var result = await doctorService.GetById(doctorEntity.Id, CancellationToken.None);
 
         //Assert 
         Assert.NotNull(result);
@@ -47,15 +44,16 @@ public class DoctorTest
         mockRepository.Setup(repo => repo.GetByIdAsync(doctorId, CancellationToken.None))
                       .ReturnsAsync((DoctorEntity?)null);
 
-        var mockMapper = new Mock<IMapper>();
-        var doctorService = new DoctorService(mockRepository.Object, mockMapper.Object);
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<AppMappingProfile>());
+        var mapper = new Mapper(config);
+
+        var doctorService = new DoctorService(mockRepository.Object, mapper);
 
         // Act
         var result = await doctorService.GetById(doctorId, CancellationToken.None);
 
         // Assert
         Assert.Null(result);
-        mockMapper.Verify(m => m.Map<DoctorModel>(It.IsAny<DoctorEntity>()), Times.AtMostOnce);
     }
 
     [Fact]
@@ -68,33 +66,32 @@ public class DoctorTest
         mockRepository.Setup(repo => repo.GetByIdAsync(doctorId, CancellationToken.None))
             .ThrowsAsync(new Exception("Repository Error"));
 
-        var mockMapper = new Mock<IMapper>();
-        var doctorService = new DoctorService(mockRepository.Object, mockMapper.Object);
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<AppMappingProfile>());
+        var mapper = new Mapper(config);
+
+        var doctorService = new DoctorService(mockRepository.Object, mapper);
 
         // Act & Assert
         await Assert.ThrowsAsync<Exception>(async () => await doctorService.GetById(doctorId, CancellationToken.None));
-        mockMapper.Verify(m => m.Map<DoctorModel>(It.IsAny<DoctorEntity>()), Times.Never);
     }
 
     [Fact]
     public async Task CreateDoctor_ValidDoctorModel_ReturnsCreatedDoctorModel()
     {
         //Arrange 
-        var doctorModel = TestDoctorModel.NewDoctorModel;
+        var createDoctorRequest = TestDoctorRequest.NewCreateDoctorRequest;
         var doctorEntity = TestDoctorEntity.NewDoctorEntity;
-        doctorEntity.Id = doctorModel.Id;
 
         var mockRepository = new Mock<IDoctorRepository>();
         mockRepository.Setup(repo => repo.CreateAsync(It.IsAny<DoctorEntity>(), CancellationToken.None)).ReturnsAsync(doctorEntity);
 
-        var mockMapper = new Mock<IMapper>();
-        mockMapper.Setup(m => m.Map<DoctorModel>(doctorEntity))
-                  .Returns(doctorModel);
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<AppMappingProfile>());
+        var mapper = new Mapper(config);
 
-        var doctorService = new DoctorService(mockRepository.Object, mockMapper.Object);
+        var doctorService = new DoctorService(mockRepository.Object, mapper);
 
         //Act 
-        var result = await doctorService.CreateAsync(doctorModel, CancellationToken.None);
+        var result = await doctorService.CreateAsync(createDoctorRequest, CancellationToken.None);
 
         //Assert 
         Assert.NotNull(result);
@@ -106,28 +103,24 @@ public class DoctorTest
     public async Task UpdateDoctor_ValidDoctorModel_ReturnsUpdatedDoctorModel()
     {
         //Arrange 
-        var doctorModel = TestDoctorModel.NewDoctorModel;
-        var updatedDoctorModel = TestDoctorModel.UpdatedDoctorModel;
         var doctorEntity = TestDoctorEntity.UpdatedDoctorEntity;
-        updatedDoctorModel.Id = doctorModel.Id;
-        doctorEntity.Id = doctorModel.Id;
+        var updatedDoctorRequest = TestDoctorRequest.UpdatedDoctorRequest;
 
         var mockRepository = new Mock<IDoctorRepository>();
         mockRepository.Setup(repo => repo.UpdateAsync(It.IsAny<DoctorEntity>(), CancellationToken.None)).ReturnsAsync(doctorEntity);
 
-        var mockMapper = new Mock<IMapper>();
-        mockMapper.Setup(m => m.Map<DoctorModel>(doctorEntity))
-                  .Returns(updatedDoctorModel);
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<AppMappingProfile>());
+        var mapper = new Mapper(config);
 
-        var doctorService = new DoctorService(mockRepository.Object, mockMapper.Object);
+        var doctorService = new DoctorService(mockRepository.Object, mapper);
 
         //Act 
-        var result = await doctorService.UpdateAsync(updatedDoctorModel, CancellationToken.None);
+        var result = await doctorService.UpdateAsync(updatedDoctorRequest, CancellationToken.None);
 
         //Assert 
         Assert.NotNull(result);
         Assert.Equal(result.Id, doctorEntity.Id);
-        Assert.Equal(result.FirstName, updatedDoctorModel.FirstName);
+        Assert.Equal(result.FirstName, doctorEntity.FirstName);
     }
 
     [Fact]
@@ -141,11 +134,10 @@ public class DoctorTest
         var mockRepository = new Mock<IDoctorRepository>();
         mockRepository.Setup(repo => repo.DeleteAsync(doctorEntity.Id, CancellationToken.None)).ReturnsAsync(true);
 
-        var mockMapper = new Mock<IMapper>();
-        mockMapper.Setup(m => m.Map<DoctorModel>(doctorEntity))
-                  .Returns(doctorModel);
+        var config = new MapperConfiguration(cfg => cfg.AddProfile<AppMappingProfile>());
+        var mapper = new Mapper(config);
 
-        var doctorService = new DoctorService(mockRepository.Object, mockMapper.Object);
+        var doctorService = new DoctorService(mockRepository.Object, mapper);
 
         //Act 
         var result = await doctorService.DeleteAsync(doctorModel.Id, CancellationToken.None);

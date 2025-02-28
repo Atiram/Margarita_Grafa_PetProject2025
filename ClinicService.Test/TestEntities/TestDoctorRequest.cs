@@ -1,12 +1,11 @@
-﻿using ClinicService.API.ViewModels;
+﻿using ClinicService.BLL.Models.Requests;
 using ClinicService.DAL.Enums;
 
 namespace ClinicService.Test.TestEntities;
-public static class TestDoctorViewModel
+public static class TestDoctorRequest
 {
-    public static DoctorViewModel NewDoctorViewModel => new()
+    public static CreateDoctorRequest NewCreateDoctorRequest => new()
     {
-        Id = Guid.NewGuid(),
         FirstName = "Test DoctorName",
         LastName = "Test LastName",
         MiddleName = "Test MiddleName",
@@ -15,26 +14,20 @@ public static class TestDoctorViewModel
         Specialization = "TestSpec",
         Office = "TestOffice",
         CareerStartYear = 2000,
-        Status = DoctorStatus.AtWork,
-        CreatedAt = DateTime.Now,
-        UpdatedAt = DateTime.MinValue,
-        Appointments = new List<AppointmentViewModel>()
+        Status = DoctorStatus.AtWork
     };
 
-    public static DoctorViewModel UpdatedDoctorViewModel => new()
+    public static UpdateDoctorRequest UpdatedDoctorRequest => new()
     {
         Id = Guid.NewGuid(),
         FirstName = "ChangedTest DoctorName",
         LastName = "ChangedTest LastName",
-        MiddleName = null,
+        MiddleName = "ChangedTest MiddleName",
         DateOfBirth = new DateOnly(1999, 1, 1),
         Email = "Ctchangedtest@email",
         Specialization = "ChangedTestSpec",
         Office = "ChangedTestOffice",
         CareerStartYear = 2010,
         Status = DoctorStatus.SickDay,
-        CreatedAt = DateTime.Now,
-        UpdatedAt = DateTime.Now,
-        Appointments = new List<AppointmentViewModel>()
     };
 }

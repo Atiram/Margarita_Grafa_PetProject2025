@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using ClinicService.API.ViewModels;
-using ClinicService.BLL.Models;
+using ClinicService.BLL.Models.Requests;
 using ClinicService.BLL.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,18 +19,18 @@ public class PatientController(IPatientService patientService, IMapper mapper) :
     }
 
     [HttpPost]
-    public async Task<PatientViewModel> Post(PatientViewModel item, CancellationToken cancellationToken)
+    public async Task<PatientViewModel> Post(CreatePatientRequest request, CancellationToken cancellationToken)
     {
-        var patientModel = await patientService.CreateAsync(mapper.Map<PatientModel>(item), cancellationToken);
+        var patientModel = await patientService.CreateAsync(request, cancellationToken);
         var patientViewModel = mapper.Map<PatientViewModel>(patientModel);
 
         return patientViewModel;
     }
 
     [HttpPut]
-    public async Task<PatientViewModel> Put(PatientViewModel item, CancellationToken cancellationToken)
+    public async Task<PatientViewModel> Put(UpdatePatientRequest request, CancellationToken cancellationToken)
     {
-        var patientModel = await patientService.UpdateAsync(mapper.Map<PatientModel>(item), cancellationToken);
+        var patientModel = await patientService.UpdateAsync(request, cancellationToken);
         var patientViewModel = mapper.Map<PatientViewModel>(patientModel);
 
         return patientViewModel;

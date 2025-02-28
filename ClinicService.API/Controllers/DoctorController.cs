@@ -1,6 +1,7 @@
 using AutoMapper;
 using ClinicService.API.ViewModels;
 using ClinicService.BLL.Models;
+using ClinicService.BLL.Models.Requests;
 using ClinicService.BLL.Services.Interfaces;
 using ClinicService.DAL.Utilities.Pagination;
 using Microsoft.AspNetCore.Mvc;
@@ -31,18 +32,18 @@ public class DoctorController(IDoctorService doctorService, IMapper mapper) : Co
     }
 
     [HttpPost]
-    public async Task<DoctorViewModel> Post(DoctorViewModel item, CancellationToken cancellationToken)
+    public async Task<DoctorViewModel> Post(CreateDoctorRequest request, CancellationToken cancellationToken)
     {
-        var doctorModel = await doctorService.CreateAsync(mapper.Map<DoctorModel>(item), cancellationToken);
+        var doctorModel = await doctorService.CreateAsync(request, cancellationToken);
         var doctorViewModel = mapper.Map<DoctorViewModel>(doctorModel);
 
         return doctorViewModel;
     }
 
     [HttpPut]
-    public async Task<DoctorViewModel> Put(DoctorViewModel item, CancellationToken cancellationToken)
+    public async Task<DoctorViewModel> Put(UpdateDoctorRequest request, CancellationToken cancellationToken)
     {
-        var doctorModel = await doctorService.UpdateAsync(mapper.Map<DoctorModel>(item), cancellationToken);
+        var doctorModel = await doctorService.UpdateAsync(request, cancellationToken);
         var doctorViewModel = mapper.Map<DoctorViewModel>(doctorModel);
 
         return doctorViewModel;
