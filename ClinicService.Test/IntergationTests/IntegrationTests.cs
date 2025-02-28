@@ -41,6 +41,7 @@ public class IntegrationTests
         requestMessage.Content = new StringContent(JsonConvert.SerializeObject(entity), Encoding.UTF8, JsonContentType);
         return requestMessage;
     }
+
     public async Task<HttpResponseMessage> SendPostRequest<T>(T entity)
     {
         using var request = new HttpRequestMessage(HttpMethod.Post, UrlPost);
@@ -60,13 +61,12 @@ public class IntegrationTests
         for (int i = 0; i < 5; i++)
         {
             var request = TestDoctorRequest.NewCreateDoctorRequest;
-            //request.Id = Guid.NewGuid();
             request.FirstName = searchPrefix + request.FirstName;
             createDoctorRequests.Add(request);
         }
         return createDoctorRequests;
-
     }
+
     public static GetAllDoctorsParams CreateGetAllDoctorsParams(string searchPrefix)
     {
         return new GetAllDoctorsParams()
@@ -92,6 +92,7 @@ public class IntegrationTests
                .ToList()
         };
     }
+
     public static string CreateActualUrl(GetAllDoctorsParams getAllDoctorsParams)
     {
         var queryString = HttpUtility.ParseQueryString(string.Empty);

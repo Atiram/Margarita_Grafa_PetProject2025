@@ -35,13 +35,8 @@ public class DoctorIntegrationTests : IntegrationTests
     {
         //Arrange
         var createDoctorRequest = TestDoctorRequest.NewCreateDoctorRequest;
-        //var viewModel = TestDoctorViewModel.NewDoctorViewModel;
-        //viewModel.Id = Guid.NewGuid();
-
         var postResponse = await SendPostRequest(createDoctorRequest);
         var postResponseResult = GetResponseResult<DoctorViewModel>(postResponse);
-        //viewModel.Id = postResponseResult.Id;
-        //viewModel.CreatedAt = postResponseResult.CreatedAt; //
         Assert.NotNull(postResponseResult);
 
         //Act
@@ -54,7 +49,6 @@ public class DoctorIntegrationTests : IntegrationTests
         Assert.NotNull(responseResult);
         Assert.Equivalent(createDoctorRequest.LastName, responseResult.LastName);
         Assert.Equivalent(createDoctorRequest.FirstName, responseResult.FirstName);
-
     }
 
     [Fact]
@@ -180,7 +174,6 @@ public class DoctorIntegrationTests : IntegrationTests
     public async Task Delete_ValidViewModel_ReturnsViewModel()
     {
         //Arrange
-        //var viewModel = TestDoctorViewModel.NewDoctorViewModel;
         var entity = TestDoctorEntity.NewDoctorEntity;
         var createDoctorRequest = TestDoctorRequest.NewCreateDoctorRequest;
 

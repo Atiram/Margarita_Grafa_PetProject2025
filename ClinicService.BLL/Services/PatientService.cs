@@ -34,7 +34,8 @@ public class PatientService(IPatientRepository patientRepository, IMapper mapper
         {
             throw new ValidationException(NotificationMessages.validationExeptionMessage);
         }
-        var patientEntity = mapper.Map<PatientEntity>(request);
+        var patient = await patientRepository.GetByIdAsync(request.Id, cancellationToken);
+        var patientEntity = mapper.Map(request, patient);
         var updatedPatientEntity = await patientRepository.UpdateAsync(patientEntity, cancellationToken);
 
         return mapper.Map<PatientModel>(updatedPatientEntity);

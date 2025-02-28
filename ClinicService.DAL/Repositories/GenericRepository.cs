@@ -23,7 +23,6 @@ public class GenericRepository<TEntity>(ClinicDbContext context) : IGenericRepos
     public async Task<TEntity> UpdateAsync(TEntity entity, CancellationToken cancellationToken)
     {
         entity.UpdatedAt = DateTime.UtcNow;
-       
         context.Update(entity);
         await context.SaveChangesAsync(cancellationToken);
 
