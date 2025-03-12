@@ -32,6 +32,16 @@ namespace ClinicServiceApi
             services.RegisterBusinessLogicServices(configuration);
             services.AddAutoMapper(Assembly.GetAssembly(typeof(AppMappingProfile)));
 
+            services.AddCors(options =>
+            {
+                options.AddPolicy("AllowReactApp", builder =>
+                {
+                    builder.WithOrigins("http://localhost:3000")
+                           .AllowAnyMethod()
+                           .AllowAnyHeader();
+                });
+            });
+
             var app = builder.Build();
 
             // Configure the HTTP request pipeline.
@@ -48,6 +58,8 @@ namespace ClinicServiceApi
             app.UseAuthorization();
 
             app.MapControllers();
+
+            app.UseCors("AllowReactApp");
 
             app.Run();
         }

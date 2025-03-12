@@ -1,15 +1,16 @@
 using AutoMapper;
 using ClinicService.API.ViewModels;
-using ClinicService.BLL.Models;
 using ClinicService.BLL.Models.Requests;
 using ClinicService.BLL.Services.Interfaces;
 using ClinicService.DAL.Utilities.Pagination;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicService.API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
+[EnableCors("AllowReactApp")]
 public class DoctorController(IDoctorService doctorService, IMapper mapper) : ControllerBase
 {
 

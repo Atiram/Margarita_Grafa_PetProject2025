@@ -2,11 +2,13 @@
 using ClinicService.API.ViewModels;
 using ClinicService.BLL.Models.Requests;
 using ClinicService.BLL.Services.Interfaces;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 
 namespace ClinicService.API.Controllers;
 [Route("[controller]")]
 [ApiController]
+[EnableCors("AllowReactApp")]
 public class PatientController(IPatientService patientService, IMapper mapper) : ControllerBase
 {
     [HttpGet]
