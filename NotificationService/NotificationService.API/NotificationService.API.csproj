@@ -10,8 +10,8 @@
     <PackageReference Include="Swashbuckle.AspNetCore" Version="6.6.2" />
   </ItemGroup>
 
-  <ItemGroup>
-    <ProjectReference Include="..\..\NotificationService.DAL\NotificationService.DAL.csproj" />
+  <ItemGroup>    
+    <ProjectReference Include="..\NotificationService.DAL\NotificationService.DAL.csproj" />
   </ItemGroup>
 
 </Project>

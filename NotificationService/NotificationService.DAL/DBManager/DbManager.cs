@@ -5,18 +5,24 @@ public class DbManager : IDbManager
 {
     private string connectionString;
     private string connectionStringWithoutDB;
-    private string scriptPath = "C:\\Users\\User\\source\\repos\\Margarita_Grafa_PetProject2025\\NotificationService.DAL\\script.sql";
+    private string scriptPath = "NotificationService.DAL\\script.sql";
+    //"C:\\Users\\User\\source\\repos\\Margarita_Grafa_PetProject2025\\NotificationService\\NotificationService.DAL\\script.sql";
+    private string t;
+    //C:\Users\User\source\repos\Margarita_Grafa_PetProject2025\NotificationService\NotificationService.DAL\script.sql
 
-    public DbManager(string connectionString, string connectionStringWithoutDB)
+    public DbManager(string connectionString, string connectionStringWithoutDB, string t)
     {
         this.connectionString = connectionString;
         this.connectionStringWithoutDB = connectionStringWithoutDB;
+        this.t = t;
     }
 
     public async Task CreateTableAsync()
     {
-        string createDatabaseSql = "CREATE DATABASE NotificationApplicationDb;";
-        await ExecuteNonQuery(createDatabaseSql, connectionStringWithoutDB);
+        //string createDatabaseSql = "CREATE DATABASE NotificationApplicationDb;";
+        //await ExecuteNonQuery(createDatabaseSql, connectionStringWithoutDB);
+        /// C:\Users\User\source\repos\Margarita_Grafa_PetProject2025\NotificationService\NotificationService.DAL
+        string h = t;
         string createTableSql = GetSqlFromScript("CREATE TABLE Events");
         await ExecuteNonQuery(createTableSql, connectionString);
     }
@@ -41,7 +47,8 @@ public class DbManager : IDbManager
 
     private string GetSqlFromScript(string scriptName)
     {
-        string scriptContent = File.ReadAllText(scriptPath);
+        string filePath = Path.Combine(Directory.GetCurrentDirectory(), t); //AppContext.BaseDirectory
+        string scriptContent = File.ReadAllText(t); // scriptPath);
         string[] scripts = scriptContent.Split(new string[] { "GO" }, StringSplitOptions.RemoveEmptyEntries);
 
         foreach (string script in scripts)
