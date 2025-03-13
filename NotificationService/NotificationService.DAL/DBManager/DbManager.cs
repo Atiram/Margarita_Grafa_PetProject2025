@@ -41,8 +41,7 @@ public class DbManager : IDbManager
 
     private string GetSqlFromScript(string scriptName)
     {
-        string filePath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).FullName, scriptPath);
-        string scriptContent = File.ReadAllText(filePath);
+        string scriptContent = File.ReadAllText(scriptPath);
         string[] scripts = scriptContent.Split(new string[] { "GO" }, StringSplitOptions.RemoveEmptyEntries);
 
         foreach (string script in scripts)
