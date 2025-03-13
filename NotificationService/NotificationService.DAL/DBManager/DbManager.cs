@@ -5,24 +5,18 @@ public class DbManager : IDbManager
 {
     private string connectionString;
     private string connectionStringWithoutDB;
-    private string scriptPath = "NotificationService.DAL\\script.sql";
-    //"C:\\Users\\User\\source\\repos\\Margarita_Grafa_PetProject2025\\NotificationService\\NotificationService.DAL\\script.sql";
-    private string t;
-    //C:\Users\User\source\repos\Margarita_Grafa_PetProject2025\NotificationService\NotificationService.DAL\script.sql
-
-    public DbManager(string connectionString, string connectionStringWithoutDB, string t)
+    private string scriptPath;
+    public DbManager(string connectionString, string connectionStringWithoutDB, string scriptPath)
     {
         this.connectionString = connectionString;
         this.connectionStringWithoutDB = connectionStringWithoutDB;
-        this.t = t;
+        this.scriptPath = scriptPath;
     }
 
     public async Task CreateTableAsync()
     {
-        //string createDatabaseSql = "CREATE DATABASE NotificationApplicationDb;";
-        //await ExecuteNonQuery(createDatabaseSql, connectionStringWithoutDB);
-        /// C:\Users\User\source\repos\Margarita_Grafa_PetProject2025\NotificationService\NotificationService.DAL
-        string h = t;
+        string createDatabaseSql = "CREATE DATABASE NotificationApplicationDb;";
+        await ExecuteNonQuery(createDatabaseSql, connectionStringWithoutDB);
         string createTableSql = GetSqlFromScript("CREATE TABLE Events");
         await ExecuteNonQuery(createTableSql, connectionString);
     }
@@ -47,8 +41,8 @@ public class DbManager : IDbManager
 
     private string GetSqlFromScript(string scriptName)
     {
-        string filePath = Path.Combine(Directory.GetCurrentDirectory(), t); //AppContext.BaseDirectory
-        string scriptContent = File.ReadAllText(t); // scriptPath);
+        string filePath = Path.Combine(Directory.GetParent(Directory.GetCurrentDirectory()).FullName, scriptPath);
+        string scriptContent = File.ReadAllText(filePath);
         string[] scripts = scriptContent.Split(new string[] { "GO" }, StringSplitOptions.RemoveEmptyEntries);
 
         foreach (string script in scripts)

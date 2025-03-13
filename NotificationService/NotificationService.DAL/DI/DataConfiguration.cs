@@ -11,8 +11,8 @@ public static class DataConfiguration
     {
         string? connectionString = configuration.GetConnectionString("DBConnection");
         string? connectionStringWithoutDB = configuration.GetConnectionString("DBConnectionWithoutDB");
-        string? s = configuration.GetSection("ScriptPath").Value;
+        string? scriptPath = configuration.GetSection("ScriptPath").Value;
         services.AddScoped<IEventRepository, EventRepository>(provider => new EventRepository(connectionString))
-            .AddScoped<IDbManager, DbManager>(provider => new DbManager(connectionString, connectionStringWithoutDB, s));
+            .AddScoped<IDbManager, DbManager>(provider => new DbManager(connectionString, connectionStringWithoutDB, scriptPath));
     }
 }
