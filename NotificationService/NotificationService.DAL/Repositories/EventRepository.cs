@@ -21,7 +21,7 @@ public class EventRepository : IEventRepository
         }
     }
 
-    public async Task<List<EventEntity>> GetEventsAsync()
+    public async Task<List<EventEntity>?> GetEventsAsync()
     {
         using (IDbConnection db = new SqlConnection(connectionString))
         {
@@ -30,22 +30,26 @@ public class EventRepository : IEventRepository
         }
     }
 
-    public async Task CreateAsync(EventEntity eventEntity)
+    public async Task<EventEntity?> CreateAsync(EventEntity eventEntity)
     {
         using (IDbConnection db = new SqlConnection(connectionString))
         {
             var sqlQuery =
-                "INSERT INTO Events (Id, Type, CreatedAt, UpdatedAt) VALUES(@Id, @Type, @CreatedAt, @UpdatedAt)";
-            await db.ExecuteAsync(sqlQuery, eventEntity);
+                "INSERT INTO Events (Type, CreatedAt, UpdatedAt) " +
+                "OUTPUT INSERTED.Id " +
+                "VALUES (@Type, @CreatedAt, @UpdatedAt);";
+            eventEntity.Id = await db.QuerySingleAsync<Guid>(sqlQuery, eventEntity);
+            return eventEntity;
         }
     }
 
-    public async Task UpdateAsync(EventEntity eventEntity)
+    public async Task<EventEntity?> UpdateAsync(EventEntity eventEntity)
     {
         using (IDbConnection db = new SqlConnection(connectionString))
         {
             var sqlQuery = "UPDATE Events SET Type = @Type WHERE Id = @Id";
             await db.ExecuteAsync(sqlQuery, eventEntity);
+            return eventEntity;
         }
     }
 

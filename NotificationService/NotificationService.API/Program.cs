@@ -1,4 +1,4 @@
-using NotificationService.DAL.DI;
+using NotificationService.BLL.DI;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -6,7 +6,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-builder.Services.RegisterRepositories(builder.Configuration);
+builder.Services.RegisterServices(builder.Configuration);
 
 var app = builder.Build();
 

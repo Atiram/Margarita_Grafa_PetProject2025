@@ -1,7 +1,7 @@
 ﻿using NotificationService.DAL.Entities;
 
-namespace NotificationService.DAL.Repositories.Interfaces;
-public interface IEventRepository
+namespace NotificationService.BLL.Services.Interfaces;
+public interface IEventService
 {
     Task<EventEntity?> GetByIdAsync(Guid id);
     Task<List<EventEntity>?> GetEventsAsync();
