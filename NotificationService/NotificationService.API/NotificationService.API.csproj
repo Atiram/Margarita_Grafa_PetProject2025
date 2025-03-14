@@ -11,7 +11,11 @@
   </ItemGroup>
 
   <ItemGroup>    
-    <ProjectReference Include="..\NotificationService.DAL\NotificationService.DAL.csproj" />
+    <ProjectReference Include="..\NotificationService.BLL\NotificationService.BLL.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="NewFolder\" />
   </ItemGroup>
 
 </Project>

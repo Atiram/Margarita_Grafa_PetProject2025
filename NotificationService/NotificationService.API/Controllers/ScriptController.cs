@@ -4,7 +4,7 @@ using NotificationService.DAL.DBManager;
 namespace NotificationService.API.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-public class ScritpController(IDbManager dbManager) : ControllerBase
+public class ScriptController(IDbManager dbManager) : ControllerBase
 {
     [HttpPost]
     public async Task Post()

@@ -1,40 +1,40 @@
 using Microsoft.AspNetCore.Mvc;
+using NotificationService.BLL.Services.Interfaces;
 using NotificationService.DAL.Entities;
-using NotificationService.DAL.Repositories.Interfaces;
 
 namespace NotificationService.API.Controllers;
 [ApiController]
 [Route("[controller]")]
-public class EventController(IEventRepository eventRepository) : ControllerBase
+public class EventController(IEventService eventService) : ControllerBase
 {
     [HttpGet("{id}")]
     public async Task<EventEntity> GetEventById(Guid id)
     {
-        return await eventRepository.GetByIdAsync(id);
+        return await eventService.GetByIdAsync(id);
     }
 
     [HttpGet]
-    public async Task<IEnumerable<EventEntity>> GetAll()
+    public async Task<IEnumerable<EventEntity>?> GetAll()
     {
-        return await eventRepository.GetEventsAsync();
+        return await eventService.GetEventsAsync();
     }
 
     [HttpPost]
     public async Task<EventEntity> Post(EventEntity eventEntity)
     {
-        await eventRepository.CreateAsync(eventEntity);
+        await eventService.CreateAsync(eventEntity);
         return eventEntity;
     }
 
     [HttpPut]
-    public async Task Put(EventEntity eventEntity)
+    public async Task<EventEntity?> Put(EventEntity eventEntity)
     {
-        await eventRepository.UpdateAsync(eventEntity);
+        return await eventService.UpdateAsync(eventEntity);
     }
 
     [HttpDelete]
     public async Task Delete(Guid id)
     {
-        await eventRepository.DeleteAsync(id);
+        await eventService.DeleteAsync(id);
     }
 }
