@@ -8,10 +8,12 @@
 
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\ClinicService.DAL\ClinicService.DAL.csproj" />
+    <ProjectReference Include="..\NotificationService\NotificationService.DAL\NotificationService.DAL.csproj" />
   </ItemGroup>
 
 </Project>

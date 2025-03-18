@@ -1,35 +1,40 @@
+using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
+using NotificationService.API.ViewModels;
 using NotificationService.BLL.Services.Interfaces;
 using NotificationService.DAL.Entities;
 
 namespace NotificationService.API.Controllers;
 [ApiController]
 [Route("[controller]")]
-public class EventController(IEventService eventService) : ControllerBase
+public class EventController(IEventService eventService, IMapper mapper) : ControllerBase
 {
     [HttpGet("{id}")]
-    public async Task<EventEntity> GetEventById(Guid id)
+    public async Task<EventViewModel> GetEventById([FromRoute] Guid id)
     {
-        return await eventService.GetByIdAsync(id);
+        var eventEntity = await eventService.GetByIdAsync(id);
+        return mapper.Map<EventViewModel>(eventEntity);
     }
 
     [HttpGet]
-    public async Task<IEnumerable<EventEntity>?> GetAll()
+    public async Task<IEnumerable<EventViewModel>> GetAll()
     {
-        return await eventService.GetEventsAsync();
+        var eventEntities = await eventService.GetEventsAsync();
+        return mapper.Map<IEnumerable<EventViewModel>>(eventEntities);
     }
 
     [HttpPost]
-    public async Task<EventEntity> Post(EventEntity eventEntity)
+    public async Task<EventViewModel> Post(EventEntity eventEntity)
     {
-        await eventService.CreateAsync(eventEntity);
-        return eventEntity;
+        var createdEvent = await eventService.CreateAsync(eventEntity);
+        return mapper.Map<EventViewModel>(createdEvent);
     }
 
     [HttpPut]
-    public async Task<EventEntity?> Put(EventEntity eventEntity)
+    public async Task<EventViewModel?> Put(EventEntity eventEntity)
     {
-        return await eventService.UpdateAsync(eventEntity);
+        var updatedEvent = await eventService.UpdateAsync(eventEntity);
+        return mapper.Map<EventViewModel>(updatedEvent);
     }
 
     [HttpDelete]

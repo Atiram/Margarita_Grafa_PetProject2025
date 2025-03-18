@@ -35,9 +35,9 @@ public class EventRepository : IEventRepository
         using (IDbConnection db = new SqlConnection(connectionString))
         {
             var sqlQuery =
-                "INSERT INTO Events (Type, CreatedAt, UpdatedAt) " +
+                "INSERT INTO Events (Type, Metadata, CreatedAt, UpdatedAt) " +
                 "OUTPUT INSERTED.Id " +
-                "VALUES (@Type, @CreatedAt, @UpdatedAt);";
+                "VALUES (@Type, @Metadata, @CreatedAt, @UpdatedAt);";
             eventEntity.Id = await db.QuerySingleAsync<Guid>(sqlQuery, eventEntity);
             return eventEntity;
         }
@@ -47,7 +47,7 @@ public class EventRepository : IEventRepository
     {
         using (IDbConnection db = new SqlConnection(connectionString))
         {
-            var sqlQuery = "UPDATE Events SET Type = @Type WHERE Id = @Id";
+            var sqlQuery = "UPDATE Events SET Type = @Type, Metadata = @Metadata WHERE Id = @Id";
             await db.ExecuteAsync(sqlQuery, eventEntity);
             return eventEntity;
         }
