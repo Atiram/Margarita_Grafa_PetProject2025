@@ -1,57 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations.Schema;
-using System.Text.Json;
-using MediatR;
+﻿using MediatR;
 using NotificationService.BLL.Mediator.Requests;
 using NotificationService.BLL.Models;
 using NotificationService.BLL.Services.Interfaces;
 using NotificationService.DAL.Entities;
+using NotificationService.DAL.Enums;
 
 namespace NotificationService.BLL.Services;
 public class EventService(IMediator mediator, IEmailService emailService) : IEventService
 {
     private const string emailSubject = "Your appointment is created";
     private const string emailMessageTemplate = "Your appointment with ID {0} is created!";
-    private string? _metadata;
 
-    public string? Metadata
-    {
-        get => _metadata;
-        set => _metadata = value;
-    }
-
-    [NotMapped]
-    public Dictionary<string, object> MetadataDict
-    {
-        get => string.IsNullOrEmpty(_metadata)
-            ? new Dictionary<string, object>()
-            : JsonSerializer.Deserialize<Dictionary<string, object>>(_metadata)
-              ?? new Dictionary<string, object>();
-        set => _metadata = JsonSerializer.Serialize(value);
-    }
-
-    public T? GetMetadata<T>(string key)
-    {
-        if (MetadataDict.TryGetValue(key, out var value))
-        {
-            var json = JsonSerializer.Serialize(value);
-            if (!string.IsNullOrEmpty(json))
-            {
-                return JsonSerializer.Deserialize<T>(json, new JsonSerializerOptions
-                {
-                    PropertyNameCaseInsensitive = true
-                });
-            }
-        }
-
-        return default;
-    }
-
-    public void SetMetadata<T>(string key, T value)
-    {
-        var dict = MetadataDict;
-        dict[key] = value;
-        MetadataDict = dict;
-    }
     public async Task<EventEntity?> GetByIdAsync(Guid id)
     {
         var eventDetails = await mediator.Send(new GetEventRequest() { Id = id });
@@ -64,15 +23,23 @@ public class EventService(IMediator mediator, IEmailService emailService) : IEve
         return eventDetails;
     }
 
-    public async Task<EventEntity?> CreateAsync(EventEntity eventEntity)
+    public async Task<EventEntity?> CreateAsync(CreateEventMail request)
     {
+        var eventEntity = new EventEntity
+        {
+            Type = EventType.Email,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
+        eventEntity.SetMetadata(nameof(CreateEventMail.Email), request.Email);
+
         var eventDetails = await mediator.Send(new CreateEventRequest { Event = eventEntity });
 
         if (eventDetails?.Metadata != null)
         {
             var createEventMail = new CreateEventMail
             {
-                Email = eventDetails.Metadata, //.GetMetadata<string>("email"),
+                Email = eventDetails.Metadata,
                 Subject = emailSubject,
                 Message = string.Format(emailMessageTemplate, eventDetails.Id),
                 OrderDate = DateTime.UtcNow
