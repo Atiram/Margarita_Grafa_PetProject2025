@@ -1,5 +1,6 @@
 ﻿using System.Net;
 using System.Net.Mail;
+using Clinic.DOMAIN;
 using Microsoft.Extensions.Configuration;
 using NotificationService.BLL.Models;
 using NotificationService.BLL.Services.Interfaces;

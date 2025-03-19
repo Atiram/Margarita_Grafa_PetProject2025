@@ -1,4 +1,4 @@
-﻿using NotificationService.BLL.Models;
+﻿using Clinic.DOMAIN;
 
 namespace NotificationService.BLL.Services.Interfaces;
 public interface IEmailService

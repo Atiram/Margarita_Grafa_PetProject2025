@@ -1,5 +1,6 @@
 ﻿using System.Text;
 using AutoMapper;
+using Clinic.DOMAIN;
 using ClinicService.BLL.Models;
 using ClinicService.BLL.Models.Requests;
 using ClinicService.BLL.Services.Interfaces;
@@ -7,7 +8,6 @@ using ClinicService.BLL.Utilities.Messages;
 using ClinicService.DAL.Entities;
 using ClinicService.DAL.Repositories.Interfaces;
 using Newtonsoft.Json;
-using NotificationService.BLL.Models;
 
 namespace ClinicService.BLL.Services;
 public class AppointmentService(

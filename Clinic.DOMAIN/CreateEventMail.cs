@@ -1,4 +1,5 @@
-﻿namespace NotificationService.BLL.Models;
+﻿namespace Clinic.DOMAIN;
+
 public class CreateEventMail
 {
     public string Email { get; set; } = null!;

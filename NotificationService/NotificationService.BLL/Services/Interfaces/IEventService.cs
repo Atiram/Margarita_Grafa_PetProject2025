@@ -1,4 +1,4 @@
-﻿using NotificationService.BLL.Models;
+﻿using Clinic.DOMAIN;
 using NotificationService.DAL.Entities;
 
 namespace NotificationService.BLL.Services.Interfaces;
