@@ -1,6 +1,7 @@
 using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using NotificationService.API.ViewModels;
+using NotificationService.BLL.Models;
 using NotificationService.BLL.Services.Interfaces;
 using NotificationService.DAL.Entities;
 
@@ -24,9 +25,9 @@ public class EventController(IEventService eventService, IMapper mapper) : Contr
     }
 
     [HttpPost]
-    public async Task<EventViewModel> Post(EventEntity eventEntity)
+    public async Task<EventViewModel> Post(CreateEventMail request)
     {
-        var createdEvent = await eventService.CreateAsync(eventEntity);
+        var createdEvent = await eventService.CreateAsync(request);
         return mapper.Map<EventViewModel>(createdEvent);
     }
 

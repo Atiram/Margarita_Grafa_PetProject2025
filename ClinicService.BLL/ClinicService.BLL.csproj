@@ -13,6 +13,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\ClinicService.DAL\ClinicService.DAL.csproj" />
+    <ProjectReference Include="..\NotificationService\NotificationService.BLL\NotificationService.BLL.csproj" />
     <ProjectReference Include="..\NotificationService\NotificationService.DAL\NotificationService.DAL.csproj" />
   </ItemGroup>
 
