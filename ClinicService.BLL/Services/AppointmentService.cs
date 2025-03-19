@@ -1,5 +1,4 @@
-﻿using System.Text;
-using AutoMapper;
+﻿using AutoMapper;
 using Clinic.DOMAIN;
 using ClinicService.BLL.Models;
 using ClinicService.BLL.Models.Requests;
@@ -7,18 +6,16 @@ using ClinicService.BLL.Services.Interfaces;
 using ClinicService.BLL.Utilities.Messages;
 using ClinicService.DAL.Entities;
 using ClinicService.DAL.Repositories.Interfaces;
-using Newtonsoft.Json;
 
 namespace ClinicService.BLL.Services;
 public class AppointmentService(
     IAppointmentRepository appointmentRepository,
     IDoctorRepository doctorRepository,
     IPatientRepository patientRepository,
-    IMapper mapper) : IAppointmentService
+    INotificationHttpClient notificationHttpClient,
+    IMapper mapper
+    ) : IAppointmentService
 {
-    private const string Url = "https://localhost:7149/Event";
-    private const string JsonContentType = "application/json";
-
     public async Task<AppointmentModel> GetById(Guid id, CancellationToken cancellationToken)
     {
         var appointmentEntity = await appointmentRepository.GetByIdAsync(id, cancellationToken);
@@ -34,7 +31,6 @@ public class AppointmentService(
         string emailAddress = doctorEntity.Email;
         var patientEntity = await patientRepository.GetByIdAsync((Guid)request.PatientId, cancellationToken);
 
-        HttpClient httpClient = new HttpClient();
         CreateEventMail createEventMail = new CreateEventMail()
         {
             Email = emailAddress,
@@ -42,11 +38,7 @@ public class AppointmentService(
             Message = string.Format(NotificationMessages.emailMessageTemplate, appointmentEntity.Date, appointmentEntity.Slots, patientEntity?.FirstName, patientEntity?.LastName),
             CreatedAt = DateTime.UtcNow
         };
-
-        var content = new StringContent(JsonConvert.SerializeObject(createEventMail), Encoding.UTF8, JsonContentType);
-        HttpResponseMessage response = await httpClient.PostAsync(Url, content, cancellationToken);
-        response.EnsureSuccessStatusCode();
-        string responseBody = await response.Content.ReadAsStringAsync();
+        notificationHttpClient.SendEventRequest(createEventMail, cancellationToken);
 
         return mapper.Map<AppointmentModel>(appointmentEntity);
     }
