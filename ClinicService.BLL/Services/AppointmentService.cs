@@ -3,14 +3,18 @@ using AutoMapper;
 using ClinicService.BLL.Models;
 using ClinicService.BLL.Models.Requests;
 using ClinicService.BLL.Services.Interfaces;
+using ClinicService.BLL.Utilities.Messages;
 using ClinicService.DAL.Entities;
 using ClinicService.DAL.Repositories.Interfaces;
 using Newtonsoft.Json;
-using NotificationService.DAL.Entities;
-using NotificationService.DAL.Enums;
+using NotificationService.BLL.Models;
 
 namespace ClinicService.BLL.Services;
-public class AppointmentService(IAppointmentRepository appointmentRepository, IDoctorRepository doctorRepository, IMapper mapper) : IAppointmentService
+public class AppointmentService(
+    IAppointmentRepository appointmentRepository,
+    IDoctorRepository doctorRepository,
+    IPatientRepository patientRepository,
+    IMapper mapper) : IAppointmentService
 {
     private const string Url = "https://localhost:7149/Event";
     private const string JsonContentType = "application/json";
@@ -27,18 +31,19 @@ public class AppointmentService(IAppointmentRepository appointmentRepository, ID
         var appointmentEntity = await appointmentRepository.CreateAsync(mapper.Map<AppointmentEntity>(request), cancellationToken);
 
         var doctorEntity = await doctorRepository.GetByIdAsync((Guid)request.DoctorId, cancellationToken);
-
         string emailAddress = doctorEntity.Email;
-        var metadata = new EventMetadata();
-        metadata.SetMetadata("email", emailAddress);
+        var patientEntity = await patientRepository.GetByIdAsync((Guid)request.PatientId, cancellationToken);
 
         HttpClient httpClient = new HttpClient();
-        EventEntity eventEntity = new EventEntity()
+        CreateEventMail createEventMail = new CreateEventMail()
         {
-            Type = EventType.Email,
-            Metadata = emailAddress //metadata.Metadata
+            Email = emailAddress,
+            Subject = NotificationMessages.emailSubject,
+            Message = string.Format(NotificationMessages.emailMessageTemplate, appointmentEntity.Date, appointmentEntity.Slots, patientEntity?.FirstName, patientEntity?.LastName),
+            CreatedAt = DateTime.UtcNow
         };
-        var content = new StringContent(JsonConvert.SerializeObject(eventEntity), Encoding.UTF8, JsonContentType);
+
+        var content = new StringContent(JsonConvert.SerializeObject(createEventMail), Encoding.UTF8, JsonContentType);
         HttpResponseMessage response = await httpClient.PostAsync(Url, content, cancellationToken);
         response.EnsureSuccessStatusCode();
         string responseBody = await response.Content.ReadAsStringAsync();

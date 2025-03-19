@@ -37,14 +37,7 @@ public class EventService(IMediator mediator, IEmailService emailService) : IEve
 
         if (eventDetails?.Metadata != null)
         {
-            var createEventMail = new CreateEventMail
-            {
-                Email = eventDetails.Metadata,
-                Subject = emailSubject,
-                Message = string.Format(emailMessageTemplate, eventDetails.Id),
-                OrderDate = DateTime.UtcNow
-            };
-            await emailService.SendEmailAsync(createEventMail);
+            await emailService.SendEmailAsync(request);
         }
         return eventDetails;
     }
@@ -59,6 +52,4 @@ public class EventService(IMediator mediator, IEmailService emailService) : IEve
     {
         await mediator.Send(new DeleteEventRequest() { Id = id });
     }
-
-
 }
