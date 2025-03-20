@@ -10,7 +10,7 @@ namespace ClinicService.BLL.DI;
 public static class ServicesConfiguration
 {
     public static void RegisterBusinessLogicServices(this IServiceCollection services, IConfiguration configuration)
-    {        
+    {
         services.AddAutoMapper(Assembly.GetAssembly(typeof(AppMappingProfile)));
         services.AddScoped<IDoctorService, DoctorService>()
             .AddScoped<IPatientService, PatientService>()

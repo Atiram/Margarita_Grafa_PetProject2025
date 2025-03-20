@@ -10,7 +10,7 @@ public static class ServicesConfiguration
     public static void RegisterServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IEventService, EventService>()
-            .AddScoped<IEmailService, EmailService>(provider => new EmailService(configuration))
+            .AddScoped<IEmailService, EmailService>()
             .AddMediatR(cf => cf.RegisterServicesFromAssembly(typeof(ServicesConfiguration).Assembly))
             .RegisterRepositories(configuration);
     }

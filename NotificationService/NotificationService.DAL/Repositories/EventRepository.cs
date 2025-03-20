@@ -1,16 +1,17 @@
 ﻿using System.Data;
 using Dapper;
 using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 using NotificationService.DAL.Entities;
 using NotificationService.DAL.Repositories.Interfaces;
 
 namespace NotificationService.DAL.Repositories;
 public class EventRepository : IEventRepository
 {
-    string? connectionString = null;
-    public EventRepository(string conn)
+    private string? connectionString;
+    public EventRepository(IConfiguration configuration)
     {
-        connectionString = conn;
+        this.connectionString = configuration.GetConnectionString("DBConnection") ?? throw new ArgumentException("Connection string 'DBConnection' is missing or empty in configuration.");
     }
     public async Task<EventEntity?> GetByIdAsync(Guid id)
     {
