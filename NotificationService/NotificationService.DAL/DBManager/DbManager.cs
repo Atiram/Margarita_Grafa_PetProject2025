@@ -1,4 +1,5 @@
 ﻿using Microsoft.Data.SqlClient;
+using Microsoft.Extensions.Configuration;
 
 namespace NotificationService.DAL.DBManager;
 public class DbManager : IDbManager
@@ -6,11 +7,11 @@ public class DbManager : IDbManager
     private string connectionString;
     private string connectionStringWithoutDB;
     private string scriptPath;
-    public DbManager(string connectionString, string connectionStringWithoutDB, string scriptPath)
+    public DbManager(IConfiguration configuration)
     {
-        this.connectionString = connectionString;
-        this.connectionStringWithoutDB = connectionStringWithoutDB;
-        this.scriptPath = scriptPath;
+        this.connectionString = configuration.GetConnectionString("DBConnection") ?? throw new ArgumentException("Connection string 'DBConnection' is missing or empty in configuration.");
+        this.connectionStringWithoutDB = configuration.GetConnectionString("DBConnectionWithoutDB") ?? throw new ArgumentException("Connection string 'DBConnectionWithoutDB' is missing or empty in configuration.");
+        this.scriptPath = configuration.GetSection("ScriptPath").Value ?? throw new ArgumentException("Script path 'ScriptPath' is missing or empty in configuration.");
     }
 
     public async Task CreateTableAsync()

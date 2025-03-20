@@ -14,8 +14,8 @@ public static class ServicesConfiguration
         services.AddAutoMapper(Assembly.GetAssembly(typeof(AppMappingProfile)));
         services.AddScoped<IDoctorService, DoctorService>()
             .AddScoped<IPatientService, PatientService>()
-            .AddScoped<IAppointmentService, AppointmentService>();
-
-        services.RegisterDataRepositories(configuration);
+            .AddScoped<IAppointmentService, AppointmentService>()
+            .AddScoped<INotificationHttpClient, NotificationHttpClient>()
+            .RegisterDataRepositories(configuration);
     }
 }
