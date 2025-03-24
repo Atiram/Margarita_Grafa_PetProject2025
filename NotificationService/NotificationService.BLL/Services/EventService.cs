@@ -1,4 +1,4 @@
-﻿using Clinic.DOMAIN;
+﻿using Clinic.Domain;
 using MediatR;
 using NotificationService.BLL.Mediator.Requests;
 using NotificationService.BLL.Services.Interfaces;

@@ -1,6 +1,10 @@
 ﻿using System.Text;
 using Clinic.Domain;
-
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+using Newtonsoft.Json;
+using NotificationService.BLL.Services.Interfaces;
 using RabbitMQ.Client;
 using RabbitMQ.Client.Events;
 
@@ -10,8 +14,8 @@ public class RabbitMqListener : BackgroundService
     private IModel _channel;
     private string hostName;
     private string queueName;
-    //private INotificationHttpClient notificationHttpClient;
-    public RabbitMqListener(IConfiguration configuration)
+    readonly IServiceScopeFactory _scopedfactory;
+    public RabbitMqListener(IConfiguration configuration, IServiceScopeFactory scopedfactory)
     {
         this.hostName = configuration.GetSection("RabbitMqSettings:HostName").Value ?? throw new ArgumentException(NotificationMessages.HostSectionMissingErrorMessage);
         this.queueName = configuration.GetSection("RabbitMqSettings:QueueName").Value ?? throw new ArgumentException(NotificationMessages.QueueNameSectionMissingErrorMessage);
@@ -20,7 +24,7 @@ public class RabbitMqListener : BackgroundService
         _connection = factory.CreateConnection();
         _channel = _connection.CreateModel();
         _channel.QueueDeclare(queue: this.queueName, durable: false, exclusive: false, autoDelete: false, arguments: null);
-        // this.notificationHttpClient = notificationHttpClient;
+        _scopedfactory = scopedfactory;
     }
 
     protected override Task ExecuteAsync(CancellationToken stoppingToken)
@@ -28,17 +32,16 @@ public class RabbitMqListener : BackgroundService
         stoppingToken.ThrowIfCancellationRequested();
 
         var consumer = new EventingBasicConsumer(_channel);
-        consumer.Received += (ch, ea) =>
+        consumer.Received += async (ch, ea) =>
         {
             var content = Encoding.UTF8.GetString(ea.Body.ToArray());
 
-            //Debug.WriteLine(string.Format(NotificationMessages.InformationMessage, content));
-
             if (content != null)
             {
-                //CreateEventMail createEventMail = JsonConvert.DeserializeObject<CreateEventMail>(content);
-
-                //notificationHttpClient.SendEventRequest(createEventMail, stoppingToken);
+                using var scope = _scopedfactory.CreateScope();
+                var ser = scope.ServiceProvider.GetRequiredService<IEventService>();
+                CreateEventMail createEventMail = JsonConvert.DeserializeObject<CreateEventMail>(content);
+                await ser.CreateAsync(createEventMail);
             }
             _channel.BasicAck(ea.DeliveryTag, false);
         };

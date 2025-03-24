@@ -21,7 +21,7 @@ public class PatientService(IPatientRepository patientRepository, IMapper mapper
     {
         if (request.FirstName.Length <= 3 || request.LastName.Length <= 3)
         {
-            throw new ValidationException(NotificationMessages.validationExeptionMessage);
+            throw new ValidationException(ClinicNotificationMessages.validationExeptionMessage);
         }
         var patientEntity = await patientRepository.CreateAsync(mapper.Map<PatientEntity>(request), cancellationToken);
 
@@ -32,7 +32,7 @@ public class PatientService(IPatientRepository patientRepository, IMapper mapper
     {
         if (request.FirstName.Length <= 3 || request.LastName.Length <= 3)
         {
-            throw new ValidationException(NotificationMessages.validationExeptionMessage);
+            throw new ValidationException(ClinicNotificationMessages.validationExeptionMessage);
         }
         var patient = await patientRepository.GetByIdAsync(request.Id, cancellationToken);
         var patientEntity = mapper.Map(request, patient);

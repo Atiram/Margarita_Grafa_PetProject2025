@@ -9,10 +9,11 @@
   <ItemGroup>
     <PackageReference Include="AutoMapper" Version="13.0.1" />
     <PackageReference Include="Newtonsoft.Json" Version="13.0.1" />
+    <PackageReference Include="RabbitMQ.Client" Version="6.8.1" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Clinic.DOMAIN\Clinic.Domain.csproj" />
+    <ProjectReference Include="..\Clinic.Domain\Clinic.Domain.csproj" />
     <ProjectReference Include="..\ClinicService.DAL\ClinicService.DAL.csproj" />
   </ItemGroup>
 

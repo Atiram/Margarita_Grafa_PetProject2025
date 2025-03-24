@@ -7,6 +7,8 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddHostedService<RabbitMqListener>();
+//builder.Services.AddSingleton<INotificationHttpClient, NotificationHttpClient>();
+
 
 var app = builder.Build();
 

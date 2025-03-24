@@ -23,10 +23,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationService.BLL", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clinic.Domain", "Clinic.DOMAIN\Clinic.Domain.csproj", "{989928EF-D9D0-418E-92C3-FA4C017FA89C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RabbitMQProducer", "RabbitMQProducer\RabbitMQProducer.csproj", "{6FC78A29-7A3F-479F-86AD-C4583A073067}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RabbitMQConsumer", "RabbitMQConsumer\RabbitMQConsumer.csproj", "{281673A6-25C3-41AD-ADEE-B063679BD333}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -65,14 +61,6 @@ Global
 		{989928EF-D9D0-418E-92C3-FA4C017FA89C}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{989928EF-D9D0-418E-92C3-FA4C017FA89C}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{989928EF-D9D0-418E-92C3-FA4C017FA89C}.Release|Any CPU.Build.0 = Release|Any CPU
-		{6FC78A29-7A3F-479F-86AD-C4583A073067}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{6FC78A29-7A3F-479F-86AD-C4583A073067}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{6FC78A29-7A3F-479F-86AD-C4583A073067}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{6FC78A29-7A3F-479F-86AD-C4583A073067}.Release|Any CPU.Build.0 = Release|Any CPU
-		{281673A6-25C3-41AD-ADEE-B063679BD333}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{281673A6-25C3-41AD-ADEE-B063679BD333}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{281673A6-25C3-41AD-ADEE-B063679BD333}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{281673A6-25C3-41AD-ADEE-B063679BD333}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

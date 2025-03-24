@@ -15,7 +15,7 @@ public class ValidationMiddlewareTest
         var context = new DefaultHttpContext();
         var nextMock = new Mock<RequestDelegate>();
         var exceptionMiddleware = new ExceptionMiddleware(nextMock.Object);
-        var validationException = new ValidationException(NotificationMessages.validationExeptionMessage);
+        var validationException = new ValidationException(ClinicNotificationMessages.validationExeptionMessage);
 
         nextMock.Setup(next => next(context)).ThrowsAsync(validationException);
 

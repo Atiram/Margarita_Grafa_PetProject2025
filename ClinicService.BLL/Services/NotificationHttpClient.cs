@@ -1,5 +1,5 @@
 ﻿using System.Text;
-using Clinic.DOMAIN;
+using Clinic.Domain;
 using ClinicService.BLL.Services.Interfaces;
 using Microsoft.Extensions.Configuration;
 using Newtonsoft.Json;

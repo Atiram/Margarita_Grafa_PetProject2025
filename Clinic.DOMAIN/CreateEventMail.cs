@@ -1,4 +1,4 @@
-﻿namespace Clinic.DOMAIN;
+﻿namespace Clinic.Domain;
 
 public class CreateEventMail
 {

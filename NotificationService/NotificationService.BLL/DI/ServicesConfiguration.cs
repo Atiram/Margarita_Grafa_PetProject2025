@@ -11,6 +11,7 @@ public static class ServicesConfiguration
     {
         services.AddScoped<IEventService, EventService>()
             .AddScoped<IEmailService, EmailService>()
+            .AddHostedService<RabbitMqListener>()
             .AddMediatR(cf => cf.RegisterServicesFromAssembly(typeof(ServicesConfiguration).Assembly))
             .RegisterRepositories(configuration);
     }
