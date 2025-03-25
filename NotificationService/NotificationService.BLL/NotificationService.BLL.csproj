@@ -14,7 +14,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Clinic.Domain\Clinic.Domain.csproj" />
     <ProjectReference Include="..\NotificationService.DAL\NotificationService.DAL.csproj" />
   </ItemGroup>
 

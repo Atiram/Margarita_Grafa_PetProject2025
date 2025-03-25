@@ -21,8 +21,6 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationService.DAL", "
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NotificationService.BLL", "NotificationService\NotificationService.BLL\NotificationService.BLL.csproj", "{D7DB54CD-1295-4FF4-9673-E08DBA606167}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Clinic.Domain", "Clinic.DOMAIN\Clinic.Domain.csproj", "{989928EF-D9D0-418E-92C3-FA4C017FA89C}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -57,10 +55,6 @@ Global
 		{D7DB54CD-1295-4FF4-9673-E08DBA606167}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D7DB54CD-1295-4FF4-9673-E08DBA606167}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D7DB54CD-1295-4FF4-9673-E08DBA606167}.Release|Any CPU.Build.0 = Release|Any CPU
-		{989928EF-D9D0-418E-92C3-FA4C017FA89C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{989928EF-D9D0-418E-92C3-FA4C017FA89C}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{989928EF-D9D0-418E-92C3-FA4C017FA89C}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{989928EF-D9D0-418E-92C3-FA4C017FA89C}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
