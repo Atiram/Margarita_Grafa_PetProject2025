@@ -1,5 +1,5 @@
 using AutoMapper;
-using Clinic.DOMAIN;
+using Clinic.Domain;
 using Microsoft.AspNetCore.Mvc;
 using NotificationService.API.ViewModels;
 using NotificationService.BLL.Services.Interfaces;

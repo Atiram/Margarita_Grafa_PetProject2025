@@ -1,4 +1,4 @@
-﻿using Clinic.DOMAIN;
+﻿using Clinic.Domain;
 
 namespace ClinicService.BLL.Services.Interfaces;
 public interface INotificationHttpClient

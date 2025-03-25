@@ -1,7 +1,8 @@
 ﻿using AutoMapper;
-using Clinic.DOMAIN;
+using Clinic.Domain;
 using ClinicService.BLL.Models;
 using ClinicService.BLL.Models.Requests;
+using ClinicService.BLL.RabbitMqProducer;
 using ClinicService.BLL.Services.Interfaces;
 using ClinicService.BLL.Utilities.Messages;
 using ClinicService.DAL.Entities;
@@ -13,7 +14,8 @@ public class AppointmentService(
     IDoctorRepository doctorRepository,
     IPatientRepository patientRepository,
     INotificationHttpClient notificationHttpClient,
-    IMapper mapper
+    IMapper mapper,
+    IRabbitMqService rabbitMqService
     ) : IAppointmentService
 {
     public async Task<AppointmentModel> GetById(Guid id, CancellationToken cancellationToken)
@@ -34,12 +36,12 @@ public class AppointmentService(
         CreateEventMail createEventMail = new CreateEventMail()
         {
             Email = emailAddress,
-            Subject = NotificationMessages.emailSubject,
-            Message = string.Format(NotificationMessages.emailMessageTemplate, appointmentEntity.Date, appointmentEntity.Slots, patientEntity?.FirstName, patientEntity?.LastName),
+            Subject = ClinicNotificationMessages.emailSubject,
+            Message = string.Format(ClinicNotificationMessages.emailMessageTemplate, appointmentEntity.Date, appointmentEntity.Slots, patientEntity?.FirstName, patientEntity?.LastName),
             CreatedAt = DateTime.UtcNow
         };
-        notificationHttpClient.SendEventRequest(createEventMail, cancellationToken);
-
+        rabbitMqService.SendMessage(createEventMail);
+        
         return mapper.Map<AppointmentModel>(appointmentEntity);
     }
 

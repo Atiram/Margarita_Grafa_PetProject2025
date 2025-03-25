@@ -1,8 +1,8 @@
 ﻿namespace ClinicService.BLL.Utilities.Messages;
-public static class NotificationMessages
+public static class ClinicNotificationMessages
 {
     public const string validationExeptionMessage = "Length must be at least three characters";
     public const string emailSubject = "New appointment is created";
     public const string emailMessageTemplate = "Appointment on {0} at {1}. Patient {2} {3}";
-
+    public const string EventUrlSectionMissingErrorMessage = "Section 'EventUrl' is missing or empty in configuration.";
 }

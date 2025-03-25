@@ -1,4 +1,5 @@
 ﻿using System.Reflection;
+using ClinicService.BLL.RabbitMqProducer;
 using ClinicService.BLL.Services;
 using ClinicService.BLL.Services.Interfaces;
 using ClinicService.BLL.Utilities.Mapping;
@@ -16,6 +17,7 @@ public static class ServicesConfiguration
             .AddScoped<IPatientService, PatientService>()
             .AddScoped<IAppointmentService, AppointmentService>()
             .AddScoped<INotificationHttpClient, NotificationHttpClient>()
+            .AddScoped<IRabbitMqService, RabbitMqService>()
             .RegisterDataRepositories(configuration);
     }
 }

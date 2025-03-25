@@ -27,7 +27,7 @@ public class DoctorService(IDoctorRepository doctorRepository, IMapper mapper) :
     {
         if (request.FirstName.Length <= 3 || request.LastName.Length <= 3)
         {
-            throw new ValidationException(NotificationMessages.validationExeptionMessage);
+            throw new ValidationException(ClinicNotificationMessages.validationExeptionMessage);
         }
         var doctorEntity = await doctorRepository.CreateAsync(mapper.Map<DoctorEntity>(request), cancellationToken);
         return mapper.Map<DoctorModel>(doctorEntity);
@@ -37,7 +37,7 @@ public class DoctorService(IDoctorRepository doctorRepository, IMapper mapper) :
     {
         if (request.FirstName.Length <= 3 || request.LastName.Length <= 3)
         {
-            throw new ValidationException(NotificationMessages.validationExeptionMessage);
+            throw new ValidationException(ClinicNotificationMessages.validationExeptionMessage);
         }
         var doctor = await doctorRepository.GetByIdAsync(request.Id, cancellationToken);
         var doctorEntity = mapper.Map(request, doctor);
