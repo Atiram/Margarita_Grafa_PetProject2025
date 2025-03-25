@@ -1,7 +1,7 @@
 ﻿using System.Text;
 using System.Text.Json;
+using Clinic.Domain;
 using ClinicService.BLL.RabbitMqProducer;
-using ClinicService.BLL.Utilities.Messages;
 using Microsoft.Extensions.Configuration;
 using RabbitMQ.Client;
 
@@ -12,8 +12,8 @@ public class RabbitMqService : IRabbitMqService
 
     public RabbitMqService(IConfiguration configuration)
     {
-        this.hostName = configuration.GetSection("RabbitMqSettings:HostName").Value ?? throw new ArgumentException(ClinicNotificationMessages.HostSectionMissingErrorMessage);
-        this.queueName = configuration.GetSection("RabbitMqSettings:QueueName").Value ?? throw new ArgumentException(ClinicNotificationMessages.QueueNameSectionMissingErrorMessage);
+        this.hostName = configuration.GetSection("RabbitMqSettings:HostName").Value ?? throw new ArgumentException(NotificationMessages.HostSectionMissingErrorMessage);
+        this.queueName = configuration.GetSection("RabbitMqSettings:QueueName").Value ?? throw new ArgumentException(NotificationMessages.QueueNameSectionMissingErrorMessage);
     }
     public void SendMessage(object obj)
     {
