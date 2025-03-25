@@ -41,8 +41,7 @@ public class AppointmentService(
             CreatedAt = DateTime.UtcNow
         };
         rabbitMqService.SendMessage(createEventMail);
-        //notificationHttpClient.SendEventRequest(createEventMail, cancellationToken);
-
+        
         return mapper.Map<AppointmentModel>(appointmentEntity);
     }
 

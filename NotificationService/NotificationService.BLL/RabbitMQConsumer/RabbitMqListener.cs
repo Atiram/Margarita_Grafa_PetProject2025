@@ -39,9 +39,9 @@ public class RabbitMqListener : BackgroundService
             if (content != null)
             {
                 using var scope = _scopedfactory.CreateScope();
-                var ser = scope.ServiceProvider.GetRequiredService<IEventService>();
+                var eventService = scope.ServiceProvider.GetRequiredService<IEventService>();
                 CreateEventMail createEventMail = JsonConvert.DeserializeObject<CreateEventMail>(content);
-                await ser.CreateAsync(createEventMail);
+                await eventService.CreateAsync(createEventMail);
             }
             _channel.BasicAck(ea.DeliveryTag, false);
         };
