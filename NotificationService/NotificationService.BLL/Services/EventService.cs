@@ -1,10 +1,12 @@
-﻿using MediatR;
+﻿using Clinic.DOMAIN;
+using MediatR;
 using NotificationService.BLL.Mediator.Requests;
 using NotificationService.BLL.Services.Interfaces;
 using NotificationService.DAL.Entities;
+using NotificationService.DAL.Enums;
 
 namespace NotificationService.BLL.Services;
-public class EventService(IMediator mediator) : IEventService
+public class EventService(IMediator mediator, IEmailService emailService) : IEventService
 {
     public async Task<EventEntity?> GetByIdAsync(Guid id)
     {
@@ -18,9 +20,22 @@ public class EventService(IMediator mediator) : IEventService
         return eventDetails;
     }
 
-    public async Task<EventEntity?> CreateAsync(EventEntity eventEntity)
+    public async Task<EventEntity?> CreateAsync(CreateEventMail request)
     {
-        var eventDetails = await mediator.Send(new CreateEventRequest() { Event = eventEntity });
+        var eventEntity = new EventEntity
+        {
+            Type = EventType.Email,
+            CreatedAt = DateTime.UtcNow,
+            UpdatedAt = DateTime.UtcNow
+        };
+        eventEntity.SetMetadata(nameof(CreateEventMail.Email), request.Email);
+
+        var eventDetails = await mediator.Send(new CreateEventRequest { Event = eventEntity });
+
+        if (eventDetails?.Metadata != null)
+        {
+            await emailService.SendEmailAsync(request);
+        }
         return eventDetails;
     }
 
