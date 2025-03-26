@@ -1,4 +1,5 @@
-using AuthenticationService.API.Models;
+using AuthenticationService.BLL.DI;
+using AuthenticationService.BLL.Models;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -63,7 +64,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 builder.Services.AddAuthorization();
-
+builder.Services.RegisterBusinessLogicServices();
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

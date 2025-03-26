@@ -1,22 +1,23 @@
-﻿using System.IdentityModel.Tokens.Jwt;
+﻿using System.ComponentModel.DataAnnotations;
+using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using AuthenticationService.BLL.Models;
+using AuthenticationService.BLL.Services.Interfaces;
 using AuthenticationService.DAL.Entities;
+using AuthenticationService.DAL.Repositories.Interfaces;
+using Clinic.Domain;
 using Microsoft.IdentityModel.Tokens;
 
 namespace AuthenticationService.BLL.Services;
-public class UserService
+public class UserService(IUserRepository userRepository) : IUserService
 {
-    private List<UserEntity> people = new List<UserEntity>
-    {
-        new UserEntity { Username="tom", Password="12345", Role = "admin" },
-        new UserEntity { Username="bob", Password="12345", Role = "user" }
-    };
-    public void Get(LoginModel model)
+    public UserModel Get(LoginModel model)
     {
         var identity = GetIdentity(model.Username, model.Password);
-
-
+        if (identity == null)
+        {
+            throw new ValidationException(NotificationMessages.InvalidAuthErrorMessage);
+        }
         var now = DateTime.UtcNow;
         var jwt = new JwtSecurityToken(
             issuer: AuthOptions.ISSUER,
@@ -30,17 +31,16 @@ public class UserService
 
         var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
 
-        var response = new
+        return new UserModel()
         {
-            access_token = encodedJwt,
-            username = identity.Name
+            Username = identity.Name,
+            Token = encodedJwt,
         };
-
-
     }
 
     private ClaimsIdentity? GetIdentity(string username, string password)
     {
+        var people = userRepository.GetUser();
         UserEntity? person = people.FirstOrDefault(x => x.Username == username && x.Password == password);
         if (person != null)
         {
@@ -54,16 +54,5 @@ public class UserService
                 ClaimsIdentity.DefaultRoleClaimType);
         }
         return null;
-    }
-
-    public class TokenResponse
-    {
-        public string Access_token { get; set; } = "";
-        public string Username { get; set; } = "";
-    }
-
-    public class ErrorResponse
-    {
-        public string ErrorText { get; set; } = "";
     }
 }
