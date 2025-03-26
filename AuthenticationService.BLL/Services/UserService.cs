@@ -11,6 +11,80 @@ using Microsoft.IdentityModel.Tokens;
 namespace AuthenticationService.BLL.Services;
 public class UserService(IUserRepository userRepository) : IUserService
 {
+    public async Task<UserEntity> GetUserByIdAsync(string id)
+    {
+        try
+        {
+            return await userRepository.GetByIdAsync(id);
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($"Error getting user by Id: {id}", ex);
+        }
+    }
+
+    public async Task<List<UserEntity>> GetAllUsersAsync()
+    {
+        try
+        {
+            return await userRepository.GetAllAsync();
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException("Error getting all users.");
+        }
+    }
+
+    public async Task<UserEntity> CreateUserAsync(UserEntity user)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(user.Username) || string.IsNullOrEmpty(user.Password))
+            {
+                throw new ArgumentException("Username and Password are required.");
+            }
+            //var hashedPassword = BCrypt.Net.BCrypt.HashPassword(user.Password);
+            //user.Password = hashedPassword;
+
+            return await userRepository.CreateAsync(user);
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($"Error creating user: {user.Username}", ex);
+        }
+    }
+
+    public async Task<bool> UpdateUserAsync(string id, UserEntity user)
+    {
+        try
+        {
+            if (string.IsNullOrEmpty(user.Username))
+            {
+                throw new ArgumentException("Username is required for update.");
+            }
+
+            return await userRepository.UpdateAsync(id, user);
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($"Error updating user with Id: {id}", ex);
+        }
+    }
+
+    public async Task<bool> DeleteUserAsync(string id)
+    {
+        try
+        {
+            return await userRepository.DeleteAsync(id);
+        }
+        catch (Exception ex)
+        {
+            throw new InvalidOperationException($"Error deleting user with Id: {id}", ex);
+        }
+    }
+
+
+
     public UserModel Get(LoginModel model)
     {
         var identity = GetIdentity(model.Username, model.Password);
@@ -30,7 +104,7 @@ public class UserService(IUserRepository userRepository) : IUserService
                 SecurityAlgorithms.HmacSha256));
 
         var encodedJwt = new JwtSecurityTokenHandler().WriteToken(jwt);
-
+        //var t = userRepository.GetAllAsync();
         return new UserModel()
         {
             Username = identity.Name,
@@ -41,7 +115,8 @@ public class UserService(IUserRepository userRepository) : IUserService
     private ClaimsIdentity? GetIdentity(string username, string password)
     {
         var people = userRepository.GetUser();
-        UserEntity? person = people.FirstOrDefault(x => x.Username == username && x.Password == password);
+        var c = people.Result;
+        UserEntity? person = c.FirstOrDefault(x => x.Username == username && x.Password == password);
         if (person != null)
         {
             var claims = new List<Claim>

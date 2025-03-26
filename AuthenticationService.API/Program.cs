@@ -1,5 +1,6 @@
 using AuthenticationService.BLL.DI;
 using AuthenticationService.BLL.Models;
+using AuthenticationService.DAL.MongoDb;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
@@ -47,7 +48,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
             ValidateLifetime = true,
             IssuerSigningKey = AuthOptions.GetSymmetricSecurityKey(),
             ValidateIssuerSigningKey = true,
-            ClockSkew = TimeSpan.Zero // Remove default 5 minute clock skew
+            ClockSkew = TimeSpan.Zero
         };
 
         options.Events = new JwtBearerEvents
@@ -64,7 +65,9 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 builder.Services.AddAuthorization();
-builder.Services.RegisterBusinessLogicServices();
+builder.Services.RegisterBusinessLogicServices(builder.Configuration);
+builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoSettings"));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
