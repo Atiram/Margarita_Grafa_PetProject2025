@@ -40,6 +40,7 @@ public class UserController(IUserService userService) : ControllerBase
         }
     }
 
+    [Authorize]
     [HttpPost]
     public async Task<IActionResult> CreateUser([FromBody] UserRegistrationModel model)
     {
