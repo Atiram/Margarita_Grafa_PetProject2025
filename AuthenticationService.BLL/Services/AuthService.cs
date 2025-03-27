@@ -26,7 +26,7 @@ public class AuthService(IUserRepository userRepository) : IAuthService
         }
         catch (Exception ex)
         {
-            throw new InvalidOperationException($"Error authenticating user: {username}", ex);
+            throw new InvalidOperationException(string.Format(NotificationMessages.AuthUserErrorMessage, username), ex);
         }
     }
 
@@ -36,7 +36,7 @@ public class AuthService(IUserRepository userRepository) : IAuthService
         {
             if (string.IsNullOrEmpty(user.Username) || string.IsNullOrEmpty(user.Password))
             {
-                throw new ArgumentException("Username and Password are required.");
+                throw new ArgumentException(NotificationMessages.NoArgumentAuthErrorMessage);
             }
 
             var hashedPassword = HashPassword(user.Password);
@@ -46,7 +46,7 @@ public class AuthService(IUserRepository userRepository) : IAuthService
         }
         catch (Exception ex)
         {
-            throw new InvalidOperationException($"Error registering user: {user.Username}", ex);
+            throw new InvalidOperationException(string.Format(NotificationMessages.RegUserErrorMessage, user.Username), ex);
         }
     }
 
@@ -74,9 +74,8 @@ public class AuthService(IUserRepository userRepository) : IAuthService
 
     private ClaimsIdentity? GetIdentity(string username, string password)
     {
-        var people = userRepository.GetAllAsync();
-        var c = people.Result;
-        UserEntity? person = c.FirstOrDefault(x => x.Username == username && x.Password == password);
+        var people = userRepository.GetAllAsync().Result;
+        UserEntity? person = people.FirstOrDefault(x => x.Username == username && x.Password == password);
         if (person != null)
         {
             var claims = new List<Claim>

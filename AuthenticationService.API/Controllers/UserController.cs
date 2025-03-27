@@ -1,6 +1,7 @@
 ﻿using AuthenticationService.API.ViewModels;
 using AuthenticationService.BLL.Services.Interfaces;
 using AuthenticationService.DAL.Entities;
+using Clinic.Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,7 +21,7 @@ public class UserController(IUserService userService) : ControllerBase
         }
         catch (Exception ex)
         {
-            throw new InvalidOperationException($"Error getting user with Id: {id}", ex);
+            throw new InvalidOperationException(string.Format(NotificationMessages.GettingUserErrorMessage, id), ex);
         }
     }
 
@@ -35,7 +36,7 @@ public class UserController(IUserService userService) : ControllerBase
         }
         catch (Exception ex)
         {
-            throw new InvalidOperationException("Error getting all users.", ex);
+            throw new InvalidOperationException(NotificationMessages.GettingAllUserErrorMessage, ex);
         }
     }
 
@@ -61,7 +62,7 @@ public class UserController(IUserService userService) : ControllerBase
         }
         catch (Exception ex)
         {
-            return StatusCode(500, "Internal Server Error");
+            return StatusCode(500, NotificationMessages.InternalServerErrorMessage);
         }
     }
 
@@ -81,13 +82,13 @@ public class UserController(IUserService userService) : ControllerBase
             var updated = await userService.UpdateUserAsync(id, user);
             if (!updated)
             {
-                throw new InvalidOperationException($"Error updating user with Id: {id}");
+                throw new InvalidOperationException(string.Format(NotificationMessages.UpdatingUserErrorMessage, id));
             }
             return user;
         }
         catch (Exception ex)
         {
-            throw new InvalidOperationException($"Error updating user with Id: {id}", ex);
+            throw new InvalidOperationException(string.Format(NotificationMessages.UpdatingUserErrorMessage, id));
         }
     }
 
@@ -100,14 +101,14 @@ public class UserController(IUserService userService) : ControllerBase
             var deleted = await userService.DeleteUserAsync(id);
             if (deleted)
             {
-                return Ok("User deleted successfully.");
+                return Ok(NotificationMessages.DeletingUserSuccessMessage);
             }
 
-            return NotFound();
+            return NotFound(string.Format(NotificationMessages.DeletingUserErrorMessage, id));
         }
         catch (Exception ex)
         {
-            return StatusCode(500, "Internal Server Error");
+            return StatusCode(500, NotificationMessages.InternalServerErrorMessage);
         }
     }
 }

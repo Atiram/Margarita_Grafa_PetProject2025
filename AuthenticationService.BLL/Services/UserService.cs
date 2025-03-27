@@ -1,6 +1,7 @@
 ﻿using AuthenticationService.BLL.Services.Interfaces;
 using AuthenticationService.DAL.Entities;
 using AuthenticationService.DAL.Repositories.Interfaces;
+using Clinic.Domain;
 
 namespace AuthenticationService.BLL.Services;
 public class UserService(IUserRepository userRepository) : IUserService
@@ -13,7 +14,7 @@ public class UserService(IUserRepository userRepository) : IUserService
         }
         catch (Exception ex)
         {
-            throw new InvalidOperationException($"Error getting user by Id: {id}", ex);
+            throw new InvalidOperationException(string.Format(NotificationMessages.GettingUserErrorMessage, id), ex);
         }
     }
 
@@ -25,7 +26,7 @@ public class UserService(IUserRepository userRepository) : IUserService
         }
         catch (Exception ex)
         {
-            throw new InvalidOperationException("Error getting all users.", ex);
+            throw new InvalidOperationException(NotificationMessages.GettingAllUserErrorMessage);
         }
     }
 
@@ -35,7 +36,7 @@ public class UserService(IUserRepository userRepository) : IUserService
         {
             if (string.IsNullOrEmpty(user.Username) || string.IsNullOrEmpty(user.Password))
             {
-                throw new ArgumentException("Username and Password are required.");
+                throw new ArgumentException(NotificationMessages.NoArgumentAuthErrorMessage);
             }
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(user.Password);
             user.Password = hashedPassword;
@@ -44,7 +45,7 @@ public class UserService(IUserRepository userRepository) : IUserService
         }
         catch (Exception ex)
         {
-            throw new InvalidOperationException($"Error creating user: {user.Username}", ex);
+            throw new InvalidOperationException(string.Format(NotificationMessages.CreatingUserErrorMessage, user.Username), ex);
         }
     }
 
@@ -52,16 +53,11 @@ public class UserService(IUserRepository userRepository) : IUserService
     {
         try
         {
-            if (string.IsNullOrEmpty(user.Username))
-            {
-                throw new ArgumentException("Username is required for update.");
-            }
-
             return await userRepository.UpdateAsync(id, user);
         }
         catch (Exception ex)
         {
-            throw new InvalidOperationException($"Error updating user with Id: {id}", ex);
+            throw new InvalidOperationException(string.Format(NotificationMessages.UpdatingUserErrorMessage, id), ex);
         }
     }
 
@@ -73,7 +69,7 @@ public class UserService(IUserRepository userRepository) : IUserService
         }
         catch (Exception ex)
         {
-            throw new InvalidOperationException($"Error deleting user with Id: {id}", ex);
+            throw new InvalidOperationException(string.Format(NotificationMessages.DeletingUserErrorMessage, id), ex);
         }
     }
 }

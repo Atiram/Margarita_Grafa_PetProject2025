@@ -1,6 +1,7 @@
 ﻿using AuthenticationService.API.ViewModels;
 using AuthenticationService.BLL.Services.Interfaces;
 using AuthenticationService.DAL.Entities;
+using Clinic.Domain;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
@@ -35,7 +36,7 @@ public class AuthController(IAuthService authService, IUserService userService) 
         }
         catch (Exception ex)
         {
-            return StatusCode(500, "Internal Server Error");
+            return StatusCode(500, NotificationMessages.InternalServerErrorMessage);
         }
     }
 
@@ -57,11 +58,11 @@ public class AuthController(IAuthService authService, IUserService userService) 
                 return Ok(new { Token = token });
             }
 
-            return Unauthorized("Invalid credentials.");
+            return Unauthorized(NotificationMessages.InvalidAuthErrorMessage);
         }
         catch (Exception ex)
         {
-            return StatusCode(500, "Internal Server Error");
+            return StatusCode(500, NotificationMessages.InternalServerErrorMessage);
         }
     }
 }

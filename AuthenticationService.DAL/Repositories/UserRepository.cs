@@ -60,39 +60,4 @@ public class UserRepository : IUserRepository
         var filter = Builders<UserEntity>.Filter.Eq(u => u.Username, username);
         return await _mongoCollection.Find(filter).FirstOrDefaultAsync();
     }
-
-
-
-    //public IMongoCollection<MyDocument> GetCollection<MyDocument>(string collectionName)
-    //{
-    //    IMongoCollection<MyDocument> mongoCollection = _mongoDatabase.GetCollection<MyDocument>(collectionName);
-    //    return mongoCollection;
-    //}
-    //public async Task<List<UserEntity>> GetUser()
-    //{
-    //    //List<UserEntity> people = new List<UserEntity> {
-    //    //new UserEntity { Username="tom", Password="12345", Role = "admin" },
-    //    //new UserEntity { Username="bob", Password="12345", Role = "user" }
-    //    //};
-
-    //    var collection = _mongoDatabase.GetCollection<UserEntity>(_mongoSettings.CollectionName);
-    //    var filter = Builders<UserEntity>.Filter.Eq("docName", "tom");
-    //    var documents = collection.Find(filter).ToList();
-
-    //    var people = await _mongoCollection.Find(Builders<UserEntity>.Filter.Empty).ToListAsync();
-
-    //    return people;
-    //}
-
-    //public UserEntity Create()
-    //{
-    //    var document = new UserEntity
-    //    {
-    //        Username = "john",
-    //        Password = "12345",
-    //        Role = "admin"
-    //    };
-    //    _mongoCollection.InsertOne(document);
-    //    return document;
-    //}
 }
