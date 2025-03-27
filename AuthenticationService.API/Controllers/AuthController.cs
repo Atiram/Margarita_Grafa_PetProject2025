@@ -1,39 +1,67 @@
-﻿using System.Security.Claims;
-using AuthenticationService.BLL.Models;
+﻿using AuthenticationService.API.ViewModels;
 using AuthenticationService.BLL.Services.Interfaces;
+using AuthenticationService.DAL.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace AuthenticationService.API.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-public class AuthController(IUserService userService) : ControllerBase
+public class AuthController(IAuthService authService, IUserService userService) : ControllerBase
 {
-    [AllowAnonymous]
-    [HttpPost("token")]
-    [Consumes("application/x-www-form-urlencoded")]
-    public IActionResult Token([FromForm] LoginModel model)
+    [HttpPost("register")]
+    public async Task<IActionResult> Register([FromBody] UserRegistrationModel model)
     {
-        UserModel user = userService.Get(model);
-        if (user == null)
+        try
         {
-            return BadRequest(new { errorText = "Invalid username or password." });
-        }
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
 
-        return Ok(user);
+            var user = new UserEntity
+            {
+                Username = model.Username,
+                Password = model.Password,
+                Role = model.Role
+            };
+
+            var registeredUser = await authService.RegisterAsync(user);
+            return Ok(registeredUser);
+        }
+        catch (ArgumentException ex)
+        {
+            return BadRequest(ex.Message);
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, "Internal Server Error");
+        }
     }
 
-    [Authorize]
-    [HttpGet("check")]
-    [ProducesResponseType(typeof(object), StatusCodes.Status200OK)]
-    public IActionResult Test()
+    [AllowAnonymous]
+    [HttpPost("login")]
+    public async Task<IActionResult> Login([FromBody] UserLoginModel model)
     {
-        var identity = User.Identity;
-        return Ok(new
+        try
         {
-            message = "Authentication successful!",
-            username = identity?.Name,
-            role = User.Claims.FirstOrDefault(c => c.Type == ClaimsIdentity.DefaultRoleClaimType)?.Value
-        });
+            if (!ModelState.IsValid)
+            {
+                return BadRequest(ModelState);
+            }
+
+            var token = await authService.AuthenticateAsync(model.Username, model.Password);
+
+            if (token != null)
+            {
+                return Ok(new { Token = token });
+            }
+
+            return Unauthorized("Invalid credentials.");
+        }
+        catch (Exception ex)
+        {
+            return StatusCode(500, "Internal Server Error");
+        }
     }
 }

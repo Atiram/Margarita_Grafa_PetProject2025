@@ -10,6 +10,7 @@ public static class ServicesConfiguration
     public static void RegisterBusinessLogicServices(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddScoped<IUserService, UserService>()
+                .AddScoped<IAuthService, AuthService>()
                 .RegisterDataRepositories(configuration);
     }
 }

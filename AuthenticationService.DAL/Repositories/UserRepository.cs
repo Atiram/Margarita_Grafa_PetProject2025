@@ -20,12 +20,6 @@ public class UserRepository : IUserRepository
         _mongoCollection = _mongoDatabase.GetCollection<UserEntity>(_mongoSettings.CollectionName);
     }
 
-    //public UserRepository(IMongoClient mongoClient, string databaseName, string collectionName) 
-    //{
-    //    var database = mongoClient.GetDatabase(databaseName);
-    //    _collection = database.GetCollection<UserEntity>(collectionName);
-    //}
-
     public async Task<UserEntity> GetByIdAsync(string id)
     {
         var filter = Builders<UserEntity>.Filter.Eq(u => u.Id, id);
@@ -46,7 +40,11 @@ public class UserRepository : IUserRepository
     public async Task<bool> UpdateAsync(string id, UserEntity user)
     {
         var filter = Builders<UserEntity>.Filter.Eq(u => u.Id, id);
-        var result = await _mongoCollection.ReplaceOneAsync(filter, user);
+        var update = Builders<UserEntity>.Update
+            .Set(u => u.Username, user.Username)
+            .Set(u => u.Role, user.Role);
+
+        var result = await _mongoCollection.UpdateOneAsync(filter, update);
         return result.ModifiedCount > 0;
     }
 
@@ -65,36 +63,36 @@ public class UserRepository : IUserRepository
 
 
 
-    public IMongoCollection<MyDocument> GetCollection<MyDocument>(string collectionName)
-    {
-        IMongoCollection<MyDocument> mongoCollection = _mongoDatabase.GetCollection<MyDocument>(collectionName);
-        return mongoCollection;
-    }
-    public async Task<List<UserEntity>> GetUser()
-    {
-        //List<UserEntity> people = new List<UserEntity> {
-        //new UserEntity { Username="tom", Password="12345", Role = "admin" },
-        //new UserEntity { Username="bob", Password="12345", Role = "user" }
-        //};
+    //public IMongoCollection<MyDocument> GetCollection<MyDocument>(string collectionName)
+    //{
+    //    IMongoCollection<MyDocument> mongoCollection = _mongoDatabase.GetCollection<MyDocument>(collectionName);
+    //    return mongoCollection;
+    //}
+    //public async Task<List<UserEntity>> GetUser()
+    //{
+    //    //List<UserEntity> people = new List<UserEntity> {
+    //    //new UserEntity { Username="tom", Password="12345", Role = "admin" },
+    //    //new UserEntity { Username="bob", Password="12345", Role = "user" }
+    //    //};
 
-        var collection = _mongoDatabase.GetCollection<UserEntity>(_mongoSettings.CollectionName);
-        var filter = Builders<UserEntity>.Filter.Eq("docName", "tom");
-        var documents = collection.Find(filter).ToList();
+    //    var collection = _mongoDatabase.GetCollection<UserEntity>(_mongoSettings.CollectionName);
+    //    var filter = Builders<UserEntity>.Filter.Eq("docName", "tom");
+    //    var documents = collection.Find(filter).ToList();
 
-        var people = await _mongoCollection.Find(Builders<UserEntity>.Filter.Empty).ToListAsync();
+    //    var people = await _mongoCollection.Find(Builders<UserEntity>.Filter.Empty).ToListAsync();
 
-        return people;
-    }
+    //    return people;
+    //}
 
-    public UserEntity Create()
-    {
-        var document = new UserEntity
-        {
-            Username = "john",
-            Password = "12345",
-            Role = "admin"
-        };
-        _mongoCollection.InsertOne(document);
-        return document;
-    }
+    //public UserEntity Create()
+    //{
+    //    var document = new UserEntity
+    //    {
+    //        Username = "john",
+    //        Password = "12345",
+    //        Role = "admin"
+    //    };
+    //    _mongoCollection.InsertOne(document);
+    //    return document;
+    //}
 }

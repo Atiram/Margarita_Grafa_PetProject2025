@@ -3,10 +3,6 @@
 namespace AuthenticationService.DAL.Repositories.Interfaces;
 public interface IUserRepository
 {
-    Task<List<UserEntity>> GetUser();
-    UserEntity Create();
-
-
     Task<UserEntity> GetByIdAsync(string id);
     Task<List<UserEntity>> GetAllAsync();
     Task<UserEntity> CreateAsync(UserEntity user);
