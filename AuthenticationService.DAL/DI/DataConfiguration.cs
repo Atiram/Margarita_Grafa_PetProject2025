@@ -13,8 +13,6 @@ public static class DataConfiguration
         var mongoClient = new MongoClient(connectionString);
 
         services.AddSingleton<IMongoClient>(mongoClient);
-        //var f = configuration.GetSection("MongoDbSettings");
-        //services.Configure<MongoDbSettings>(configuration.GetSection("MongoSettings"));
         services.AddScoped<IUserRepository, UserRepository>();
     }
 }
