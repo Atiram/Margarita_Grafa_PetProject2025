@@ -46,11 +46,6 @@ public class UserController(IUserService userService) : ControllerBase
     {
         try
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var user = new UserEntity
             {
                 Username = model.Username,

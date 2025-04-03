@@ -15,11 +15,6 @@ public class AuthController(IAuthService authService, IUserService userService) 
     {
         try
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var user = new UserEntity
             {
                 Username = model.Username,
@@ -46,11 +41,6 @@ public class AuthController(IAuthService authService, IUserService userService) 
     {
         try
         {
-            if (!ModelState.IsValid)
-            {
-                return BadRequest(ModelState);
-            }
-
             var token = await authService.AuthenticateAsync(model.Username, model.Password);
 
             if (token != null)
