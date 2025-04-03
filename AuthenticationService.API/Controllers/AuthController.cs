@@ -13,46 +13,28 @@ public class AuthController(IAuthService authService, IUserService userService) 
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] UserRegistrationModel model)
     {
-        try
+        var user = new UserEntity
         {
-            var user = new UserEntity
-            {
-                Username = model.Username,
-                Password = model.Password,
-                Role = model.Role
-            };
+            Username = model.Username,
+            Password = model.Password,
+            Role = model.Role
+        };
 
-            var registeredUser = await authService.RegisterAsync(user);
-            return Ok(registeredUser);
-        }
-        catch (ArgumentException ex)
-        {
-            return BadRequest(ex.Message);
-        }
-        catch (Exception ex)
-        {
-            return StatusCode(500, NotificationMessages.InternalServerErrorMessage);
-        }
+        var registeredUser = await authService.RegisterAsync(user);
+        return Ok(registeredUser);
     }
 
     [AllowAnonymous]
     [HttpPost("login")]
     public async Task<IActionResult> Login([FromBody] UserLoginModel model)
     {
-        try
-        {
-            var token = await authService.AuthenticateAsync(model.Username, model.Password);
+        var token = await authService.AuthenticateAsync(model.Username, model.Password);
 
-            if (token != null)
-            {
-                return Ok(new { Token = token });
-            }
-
-            return Unauthorized(NotificationMessages.InvalidAuthErrorMessage);
-        }
-        catch (Exception ex)
+        if (token != null)
         {
-            return StatusCode(500, NotificationMessages.InternalServerErrorMessage);
+            return Ok(new { Token = token });
         }
+
+        return Unauthorized(NotificationMessages.InvalidAuthErrorMessage);
     }
 }
