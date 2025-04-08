@@ -13,5 +13,7 @@ public class AppMappingProfile : Profile
         CreateMap<PatientModel, PatientViewModel>().ReverseMap();
 
         CreateMap<AppointmentModel, AppointmentViewModel>().ReverseMap();
+
+        CreateMap<AppointmentResultModel, AppointmentResultViewModel>().ReverseMap();
     }
 }

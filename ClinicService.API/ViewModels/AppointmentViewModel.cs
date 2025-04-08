@@ -1,4 +1,6 @@
-﻿namespace ClinicService.API.ViewModels;
+﻿using ClinicService.DAL.Entities;
+
+namespace ClinicService.API.ViewModels;
 
 public class AppointmentViewModel : GeneralViewModel
 {
@@ -6,6 +8,8 @@ public class AppointmentViewModel : GeneralViewModel
     public required DoctorViewModel Doctor { get; set; }
     public Guid? PatientId { get; set; }
     public required PatientViewModel Patient { get; set; }
+    public AppointmentResultEntity? AppointmentResult { get; set; }
+
     public required DateOnly Date { get; set; }
     public required TimeOnly Slots { get; set; }
 }

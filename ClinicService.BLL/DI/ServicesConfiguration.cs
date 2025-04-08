@@ -16,6 +16,7 @@ public static class ServicesConfiguration
         services.AddScoped<IDoctorService, DoctorService>()
             .AddScoped<IPatientService, PatientService>()
             .AddScoped<IAppointmentService, AppointmentService>()
+            .AddScoped<IAppointmentResultService, AppointmentResultService>()
             .AddScoped<INotificationHttpClient, NotificationHttpClient>()
             .AddScoped<IRabbitMqService, RabbitMqService>()
             .RegisterDataRepositories(configuration);
