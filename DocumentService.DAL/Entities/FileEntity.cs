@@ -7,9 +7,10 @@ public class FileEntity
 {
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]
-    public string Id { get; set; } = null!;
+    public string Id { get; set; }
     public DocumentType DocumentType { get; set; }
     public string FileName { get; set; }
     public string StorageLocation { get; set; }
+    [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
     public DateTime UploadedDate { get; set; }
 }

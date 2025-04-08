@@ -1,4 +1,5 @@
-﻿using DocumentService.BBL.Models;
+﻿using Clinic.Domain;
+using DocumentService.BBL.Models;
 using DocumentService.BBL.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -33,8 +34,7 @@ public class FileController(IFileService fileService) : ControllerBase
     public async Task<IActionResult> DeleteFile(string id)
     {
         var deleted = await fileService.DeleteAsync(id);
-
-        return NoContent();
+        return deleted ? Ok() : NotFound(string.Format(NotificationMessages.NotFoundErrorMessage, id));
     }
 }
 

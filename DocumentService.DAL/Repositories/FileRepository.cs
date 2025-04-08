@@ -31,10 +31,11 @@ public class FileRepository : IFileRepository
         return await _mongoCollection.Find(Builders<FileEntity>.Filter.Empty).ToListAsync();
     }
 
-    public async Task<FileEntity> CreateAsync(FileEntity documentEntity)
+    public async Task<FileEntity> CreateAsync(FileEntity fileEntity)
     {
-        await _mongoCollection.InsertOneAsync(documentEntity);
-        return documentEntity;
+        fileEntity.UploadedDate = DateTime.UtcNow;
+        await _mongoCollection.InsertOneAsync(fileEntity);
+        return fileEntity;
     }
 
     public async Task<bool> DeleteAsync(string id)
