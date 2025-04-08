@@ -12,7 +12,6 @@ public class FileController(IFileService fileService) : ControllerBase
     public async Task<FileModel> GetFile(string id)
     {
         var file = await fileService.GetByIdAsync(id);
-
         return file;
     }
 
