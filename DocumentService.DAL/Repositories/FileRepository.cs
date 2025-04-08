@@ -5,33 +5,33 @@ using Microsoft.Extensions.Options;
 using MongoDB.Driver;
 
 namespace DocumentService.DAL.Repositories;
-public class DocumentRepository : IDocumentRepository
+public class FileRepository : IFileRepository
 {
     private readonly MongoDbSettings _mongoSettings;
     private readonly IMongoClient _mongoClient;
     private readonly IMongoDatabase _mongoDatabase;
-    private readonly IMongoCollection<DocumentEntity> _mongoCollection;
+    private readonly IMongoCollection<FileEntity> _mongoCollection;
 
-    public DocumentRepository(IOptions<MongoDbSettings> mongoDbSettings, IMongoClient mongoClient)
+    public FileRepository(IOptions<MongoDbSettings> mongoDbSettings, IMongoClient mongoClient)
     {
         _mongoSettings = mongoDbSettings.Value;
         _mongoClient = mongoClient;
         _mongoDatabase = _mongoClient.GetDatabase(_mongoSettings.DatabaseName);
-        _mongoCollection = _mongoDatabase.GetCollection<DocumentEntity>(_mongoSettings.CollectionName);
+        _mongoCollection = _mongoDatabase.GetCollection<FileEntity>(_mongoSettings.CollectionName);
     }
 
-    public async Task<DocumentEntity> GetByIdAsync(string id)
+    public async Task<FileEntity> GetByIdAsync(string id)
     {
-        var filter = Builders<DocumentEntity>.Filter.Eq(u => u.Id, id);
+        var filter = Builders<FileEntity>.Filter.Eq(u => u.Id, id);
         return await _mongoCollection.Find(filter).FirstOrDefaultAsync();
     }
 
-    public async Task<List<DocumentEntity>> GetAllAsync()
+    public async Task<List<FileEntity>> GetAllAsync()
     {
-        return await _mongoCollection.Find(Builders<DocumentEntity>.Filter.Empty).ToListAsync();
+        return await _mongoCollection.Find(Builders<FileEntity>.Filter.Empty).ToListAsync();
     }
 
-    public async Task<DocumentEntity> CreateAsync(DocumentEntity documentEntity)
+    public async Task<FileEntity> CreateAsync(FileEntity documentEntity)
     {
         await _mongoCollection.InsertOneAsync(documentEntity);
         return documentEntity;
@@ -39,7 +39,7 @@ public class DocumentRepository : IDocumentRepository
 
     public async Task<bool> DeleteAsync(string id)
     {
-        var filter = Builders<DocumentEntity>.Filter.Eq(u => u.Id, id);
+        var filter = Builders<FileEntity>.Filter.Eq(u => u.Id, id);
         var result = await _mongoCollection.DeleteOneAsync(filter);
         return result.DeletedCount > 0;
     }

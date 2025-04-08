@@ -1,15 +1,12 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using Azure.Storage.Blobs;
+using Azure.Storage.Blobs.Models;
 
 namespace DocumentService.BBL.Services;
 internal class FileName
 {
     private readonly BlobServiceClient _blobServiceClient;
 
-    public DocumentRepository(BlobServiceClient blobServiceClient)
+    public FileName(BlobServiceClient blobServiceClient)
     {
         _blobServiceClient = blobServiceClient;
     }

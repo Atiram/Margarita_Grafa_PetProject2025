@@ -5,25 +5,25 @@ using DocumentService.DAL.Entities;
 using DocumentService.DAL.Repositories.Interfaces;
 
 namespace DocumentService.BBL.Services;
-public class DocumentService(IDocumentRepository documentRepository, IMapper mapper) : IDocumentService
+public class FileService(IFileRepository documentRepository, IMapper mapper) : IFileService
 {
-    public async Task<DocumentModel> GetByIdAsync(string id)
+    public async Task<FileModel> GetByIdAsync(string id)
     {
         var documentEntity = await documentRepository.GetByIdAsync(id);
-        return mapper.Map<DocumentModel>(documentEntity);
+        return mapper.Map<FileModel>(documentEntity);
     }
 
-    public async Task<List<DocumentModel>> GetAllAsync()
+    public async Task<List<FileModel>> GetAllAsync()
     {
         var documentEntities = await documentRepository.GetAllAsync();
-        return mapper.Map<List<DocumentModel>>(documentEntities);
+        return mapper.Map<List<FileModel>>(documentEntities);
     }
 
-    public async Task<DocumentModel> CreateAsync(DocumentModel documentModel)
+    public async Task<FileModel> CreateAsync(FileModel documentModel)
     {
-        var documentEntity = mapper.Map<DocumentEntity>(documentModel);
+        var documentEntity = mapper.Map<FileEntity>(documentModel);
         var createdDocumentEntity = await documentRepository.CreateAsync(documentEntity);
-        return mapper.Map<DocumentModel>(createdDocumentEntity);
+        return mapper.Map<FileModel>(createdDocumentEntity);
     }
 
     public async Task<bool> DeleteAsync(string id)

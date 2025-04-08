@@ -7,6 +7,6 @@ public class AppMappingProfile : Profile
 {
     public AppMappingProfile()
     {
-        CreateMap<DocumentEntity, DocumentModel>().ReverseMap();
+        CreateMap<FileEntity, FileModel>().ReverseMap();
     }
 }

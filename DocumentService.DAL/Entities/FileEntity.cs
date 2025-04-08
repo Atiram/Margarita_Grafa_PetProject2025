@@ -1,10 +1,9 @@
-﻿using Azure.Storage.Blobs.Models;
-using DocumentService.DAL.Enums;
+﻿using DocumentService.DAL.Enums;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 
 namespace DocumentService.DAL.Entities;
-public class DocumentEntity
+public class FileEntity
 {
     [BsonId]
     [BsonRepresentation(BsonType.ObjectId)]

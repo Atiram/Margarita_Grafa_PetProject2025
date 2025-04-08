@@ -1,7 +1,7 @@
 ﻿using DocumentService.DAL.Enums;
 
 namespace DocumentService.BBL.Models;
-public class DocumentModel
+public class FileModel
 {
     public string Id { get; set; } = null!;
     public DocumentType DocumentType { get; set; }

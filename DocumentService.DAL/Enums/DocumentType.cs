@@ -1,6 +1,6 @@
 ﻿namespace DocumentService.DAL.Enums;
 public enum DocumentType
 {
-    Photo,
-    PdfFile
+    Photo = 0,
+    PdfFile = 1
 }
