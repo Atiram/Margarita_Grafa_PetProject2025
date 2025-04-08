@@ -7,17 +7,12 @@ using MongoDB.Driver;
 namespace DocumentService.DAL.Repositories;
 public class FileRepository : IFileRepository
 {
-    private readonly MongoDbSettings _mongoSettings;
-    private readonly IMongoClient _mongoClient;
-    private readonly IMongoDatabase _mongoDatabase;
     private readonly IMongoCollection<FileEntity> _mongoCollection;
 
     public FileRepository(IOptions<MongoDbSettings> mongoDbSettings, IMongoClient mongoClient)
     {
-        _mongoSettings = mongoDbSettings.Value;
-        _mongoClient = mongoClient;
-        _mongoDatabase = _mongoClient.GetDatabase(_mongoSettings.DatabaseName);
-        _mongoCollection = _mongoDatabase.GetCollection<FileEntity>(_mongoSettings.CollectionName);
+        var mongoDatabase = mongoClient.GetDatabase(mongoDbSettings.Value.DatabaseName);
+        _mongoCollection = mongoDatabase.GetCollection<FileEntity>(mongoDbSettings.Value.CollectionName);
     }
 
     public async Task<FileEntity> GetByIdAsync(string id)
