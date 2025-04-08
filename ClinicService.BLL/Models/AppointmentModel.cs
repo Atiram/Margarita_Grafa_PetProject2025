@@ -9,7 +9,6 @@ public class AppointmentModel : GenericModel
     public Guid? PatientId { get; set; }
     public required PatientModel Patient { get; set; }
     public AppointmentResultEntity? AppointmentResult { get; set; }
-
     public required DateOnly Date { get; set; }
     public required TimeOnly Slots { get; set; }
 }
