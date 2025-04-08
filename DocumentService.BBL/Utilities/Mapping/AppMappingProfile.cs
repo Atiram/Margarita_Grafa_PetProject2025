@@ -1,0 +1,12 @@
+﻿using AutoMapper;
+using DocumentService.BBL.Models;
+using DocumentService.DAL.Entities;
+
+namespace DocumentService.BBL.Utilities.Mapping;
+public class AppMappingProfile : Profile
+{
+    public AppMappingProfile()
+    {
+        CreateMap<FileEntity, FileModel>().ReverseMap();
+    }
+}
