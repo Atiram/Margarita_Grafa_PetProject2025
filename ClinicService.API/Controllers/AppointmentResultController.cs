@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Clinic.Domain;
 using ClinicService.API.ViewModels;
 using ClinicService.BLL.Models.Requests;
 using ClinicService.BLL.Services.Interfaces;
@@ -46,8 +47,9 @@ public class AppointmentResultController(IAppointmentResultService appointmentRe
     }
 
     [HttpDelete]
-    public async Task Delete(Guid id, CancellationToken cancellationToken)
+    public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
-        await appointmentResultService.DeleteAsync(id, cancellationToken);
+        var isDeleted = await appointmentResultService.DeleteAsync(id, cancellationToken);
+        return isDeleted ? Ok() : NotFound(string.Format(NotificationMessages.NotFoundErrorMessage, id));
     }
 }
