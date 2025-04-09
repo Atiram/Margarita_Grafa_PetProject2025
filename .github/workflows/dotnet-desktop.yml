@@ -45,7 +45,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
           EXCLUDE_FROM_COVERAGE: "**/Quickstart/**/*,**/program.cs"
-          EXCLUDE_FROM_ANALYS: "**/Quickstart/**/*"          
+          EXCLUDE_FROM_ANALYS: "**/Quickstart/**/*"
+          MONGO_CONNECTION_STRING: ${{ secrets.MONGO_CONNECTION_STRING }}
         run: |
           .sonar/scanner/dotnet-sonarscanner begin /k:"Atiram_Margarita_Grafa_PetProject2025" /o:"atiram" /d:sonar.token="${{ secrets.SONAR_TOKEN }}" /d:sonar.host.url="https://sonarcloud.io" /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml" -d:sonar.cs.vstest.reportsPaths="**/TestResults/*.trx"
           dotnet build --configuration Debug
