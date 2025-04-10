@@ -1,4 +1,6 @@
-﻿namespace ClinicService.BLL.Models;
+﻿using ClinicService.DAL.Entities;
+
+namespace ClinicService.BLL.Models;
 
 public class AppointmentModel : GenericModel
 {
@@ -6,6 +8,7 @@ public class AppointmentModel : GenericModel
     public required DoctorModel Doctor { get; set; }
     public Guid? PatientId { get; set; }
     public required PatientModel Patient { get; set; }
+    public AppointmentResultEntity? AppointmentResult { get; set; }
     public required DateOnly Date { get; set; }
     public required TimeOnly Slots { get; set; }
 }

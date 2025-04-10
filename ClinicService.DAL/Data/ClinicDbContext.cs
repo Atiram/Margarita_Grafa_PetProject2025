@@ -7,6 +7,7 @@ public class ClinicDbContext : DbContext
     public DbSet<DoctorEntity> Doctors { get; set; }
     public DbSet<PatientEntity> Patients { get; set; }
     public DbSet<AppointmentEntity> Appointments { get; set; }
+    public DbSet<AppointmentResultEntity> AppointmentResults { get; set; }
 
     public ClinicDbContext(DbContextOptions<ClinicDbContext> options) : base(options)
     {
@@ -45,11 +46,21 @@ public class ClinicDbContext : DbContext
             e.Property(b => b.Id).HasMaxLength(50).IsRequired();
         });
 
+        modelBuilder.Entity<AppointmentResultEntity>(e =>
+        {
+            e.Property(b => b.Id).HasMaxLength(50).IsRequired();
+            e.Property(b => b.Complaints).HasMaxLength(500).IsRequired();
+            e.Property(b => b.Conclusion).HasMaxLength(1000).IsRequired();
+            e.Property(b => b.Recommendations).HasMaxLength(1000).IsRequired();
+        });
+
         modelBuilder.Entity<DoctorEntity>()
             .HasKey(b => b.Id);
         modelBuilder.Entity<PatientEntity>()
             .HasKey(b => b.Id);
         modelBuilder.Entity<AppointmentEntity>()
+            .HasKey(b => b.Id);
+        modelBuilder.Entity<AppointmentResultEntity>()
             .HasKey(b => b.Id);
         #endregion
     }

@@ -1,5 +1,8 @@
-﻿namespace ClinicService.DAL.Entities;
-public class AppointmentResultEntity : GenericEntity
+﻿using ClinicService.DAL.Entities;
+
+namespace ClinicService.API.ViewModels;
+
+public class AppointmentResultViewModel : GeneralViewModel
 {
     public required string Complaints { get; set; }
     public required string Conclusion { get; set; }
