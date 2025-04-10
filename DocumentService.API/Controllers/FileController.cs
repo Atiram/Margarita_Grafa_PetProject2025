@@ -22,6 +22,12 @@ public class FileController(IFileService fileService) : ControllerBase
         return files;
     }
 
+    [HttpPost("download")]
+    public async Task DownloadFile(FileModel fileModel)
+    {
+        await fileService.DownloadFileAsync(fileModel);
+    }
+
     [HttpPost]
     public async Task<FileModel> CreateFile(FileModel fileModel)
     {

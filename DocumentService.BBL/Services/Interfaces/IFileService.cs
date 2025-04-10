@@ -7,4 +7,5 @@ public interface IFileService
     Task<List<FileModel>> GetAllAsync();
     Task<FileModel> CreateAsync(FileModel documentModel);
     Task<bool> DeleteAsync(string id);
+    Task DownloadFileAsync(FileModel documentModel);
 }

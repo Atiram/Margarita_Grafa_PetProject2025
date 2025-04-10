@@ -15,4 +15,6 @@ public static class NotificationMessages
     public const string DeletingUserSuccessMessage = "User deleted successfully.";
     public const string InternalServerErrorMessage = "Internal Server Error";
     public const string NotFoundErrorMessage = "Item with id {0} not found";
+    public const string NotDeletedErrorMessage = "File is not deleted";
+    public const string NoBlobNameErrorMessage = "BlobName is required";
 }
