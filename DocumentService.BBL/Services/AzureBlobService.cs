@@ -68,7 +68,7 @@ public class AzureBlobService : IAzureBlobService
     {
         BlobClient blobClient = await GetBlobClientAsync(blobName);
         BlobDownloadResult downloadResult = await blobClient.DownloadContentAsync();
-        await File.WriteAllBytesAsync(downloadFilePath, downloadResult.Content.ToArray());
+        await File.WriteAllBytesAsync(Path.Combine(downloadFilePath, blobName), downloadResult.Content.ToArray());
     }
 }
 

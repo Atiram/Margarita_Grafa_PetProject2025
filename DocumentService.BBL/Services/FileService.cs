@@ -64,6 +64,10 @@ public class FileService(
     public async Task DownloadFileAsync(string id, string downloadFilePath)
     {
         FileModel documentModel = await GetByIdAsync(id);
+        if (documentModel == null)
+        {
+            throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, id));
+        }
         if (string.IsNullOrEmpty(downloadFilePath))
         {
             Process.Start(new ProcessStartInfo
