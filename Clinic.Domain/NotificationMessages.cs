@@ -15,4 +15,9 @@ public static class NotificationMessages
     public const string DeletingUserSuccessMessage = "User deleted successfully.";
     public const string InternalServerErrorMessage = "Internal Server Error";
     public const string NotFoundErrorMessage = "Item with id {0} not found";
+    public const string NotDeletedErrorMessage = "File is not deleted";
+    public const string NoBlobNameErrorMessage = "BlobName is required";
+    public const string NoDownloadFilePathErrorMessage = "DownloadFilePath is required for downloading the file";
+    public const string ConnectionStringMissingErrorMessage = "Section AzureConnectionString is missing or empty in configuration.";
+    public const string ContainerNameMissingErrorMessage = "Section BlobStorageContainerName is missing or empty in configuration.";
 }
