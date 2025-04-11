@@ -9,10 +9,10 @@ public class FileEntity
     [BsonRepresentation(BsonType.ObjectId)]
     public string? Id { get; set; }
     public required DocumentType DocumentType { get; set; }
-    public string? LocalFilePath { get; set; }
-    public string? DownloadFilePath { get; set; }
     public required string BlobName { get; set; }
     public string? StorageLocation { get; set; }
+    public string? ReferenceItemId { get; set; }
+
     [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
     public DateTime UploadedDate { get; set; }
 }

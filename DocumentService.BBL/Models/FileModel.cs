@@ -5,9 +5,8 @@ public class FileModel
 {
     public string? Id { get; set; }
     public DocumentType DocumentType { get; set; }
-    public string? LocalFilePath { get; set; }
-    public string? DownloadFilePath { get; set; }
     public required string BlobName { get; set; }
     public string? StorageLocation { get; set; }
+    public string? ReferenceItemId { get; set; }
     public DateTime UploadedDate { get; set; }
 }

@@ -24,15 +24,15 @@ public class FileController(IFileService fileService) : ControllerBase
     }
 
     [HttpPost("download")]
-    public async Task DownloadFile(FileModel fileModel)
+    public async Task DownloadFile(string id, string? downloadFilePath)
     {
-        await fileService.DownloadFileAsync(fileModel);
+        await fileService.DownloadFileAsync(id, downloadFilePath ?? string.Empty);
     }
 
     [HttpPost]
-    public async Task<FileModel> CreateFile(CreateFileRequest createFileRequest)
+    public async Task<FileModel> CreateFile(CreateFileRequest createFileRequest, string? localFilePath)
     {
-        var createdFile = await fileService.CreateAsync(createFileRequest);
+        var createdFile = await fileService.CreateAsync(createFileRequest, localFilePath ?? string.Empty);
         return createdFile;
     }
 

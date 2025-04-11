@@ -9,14 +9,14 @@ public class AzureBlobService : IAzureBlobService
 {
     private readonly string _connectionString;
     private readonly string _containerName;
-    private const string AzureConnectionStringSection = "AzureBlobStorage";
-    private const string AzureContainerNameSection = "BlobStorageContainerName";
+    private const string AzureConnectionStringSectionName = "AzureBlobStorage";
+    private const string AzureContainerNameSectionName = "BlobStorageContainerName";
 
     public AzureBlobService(IConfiguration configuration)
     {
-        _connectionString = configuration.GetConnectionString(AzureConnectionStringSection) ??
+        _connectionString = configuration.GetConnectionString(AzureConnectionStringSectionName) ??
             throw new InvalidOperationException(NotificationMessages.ConnectionStringMissingErrorMessage);
-        _containerName = configuration.GetSection(AzureContainerNameSection)?.Value ??
+        _containerName = configuration.GetSection(AzureContainerNameSectionName)?.Value ??
             throw new InvalidOperationException(NotificationMessages.ContainerNameMissingErrorMessage);
     }
 

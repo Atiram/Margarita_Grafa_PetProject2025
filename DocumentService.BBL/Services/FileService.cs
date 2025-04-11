@@ -10,7 +10,7 @@ using DocumentService.DAL.Repositories.Interfaces;
 
 namespace DocumentService.BBL.Services;
 public class FileService(
-    IAzureBlobService _blobStorageService,
+    IAzureBlobService blobStorageService,
     IFileRepository documentRepository,
     IMapper mapper) : IFileService
 {
@@ -26,21 +26,21 @@ public class FileService(
         return mapper.Map<List<FileModel>>(documentEntities);
     }
 
-    public async Task<FileModel> CreateAsync(CreateFileRequest createFileRequest)
+    public async Task<FileModel> CreateAsync(CreateFileRequest createFileRequest, string? localFilePath)
     {
         var documentEntity = mapper.Map<FileEntity>(createFileRequest);
         if (string.IsNullOrEmpty(createFileRequest.BlobName))
         {
             throw new ArgumentException(NotificationMessages.NoBlobNameErrorMessage);
         }
-        if (!string.IsNullOrEmpty(createFileRequest.LocalFilePath))
+        if (!string.IsNullOrEmpty(localFilePath))
         {
-            documentEntity.StorageLocation = await _blobStorageService.UploadFileAsync(createFileRequest.LocalFilePath, createFileRequest.BlobName);
+            documentEntity.StorageLocation = await blobStorageService.UploadFileAsync(localFilePath, createFileRequest.BlobName);
         }
         else
         {
             byte[] fileBytes = GenerateInMemoryTextFile();
-            documentEntity.StorageLocation = await _blobStorageService.UploadFileFromMemoryAsync(fileBytes, createFileRequest.BlobName);
+            documentEntity.StorageLocation = await blobStorageService.UploadFileFromMemoryAsync(fileBytes, createFileRequest.BlobName);
         }
         var createdDocumentEntity = await documentRepository.CreateAsync(documentEntity);
         return mapper.Map<FileModel>(createdDocumentEntity);
@@ -53,7 +53,7 @@ public class FileService(
         {
             throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, id));
         }
-        bool isFileDeleted = await _blobStorageService.DeleteBlobAsync(documentEntity.BlobName);
+        bool isFileDeleted = await blobStorageService.DeleteBlobAsync(documentEntity.BlobName);
         if (!isFileDeleted)
         {
             throw new Exception(NotificationMessages.NotDeletedErrorMessage);
@@ -61,9 +61,10 @@ public class FileService(
         return await documentRepository.DeleteAsync(id);
     }
 
-    public async Task DownloadFileAsync(FileModel documentModel)
+    public async Task DownloadFileAsync(string id, string downloadFilePath)
     {
-        if (string.IsNullOrEmpty(documentModel.DownloadFilePath))
+        FileModel documentModel = await GetByIdAsync(id);
+        if (string.IsNullOrEmpty(downloadFilePath))
         {
             Process.Start(new ProcessStartInfo
             {
@@ -73,9 +74,11 @@ public class FileService(
         }
         else if (!string.IsNullOrEmpty(documentModel.BlobName))
         {
-            await _blobStorageService.DownloadFileAsync(documentModel.BlobName, documentModel.DownloadFilePath);
+            await blobStorageService.DownloadFileAsync(documentModel.BlobName, downloadFilePath);
         }
     }
+
+    //this method initates file content in memory, will be changed later
     private byte[] GenerateInMemoryTextFile()
     {
         string fileContent = "Test file for container";
