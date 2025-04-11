@@ -9,6 +9,8 @@ public class AzureBlobService : IAzureBlobService
 {
     private readonly string connectionString;
     private readonly string containerName;
+    private readonly BlobServiceClient blobServiceClient;
+    private readonly BlobContainerClient containerClient;
     private const string AzureConnectionStringSectionName = "AzureBlobStorage";
     private const string AzureContainerNameSectionName = "BlobStorageContainerName";
 
@@ -18,12 +20,12 @@ public class AzureBlobService : IAzureBlobService
             throw new InvalidOperationException(NotificationMessages.ConnectionStringMissingErrorMessage);
         containerName = configuration.GetSection(AzureContainerNameSectionName)?.Value ??
             throw new InvalidOperationException(NotificationMessages.ContainerNameMissingErrorMessage);
+        blobServiceClient = new BlobServiceClient(connectionString);
+        containerClient = blobServiceClient.GetBlobContainerClient(containerName);
     }
 
-    public async Task<BlobClient> GetBlobClientAsync(string blobName)
+    private async Task<BlobClient> GetBlobClientAsync(string blobName)
     {
-        BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
-        BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(containerName);
         await containerClient.CreateIfNotExistsAsync();
         if (blobName == null)
         {
@@ -32,10 +34,10 @@ public class AzureBlobService : IAzureBlobService
         return containerClient.GetBlobClient(blobName);
     }
 
-    public async Task<string> UploadFileAsync(string localFilePath, string blobName)
+    public async Task<string> UploadFileAsync(string localFilePath, string blobName, CancellationToken cancellationToken = default)
     {
         BlobClient blobClient = await GetBlobClientAsync(blobName);
-        await blobClient.UploadAsync(localFilePath, true);
+        await blobClient.UploadAsync(localFilePath, true, cancellationToken);
         if (blobClient.Uri == null)
         {
             throw new NullReferenceException();
@@ -43,13 +45,13 @@ public class AzureBlobService : IAzureBlobService
         return blobClient.Uri.ToString();
     }
 
-    public async Task<string> UploadFileFromMemoryAsync(byte[] fileBytes, string blobName)
+    public async Task<string> UploadFileFromMemoryAsync(byte[] fileBytes, string blobName, CancellationToken cancellationToken = default)
     {
         BlobClient blobClient = await GetBlobClientAsync(blobName);
 
         using (MemoryStream stream = new MemoryStream(fileBytes))
         {
-            await blobClient.UploadAsync(stream);
+            await blobClient.UploadAsync(stream, cancellationToken);
         }
         if (blobClient.Uri == null)
         {
@@ -58,16 +60,16 @@ public class AzureBlobService : IAzureBlobService
         return blobClient.Uri.ToString();
     }
 
-    public async Task<bool> DeleteBlobAsync(string blobName)
+    public async Task<bool> DeleteBlobAsync(string blobName, CancellationToken cancellationToken = default)
     {
         BlobClient blobClient = await GetBlobClientAsync(blobName);
-        return await blobClient.DeleteIfExistsAsync();
+        return await blobClient.DeleteIfExistsAsync(cancellationToken: cancellationToken);
     }
 
-    public async Task DownloadFileAsync(string blobName, string downloadFilePath)
+    public async Task DownloadFileAsync(string blobName, string downloadFilePath, CancellationToken cancellationToken = default)
     {
         BlobClient blobClient = await GetBlobClientAsync(blobName);
-        BlobDownloadResult downloadResult = await blobClient.DownloadContentAsync();
-        await File.WriteAllBytesAsync(Path.Combine(downloadFilePath, blobName), downloadResult.Content.ToArray());
+        BlobDownloadResult downloadResult = await blobClient.DownloadContentAsync(cancellationToken);
+        await File.WriteAllBytesAsync(Path.Combine(downloadFilePath, blobName), downloadResult.Content.ToArray(), cancellationToken);
     }
 }
