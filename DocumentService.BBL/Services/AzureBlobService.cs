@@ -7,23 +7,23 @@ using Microsoft.Extensions.Configuration;
 namespace DocumentService.BBL.Services;
 public class AzureBlobService : IAzureBlobService
 {
-    private readonly string _connectionString;
-    private readonly string _containerName;
+    private readonly string connectionString;
+    private readonly string containerName;
     private const string AzureConnectionStringSectionName = "AzureBlobStorage";
     private const string AzureContainerNameSectionName = "BlobStorageContainerName";
 
     public AzureBlobService(IConfiguration configuration)
     {
-        _connectionString = configuration.GetConnectionString(AzureConnectionStringSectionName) ??
+        connectionString = configuration.GetConnectionString(AzureConnectionStringSectionName) ??
             throw new InvalidOperationException(NotificationMessages.ConnectionStringMissingErrorMessage);
-        _containerName = configuration.GetSection(AzureContainerNameSectionName)?.Value ??
+        containerName = configuration.GetSection(AzureContainerNameSectionName)?.Value ??
             throw new InvalidOperationException(NotificationMessages.ContainerNameMissingErrorMessage);
     }
 
     public async Task<BlobClient> GetBlobClientAsync(string blobName)
     {
-        BlobServiceClient blobServiceClient = new BlobServiceClient(_connectionString);
-        BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(_containerName);
+        BlobServiceClient blobServiceClient = new BlobServiceClient(connectionString);
+        BlobContainerClient containerClient = blobServiceClient.GetBlobContainerClient(containerName);
         await containerClient.CreateIfNotExistsAsync();
         if (blobName == null)
         {
@@ -71,5 +71,3 @@ public class AzureBlobService : IAzureBlobService
         await File.WriteAllBytesAsync(Path.Combine(downloadFilePath, blobName), downloadResult.Content.ToArray());
     }
 }
-
-
