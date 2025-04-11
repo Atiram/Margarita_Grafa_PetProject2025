@@ -3,13 +3,14 @@ using System.Text;
 using AutoMapper;
 using Clinic.Domain;
 using DocumentService.BBL.Models;
+using DocumentService.BBL.Models.Requests;
 using DocumentService.BBL.Services.Interfaces;
 using DocumentService.DAL.Entities;
 using DocumentService.DAL.Repositories.Interfaces;
 
 namespace DocumentService.BBL.Services;
 public class FileService(
-    AzureBlobService _blobStorageService,
+    IAzureBlobService _blobStorageService,
     IFileRepository documentRepository,
     IMapper mapper) : IFileService
 {
@@ -25,22 +26,22 @@ public class FileService(
         return mapper.Map<List<FileModel>>(documentEntities);
     }
 
-    public async Task<FileModel> CreateAsync(FileModel documentModel)
+    public async Task<FileModel> CreateAsync(CreateFileRequest createFileRequest)
     {
-        if (string.IsNullOrEmpty(documentModel.BlobName))
+        var documentEntity = mapper.Map<FileEntity>(createFileRequest);
+        if (string.IsNullOrEmpty(createFileRequest.BlobName))
         {
             throw new ArgumentException(NotificationMessages.NoBlobNameErrorMessage);
         }
-        if (!string.IsNullOrEmpty(documentModel.LocalFilePath))
+        if (!string.IsNullOrEmpty(createFileRequest.LocalFilePath))
         {
-            documentModel.StorageLocation = await _blobStorageService.UploadFileAsync(documentModel.LocalFilePath, documentModel.BlobName);
+            documentEntity.StorageLocation = await _blobStorageService.UploadFileAsync(createFileRequest.LocalFilePath, createFileRequest.BlobName);
         }
         else
         {
             byte[] fileBytes = GenerateInMemoryTextFile();
-            documentModel.StorageLocation = await _blobStorageService.UploadFileFromMemoryAsync(fileBytes, documentModel.BlobName);
+            documentEntity.StorageLocation = await _blobStorageService.UploadFileFromMemoryAsync(fileBytes, createFileRequest.BlobName);
         }
-        var documentEntity = mapper.Map<FileEntity>(documentModel);
         var createdDocumentEntity = await documentRepository.CreateAsync(documentEntity);
         return mapper.Map<FileModel>(createdDocumentEntity);
     }

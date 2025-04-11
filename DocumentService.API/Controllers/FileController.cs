@@ -1,5 +1,6 @@
 ﻿using Clinic.Domain;
 using DocumentService.BBL.Models;
+using DocumentService.BBL.Models.Requests;
 using DocumentService.BBL.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -29,9 +30,9 @@ public class FileController(IFileService fileService) : ControllerBase
     }
 
     [HttpPost]
-    public async Task<FileModel> CreateFile(FileModel fileModel)
+    public async Task<FileModel> CreateFile(CreateFileRequest createFileRequest)
     {
-        var createdFile = await fileService.CreateAsync(fileModel);
+        var createdFile = await fileService.CreateAsync(createFileRequest);
         return createdFile;
     }
 

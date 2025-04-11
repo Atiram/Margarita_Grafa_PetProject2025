@@ -1,16 +1,23 @@
 ﻿using Azure.Storage.Blobs;
 using Azure.Storage.Blobs.Models;
+using Clinic.Domain;
+using DocumentService.BBL.Services.Interfaces;
+using Microsoft.Extensions.Configuration;
 
 namespace DocumentService.BBL.Services;
-public class AzureBlobService
+public class AzureBlobService : IAzureBlobService
 {
     private readonly string _connectionString;
     private readonly string _containerName;
+    private const string AzureConnectionStringSection = "AzureBlobStorage";
+    private const string AzureContainerNameSection = "BlobStorageContainerName";
 
-    public AzureBlobService(string connectionString, string containerName)
+    public AzureBlobService(IConfiguration configuration)
     {
-        _connectionString = connectionString;
-        _containerName = containerName;
+        _connectionString = configuration.GetConnectionString(AzureConnectionStringSection) ??
+            throw new InvalidOperationException(NotificationMessages.ConnectionStringMissingErrorMessage);
+        _containerName = configuration.GetSection(AzureContainerNameSection)?.Value ??
+            throw new InvalidOperationException(NotificationMessages.ContainerNameMissingErrorMessage);
     }
 
     public async Task<BlobClient> GetBlobClientAsync(string blobName)
