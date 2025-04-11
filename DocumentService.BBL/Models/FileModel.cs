@@ -3,7 +3,7 @@
 namespace DocumentService.BBL.Models;
 public class FileModel
 {
-    public string? Id { get; set; }
+    public required string Id { get; set; }
     public DocumentType DocumentType { get; set; }
     public required string BlobName { get; set; }
     public string? StorageLocation { get; set; }
