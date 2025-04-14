@@ -117,7 +117,7 @@ public class FileService(
         var documentModel = await GetByIdAsync(id, cancellationToken) ??
                             throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, id));
 
-        if (string.IsNullOrWhiteSpace(documentModel.BlobName))
+        if (string.IsNullOrEmpty(documentModel.BlobName))
         {
             throw new InvalidOperationException(NotificationMessages.NoBlobNameErrorMessage);
         }

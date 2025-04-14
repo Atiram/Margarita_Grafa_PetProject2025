@@ -27,48 +27,48 @@ public class AzureBlobService : IAzureBlobService
     private async Task<BlobClient> GetBlobClientAsync(string blobName)
     {
         await containerClient.CreateIfNotExistsAsync();
-        if (blobName == null)
+        if (string.IsNullOrEmpty(blobName))
         {
-            throw new NullReferenceException();
+            throw new InvalidOperationException(NotificationMessages.NoBlobNameErrorMessage);
         }
         return containerClient.GetBlobClient(blobName);
     }
 
     public async Task<string> UploadFileAsync(string localFilePath, string blobName, CancellationToken cancellationToken)
     {
-        BlobClient blobClient = await GetBlobClientAsync(blobName);
+        var blobClient = await GetBlobClientAsync(blobName);
         await blobClient.UploadAsync(localFilePath, true, cancellationToken);
-        if (blobClient.Uri == null)
+        if (string.IsNullOrEmpty(blobClient.Uri?.ToString()))
         {
-            throw new NullReferenceException();
+            throw new InvalidOperationException(NotificationMessages.NoUrlErrorMessage);
         }
         return blobClient.Uri.ToString();
     }
 
     public async Task<string> UploadFileFromMemoryAsync(byte[] fileBytes, string blobName, CancellationToken cancellationToken)
     {
-        BlobClient blobClient = await GetBlobClientAsync(blobName);
+        var blobClient = await GetBlobClientAsync(blobName);
 
         using (MemoryStream stream = new MemoryStream(fileBytes))
         {
             await blobClient.UploadAsync(stream, cancellationToken);
         }
-        if (blobClient.Uri == null)
+        if (string.IsNullOrEmpty(blobClient.Uri?.ToString()))
         {
-            throw new NullReferenceException();
+            throw new InvalidOperationException(NotificationMessages.NoUrlErrorMessage);
         }
         return blobClient.Uri.ToString();
     }
 
     public async Task<bool> DeleteBlobAsync(string blobName, CancellationToken cancellationToken)
     {
-        BlobClient blobClient = await GetBlobClientAsync(blobName);
+        var blobClient = await GetBlobClientAsync(blobName);
         return await blobClient.DeleteIfExistsAsync(cancellationToken: cancellationToken);
     }
 
     public async Task DownloadFileAsync(string blobName, string downloadFilePath, CancellationToken cancellationToken)
     {
-        BlobClient blobClient = await GetBlobClientAsync(blobName);
+        var blobClient = await GetBlobClientAsync(blobName);
         BlobDownloadResult downloadResult = await blobClient.DownloadContentAsync(cancellationToken);
         await File.WriteAllBytesAsync(Path.Combine(downloadFilePath, blobName), downloadResult.Content.ToArray(), cancellationToken);
     }
