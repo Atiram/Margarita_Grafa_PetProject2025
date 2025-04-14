@@ -1,6 +1,5 @@
 ﻿using System.Diagnostics;
 using System.Text;
-using System.Threading;
 using AutoMapper;
 using Clinic.Domain;
 using DocumentService.BBL.Models;
@@ -8,6 +7,7 @@ using DocumentService.BBL.Models.Requests;
 using DocumentService.BBL.Services.Interfaces;
 using DocumentService.DAL.Entities;
 using DocumentService.DAL.Repositories.Interfaces;
+using MongoDB.Driver;
 
 namespace DocumentService.BBL.Services;
 public class FileService(
@@ -15,46 +15,77 @@ public class FileService(
     IFileRepository documentRepository,
     IMapper mapper) : IFileService
 {
-    public async Task<FileModel> GetByIdAsync(string id, CancellationToken cancellationToken = default)
+    public async Task<FileModel> GetByIdAsync(string id, CancellationToken cancellationToken)
     {
         var documentEntity = await documentRepository.GetByIdAsync(id, cancellationToken);
         return mapper.Map<FileModel>(documentEntity);
     }
 
-    public async Task<List<FileModel>> GetAllAsync(CancellationToken cancellationToken = default)
+    public async Task<List<FileModel>> GetAllAsync(CancellationToken cancellationToken)
     {
         var documentEntities = await documentRepository.GetAllAsync(cancellationToken);
         return mapper.Map<List<FileModel>>(documentEntities);
     }
 
-    public async Task<FileModel> CreateAsync(CreateFileRequest createFileRequest, string? localFilePath, CancellationToken cancellationToken = default)
+    public async Task<FileModel> CreateAsync(CreateFileRequest createFileRequest, string? localFilePath, CancellationToken cancellationToken)
     {
         var documentEntity = mapper.Map<FileEntity>(createFileRequest);
-        if (string.IsNullOrEmpty(createFileRequest.BlobName))
+        bool uploadSuccessful = false;
+
+        try
         {
-            throw new ArgumentException(NotificationMessages.NoBlobNameErrorMessage);
+            if (!string.IsNullOrEmpty(localFilePath))
+            {
+                documentEntity.StorageLocation = await blobStorageService.UploadFileAsync(localFilePath, createFileRequest.BlobName, cancellationToken);
+            }
+            else
+            {
+                var fileBytes = GenerateInMemoryTextFile();
+                documentEntity.StorageLocation = await blobStorageService.UploadFileFromMemoryAsync(fileBytes, createFileRequest.BlobName, cancellationToken);
+            }
+
+            uploadSuccessful = true;
+            var createdDocumentEntity = await documentRepository.CreateAsync(documentEntity, cancellationToken);
+            return mapper.Map<FileModel>(createdDocumentEntity);
         }
-        if (!string.IsNullOrEmpty(localFilePath))
+        catch (MongoException mongoEx)
         {
-            documentEntity.StorageLocation = await blobStorageService.UploadFileAsync(localFilePath, createFileRequest.BlobName, cancellationToken);
+            if (uploadSuccessful)
+            {
+                await RollbackFileUpload(createFileRequest.BlobName, cancellationToken);
+            }
+            throw new MongoException(NotificationMessages.WritingBlobErrorMessage, mongoEx);
         }
-        else
+        catch (Exception ex)
         {
-            var fileBytes = GenerateInMemoryTextFile();
-            documentEntity.StorageLocation = await blobStorageService.UploadFileFromMemoryAsync(fileBytes, createFileRequest.BlobName, cancellationToken);
+            if (uploadSuccessful)
+            {
+                await RollbackFileUpload(createFileRequest.BlobName, cancellationToken);
+            }
+            throw new Exception(NotificationMessages.UploadingFileErrorMessage, ex);
         }
-        var createdDocumentEntity = await documentRepository.CreateAsync(documentEntity, cancellationToken);
-        return mapper.Map<FileModel>(createdDocumentEntity);
     }
 
-    public async Task<bool> DeleteAsync(string id, CancellationToken cancellationToken = default)
+    private async Task RollbackFileUpload(string blobName, CancellationToken cancellationToken)
+    {
+        try
+        {
+            await blobStorageService.DeleteBlobAsync(blobName, cancellationToken);
+        }
+        catch (Exception deleteEx)
+        {
+            throw new Exception(NotificationMessages.DeletingBlobErrorMessage, deleteEx);
+        }
+    }
+
+    public async Task<bool> DeleteAsync(string id, CancellationToken cancellationToken)
     {
         var documentEntity = await documentRepository.GetByIdAsync(id, cancellationToken);
         if (documentEntity == null)
         {
             throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, id));
         }
-        bool isFileDeleted = await blobStorageService.DeleteBlobAsync(documentEntity.BlobName, cancellationToken);
+        var isFileDeleted = await blobStorageService.DeleteBlobAsync(documentEntity.BlobName, cancellationToken);
         if (!isFileDeleted)
         {
             throw new Exception(NotificationMessages.NotDeletedErrorMessage);
@@ -62,42 +93,14 @@ public class FileService(
         return await documentRepository.DeleteAsync(id, cancellationToken);
     }
 
-    //public async Task DownloadFileAsync(string id, string downloadFilePath, CancellationToken cancellationToken = default)
-    //{
-    //    var documentModel = await GetByIdAsync(id, cancellationToken) ??
-    //        throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, id));
-
-    //    if (string.IsNullOrEmpty(downloadFilePath))
-    //    {
-    //        Process.Start(new ProcessStartInfo
-    //        {
-    //            FileName = documentModel.StorageLocation,
-    //            UseShellExecute = true
-    //        });
-    //    }
-    //    else if (!string.IsNullOrEmpty(documentModel.BlobName))
-    //    {
-    //        await blobStorageService.DownloadFileAsync(documentModel.BlobName, downloadFilePath, cancellationToken);
-    //    }
-    //}
-    public async Task<bool> DownloadFileAsync(string id, string downloadFilePath, CancellationToken cancellationToken = default)
+    public async Task<bool> DownloadFileAsync(string id, string? downloadFilePath, CancellationToken cancellationToken)
     {
-        var documentModel = await GetByIdAsync(id, cancellationToken) ??
-                            throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, id));
-        if (string.IsNullOrWhiteSpace(downloadFilePath))
-        {
-            throw new ArgumentException(NotificationMessages.NoDownloadFilePathErrorMessage);
-        }
-        if (string.IsNullOrWhiteSpace(documentModel.BlobName))
-        {
-            throw new InvalidOperationException(NotificationMessages.NoBlobNameErrorMessage);
-        }
-        await blobStorageService.DownloadFileAsync(documentModel.BlobName, downloadFilePath, cancellationToken);
-        return true;
-
+        return string.IsNullOrEmpty(downloadFilePath)
+            ? await OpenFileInBrowserAsync(id, cancellationToken)
+            : await DownloadAsync(id, downloadFilePath, cancellationToken);
     }
 
-    public async Task<bool> OpenFileInBrowserAsync(string id, CancellationToken cancellationToken = default)
+    private async Task<bool> OpenFileInBrowserAsync(string id, CancellationToken cancellationToken)
     {
         var documentModel = await GetByIdAsync(id, cancellationToken) ??
                             throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, id));
@@ -108,7 +111,20 @@ public class FileService(
         });
         return true;
     }
- 
+
+    private async Task<bool> DownloadAsync(string id, string downloadFilePath, CancellationToken cancellationToken)
+    {
+        var documentModel = await GetByIdAsync(id, cancellationToken) ??
+                            throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, id));
+
+        if (string.IsNullOrWhiteSpace(documentModel.BlobName))
+        {
+            throw new InvalidOperationException(NotificationMessages.NoBlobNameErrorMessage);
+        }
+        await blobStorageService.DownloadFileAsync(documentModel.BlobName, downloadFilePath, cancellationToken);
+        return true;
+    }
+
     //this method initates file content in memory, will be changed later
     private byte[] GenerateInMemoryTextFile()
     {

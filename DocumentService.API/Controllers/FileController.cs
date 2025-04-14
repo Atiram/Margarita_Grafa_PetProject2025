@@ -26,7 +26,6 @@ public class FileController(IFileService fileService) : ControllerBase
     [HttpPost("download")]
     public async Task DownloadFile(string id, string? downloadFilePath, CancellationToken cancellationToken = default)
     {
-        //Add check for DownloadFileAsync or OpenFileInBrowserAsync
         await fileService.DownloadFileAsync(id, downloadFilePath ?? string.Empty, cancellationToken);
     }
 

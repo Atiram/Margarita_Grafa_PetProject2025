@@ -7,12 +7,15 @@ using MongoDB.Driver;
 namespace DocumentService.DAL.DI;
 public static class DataConfiguration
 {
+    private const string ConnectionStringVariableName = "MONGO_CONNECTION_STRING";
+    private const string MongoConnectionString = "MongoSettings:ConnectionString";
+
     public static void RegisterDataRepositories(this IServiceCollection services, IConfiguration configuration)
     {
-        var connectionString = configuration.GetSection("MongoSettings:ConnectionString")?.Value;
+        var connectionString = configuration.GetSection(MongoConnectionString)?.Value;
         if (string.IsNullOrEmpty(connectionString))
         {
-            connectionString = Environment.GetEnvironmentVariable("MONGO_CONNECTION_STRING");
+            connectionString = Environment.GetEnvironmentVariable(ConnectionStringVariableName);
         }
         var mongoClient = new MongoClient(connectionString);
 
