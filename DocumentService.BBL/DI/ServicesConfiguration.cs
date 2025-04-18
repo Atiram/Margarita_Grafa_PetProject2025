@@ -11,8 +11,9 @@ public static class ServicesConfiguration
 {
     public static void RegisterBusinessLogicServices(this IServiceCollection services, IConfiguration configuration)
     {
-        services.AddAutoMapper(Assembly.GetAssembly(typeof(AppMappingProfile)));
-        services.AddScoped<IFileService, FileService>()
+        services.AddAutoMapper(Assembly.GetAssembly(typeof(AppMappingProfile)))
+                .AddScoped<IAzureBlobService, AzureBlobService>(provider => new AzureBlobService(configuration))
+                .AddScoped<IFileService, FileService>()
                 .RegisterDataRepositories(configuration);
     }
 }
