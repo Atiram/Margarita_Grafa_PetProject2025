@@ -1,6 +1,8 @@
 ﻿using AutoMapper;
-using DocumentService.BBL.Models;
-using DocumentService.BBL.Models.Requests;
+using Clinic.Domain;
+
+//using DocumentService.BBL.Models;
+//using DocumentService.BBL.Models.Requests;
 using DocumentService.DAL.Entities;
 
 namespace DocumentService.BBL.Utilities.Mapping;

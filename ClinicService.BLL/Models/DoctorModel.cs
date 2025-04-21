@@ -13,4 +13,6 @@ public class DoctorModel : GenericModel
     public required int CareerStartYear { get; set; }
     public required DoctorStatus Status { get; set; }
     public List<AppointmentModel>? Appointments { get; set; }
+    public string? PhotoUrl { get; set; }
+    public string? FileId { get; set; }
 }

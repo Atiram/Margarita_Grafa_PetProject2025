@@ -2,8 +2,6 @@
 using System.Text;
 using AutoMapper;
 using Clinic.Domain;
-using DocumentService.BBL.Models;
-using DocumentService.BBL.Models.Requests;
 using DocumentService.BBL.Services.Interfaces;
 using DocumentService.DAL.Entities;
 using DocumentService.DAL.Repositories.Interfaces;
@@ -34,7 +32,7 @@ public class FileService(
 
         try
         {
-            if (!string.IsNullOrEmpty(localFilePath))
+            if (!string.IsNullOrEmpty(localFilePath))// || formFile!=null)
             {
                 documentEntity.StorageLocation = await blobStorageService.UploadFileAsync(localFilePath, createFileRequest.BlobName, cancellationToken);
             }
@@ -91,6 +89,17 @@ public class FileService(
             throw new Exception(NotificationMessages.NotDeletedErrorMessage);
         }
         return await documentRepository.DeleteAsync(id, cancellationToken);
+    }
+
+    public async Task<bool> DeleteByReferenceItemIdAsync(string ReferenceItemId, string blobName, CancellationToken cancellationToken)
+    {
+
+        var isFileDeleted = await blobStorageService.DeleteBlobAsync(blobName, cancellationToken);
+        if (!isFileDeleted)
+        {
+            throw new Exception(NotificationMessages.NotDeletedErrorMessage);
+        }
+        return await documentRepository.DeleteByReferenceItemIdAsync(ReferenceItemId, cancellationToken);
     }
 
     public async Task<bool> DownloadFileAsync(string id, string? downloadFilePath, CancellationToken cancellationToken)

@@ -1,6 +1,4 @@
 ﻿using Clinic.Domain;
-using DocumentService.BBL.Models;
-using DocumentService.BBL.Models.Requests;
 using DocumentService.BBL.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -41,6 +39,13 @@ public class FileController(IFileService fileService) : ControllerBase
     {
         var deleted = await fileService.DeleteAsync(id, cancellationToken);
         return deleted ? Ok() : NotFound(string.Format(NotificationMessages.NotFoundErrorMessage, id));
+    }
+
+    [HttpDelete("reference")]
+    public async Task<IActionResult> DeleteFileByReferenceItemId(string referenceItemId, string blobName, CancellationToken cancellationToken = default)
+    {
+        var deleted = await fileService.DeleteByReferenceItemIdAsync(referenceItemId, blobName, cancellationToken);
+        return deleted ? Ok() : NotFound(string.Format(NotificationMessages.NotFoundErrorMessage, referenceItemId));
     }
 }
 
