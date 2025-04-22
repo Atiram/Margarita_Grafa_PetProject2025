@@ -21,6 +21,12 @@ public class FileRepository : IFileRepository
         return await _mongoCollection.Find(filter).FirstOrDefaultAsync(cancellationToken);
     }
 
+    public async Task<FileEntity> GetByReferenceItemIdAsync(string ReferenceItemId, CancellationToken cancellationToken)
+    {
+        var filter = Builders<FileEntity>.Filter.Eq(u => u.ReferenceItemId, ReferenceItemId);
+        return await _mongoCollection.Find(filter).FirstOrDefaultAsync(cancellationToken);
+    }
+
     public async Task<List<FileEntity>> GetAllAsync(CancellationToken cancellationToken)
     {
         return await _mongoCollection.Find(Builders<FileEntity>.Filter.Empty).ToListAsync(cancellationToken);

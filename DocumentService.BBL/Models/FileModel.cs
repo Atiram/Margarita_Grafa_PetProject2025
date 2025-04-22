@@ -1,4 +1,4 @@
-﻿using DocumentService.DAL.Enums;
+﻿using Clinic.Domain.Enums;
 
 namespace DocumentService.BBL.Models;
 public class FileModel

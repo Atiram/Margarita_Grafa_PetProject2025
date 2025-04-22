@@ -1,5 +1,5 @@
 ﻿namespace DocumentService.DAL.Enums;
-public enum DocumentType
+public enum DocumentType222
 {
     Photo,
     PdfFile

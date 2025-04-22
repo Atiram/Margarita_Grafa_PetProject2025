@@ -16,15 +16,21 @@ namespace ClinicService.BLL.Services;
 public class DoctorService(IDoctorRepository doctorRepository, IMapper mapper, IConfiguration configuration) : IDoctorService
 {
     private const string FileServiceSectionName = "FileServiceBaseUrl";
-    private readonly string fileUrl = configuration.GetSection(FileServiceSectionName).Value ??
+    private readonly string fileServiceBaseUrl = configuration.GetSection(FileServiceSectionName).Value ??
         throw new ArgumentException(string.Format(NotificationMessages.SectionMissingErrorMessage, FileServiceSectionName));
     private HttpClient httpClient = new HttpClient();
 
     public async Task<DoctorModel> GetById(Guid id, CancellationToken cancellationToken)
     {
         var doctorEntity = await doctorRepository.GetByIdAsync(id, cancellationToken);
+        if (doctorEntity == null)
+        {
+            throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, id));
+        }
+        string fileUrl = await GetPhotoAsync(doctorEntity.Id, cancellationToken);
+        var doctorModel = mapper.Map<DoctorModel>(doctorEntity);
 
-        return mapper.Map<DoctorModel>(doctorEntity);
+        return doctorModel;
     }
 
     public async Task<PagedResult<DoctorModel>> GetAll(GetAllDoctorsParams getAllDoctorsParams, CancellationToken cancellationToken)
@@ -44,29 +50,7 @@ public class DoctorService(IDoctorRepository doctorRepository, IMapper mapper, I
         var doctorModel = mapper.Map<DoctorModel>(doctorEntity);
         return doctorModel;
     }
-    private async Task UploadPhotoAsync(Guid doctorId, IFormFile? photoFile, CancellationToken cancellationToken)
-    {
-        if (photoFile == null || photoFile.Length == 0)
-        {
-            throw new ValidationException(string.Format(NotificationMessages.NotFoundErrorMessage, photoFile?.Name));
-        }
 
-        using var content = new MultipartFormDataContent();
-
-        using var streamContent = new StreamContent(photoFile.OpenReadStream());
-        streamContent.Headers.ContentType = new MediaTypeHeaderValue(photoFile.ContentType);
-        content.Add(streamContent, "file", photoFile.FileName);
-        content.Add(new StringContent(doctorId.ToString()), "referenceItemId");
-        content.Add(new StringContent("Photo"), "documentType");
-        content.Add(new StringContent($"{doctorId}.jpg"), "blobName");
-
-        HttpResponseMessage uploadResponse = await httpClient.PostAsync(
-            fileUrl,
-            content,
-            cancellationToken);
-
-        uploadResponse.EnsureSuccessStatusCode();
-    }
 
     public async Task<DoctorModel> UpdateAsync(UpdateDoctorRequest request, CancellationToken cancellationToken)
     {
@@ -74,9 +58,19 @@ public class DoctorService(IDoctorRepository doctorRepository, IMapper mapper, I
         {
             throw new ValidationException(ClinicNotificationMessages.validationExeptionMessage);
         }
-        var doctor = await doctorRepository.GetByIdAsync(request.Id, cancellationToken);
-        var doctorEntity = mapper.Map(request, doctor);
 
+        var doctor = await doctorRepository.GetByIdAsync(request.Id, cancellationToken);
+        if (doctor == null)
+        {
+            throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, request.Id));
+        }
+
+        var doctorEntity = mapper.Map(request, doctor);
+        if (request.Formfile == null || request.Formfile.Length == 0)
+        {
+            await DeletePhotoAsync(doctorEntity.Id, cancellationToken);
+            await UploadPhotoAsync(doctorEntity.Id, request.Formfile, cancellationToken);
+        }
         var updatedDoctorEntity = await doctorRepository.UpdateAsync(doctorEntity, cancellationToken);
 
         return mapper.Map<DoctorModel>(updatedDoctorEntity);
@@ -102,13 +96,44 @@ public class DoctorService(IDoctorRepository doctorRepository, IMapper mapper, I
         }
     }
 
+    private async Task<string> GetPhotoAsync(Guid doctorId, CancellationToken cancellationToken)
+    {
+        string getFileByReferenceIdEndpoint = $"{fileServiceBaseUrl}/referenceId/{doctorId}";
+        HttpResponseMessage response = await httpClient.GetAsync(getFileByReferenceIdEndpoint, cancellationToken);
+        response.EnsureSuccessStatusCode();
+        return response.Content.ReadAsStringAsync().Result;
+    }
+
+    private async Task UploadPhotoAsync(Guid doctorId, IFormFile? photoFile, CancellationToken cancellationToken)
+    {
+        if (photoFile == null || photoFile.Length == 0)
+        {
+            throw new ValidationException(string.Format(NotificationMessages.NotFoundErrorMessage, photoFile?.Name));
+        }
+
+        using var content = new MultipartFormDataContent();
+
+        using var streamContent = new StreamContent(photoFile.OpenReadStream());
+        streamContent.Headers.ContentType = new MediaTypeHeaderValue(photoFile.ContentType);
+        content.Add(streamContent, "file", photoFile.FileName);
+        content.Add(new StringContent(doctorId.ToString()), "referenceItemId");
+        content.Add(new StringContent("Photo"), "documentType");
+        content.Add(new StringContent($"{doctorId}.jpg"), "blobName");
+
+        HttpResponseMessage uploadResponse = await httpClient.PostAsync(
+            fileServiceBaseUrl,
+            content,
+            cancellationToken);
+
+        uploadResponse.EnsureSuccessStatusCode();
+    }
     private async Task DeletePhotoAsync(Guid doctorId, CancellationToken cancellationToken)
     {
-        string fileServiceBaseUrl = fileUrl;
+        string fileServiceBaseUrl = this.fileServiceBaseUrl;
         string fileServiceDeleteEndpoint = $"{fileServiceBaseUrl}?referenceItemId={doctorId}";
 
         HttpResponseMessage deleteFileResponse = await httpClient.DeleteAsync(
-            $"{fileServiceDeleteEndpoint}", cancellationToken);
+            fileServiceDeleteEndpoint, cancellationToken);
         deleteFileResponse.EnsureSuccessStatusCode();
     }
 }

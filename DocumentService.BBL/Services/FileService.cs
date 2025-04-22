@@ -20,6 +20,12 @@ public class FileService(
         return mapper.Map<FileModel>(documentEntity);
     }
 
+    public async Task<FileModel> GetByReferenceItemIdAsync(string referenceItemId, CancellationToken cancellationToken)
+    {
+        var documentEntity = await documentRepository.GetByReferenceItemIdAsync(referenceItemId, cancellationToken);
+        return mapper.Map<FileModel>(documentEntity);
+    }
+
     public async Task<List<FileModel>> GetAllAsync(CancellationToken cancellationToken)
     {
         var documentEntities = await documentRepository.GetAllAsync(cancellationToken);
