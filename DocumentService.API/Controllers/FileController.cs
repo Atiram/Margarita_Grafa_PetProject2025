@@ -16,7 +16,7 @@ public class FileController(IFileService fileService) : ControllerBase
     }
 
     [HttpGet("referenceId/{referenceItemId}")]
-    public async Task<string> GetFileByReferenceItemIdAsync(string referenceItemId, CancellationToken cancellationToken = default)
+    public async Task<string?> GetFileByReferenceItemIdAsync(string referenceItemId, CancellationToken cancellationToken = default)
     {
         var file = await fileService.GetByReferenceItemIdAsync(referenceItemId, cancellationToken);
         return file.StorageLocation;
