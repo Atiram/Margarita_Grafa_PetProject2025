@@ -1,6 +1,5 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.Net.Http.Json;
-using System.Text.Json;
+using System.Net.Http.Headers;
 using AutoMapper;
 using Clinic.Domain;
 using ClinicService.BLL.Models;
@@ -10,13 +9,15 @@ using ClinicService.BLL.Utilities.Messages;
 using ClinicService.DAL.Entities;
 using ClinicService.DAL.Repositories.Interfaces;
 using ClinicService.DAL.Utilities.Pagination;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 
 namespace ClinicService.BLL.Services;
-public class DoctorService(IDoctorRepository doctorRepository, IMapper mapper, IConfiguration configuration) : IDoctorService //HttpClient httpClient, 
+public class DoctorService(IDoctorRepository doctorRepository, IMapper mapper, IConfiguration configuration) : IDoctorService
 {
-    private readonly string FileServiceSectionName = "FileServiceBaseUrl";
-    private readonly string fileUrl = configuration.GetSection("FileServiceBaseUrl").Value ?? throw new ArgumentException("Section 'FileServiceBaseUrl' is missing or empty in configuration.");
+    private const string FileServiceSectionName = "FileServiceBaseUrl";
+    private readonly string fileUrl = configuration.GetSection(FileServiceSectionName).Value ??
+        throw new ArgumentException(string.Format(NotificationMessages.SectionMissingErrorMessage, FileServiceSectionName));
     private HttpClient httpClient = new HttpClient();
 
     public async Task<DoctorModel> GetById(Guid id, CancellationToken cancellationToken)
@@ -39,67 +40,32 @@ public class DoctorService(IDoctorRepository doctorRepository, IMapper mapper, I
             throw new ValidationException(ClinicNotificationMessages.validationExeptionMessage);
         }
         var doctorEntity = await doctorRepository.CreateAsync(mapper.Map<DoctorEntity>(request), cancellationToken);
-        //IFormFile formFile = null;
-        //string photoUrl 
-        var fileModel = await UploadPhotoAsync(doctorEntity.Id, cancellationToken);
+        await UploadPhotoAsync(doctorEntity.Id, request.Formfile, cancellationToken);
         var doctorModel = mapper.Map<DoctorModel>(doctorEntity);
-        doctorModel.PhotoUrl = fileModel.StorageLocation;
-        doctorModel.FileId = fileModel.Id;
         return doctorModel;
     }
-    private async Task<FileModel> UploadPhotoAsync(Guid doctorId, CancellationToken cancellationToken) //IFormFile photoFile,
+    private async Task UploadPhotoAsync(Guid doctorId, IFormFile? photoFile, CancellationToken cancellationToken)
     {
-        string fileServiceBaseUrl = fileUrl;
-        string fileServiceUploadEndpoint = $"{fileServiceBaseUrl}?localFilePath=C:\\Users\\User\\Pictures\\Screenshots\\Screenshot 2025-04-09 174354.png";///upload/doctor/{doctorId}"; //fileServiceUploadEndpoint
-
-        try
+        if (photoFile == null || photoFile.Length == 0)
         {
-            var createFileRequest = new CreateFileRequest
-            {
-                DocumentType = DocumentType.Photo,
-                BlobName = $"{doctorId}.jpg",
-                ReferenceItemId = doctorId.ToString()
-            };
-
-            HttpResponseMessage uploadResponse = await httpClient.PostAsJsonAsync(
-                fileServiceUploadEndpoint,
-                createFileRequest,
-                cancellationToken);
-
-            uploadResponse.EnsureSuccessStatusCode();
-            //string responseBody = await uploadResponse.Content.ReadAsStringAsync();
-            //using (JsonDocument jsonDocument = JsonDocument.Parse(responseBody))
-            //{
-            //    JsonElement root = jsonDocument.RootElement;
-            //    if (root.TryGetProperty("storageLocation", out JsonElement storageLocationElement))
-            //    {
-            //        return storageLocationElement.GetString();
-            //    }
-            //    else
-            //    {
-            //        throw new InvalidOperationException("'storageLocation'not found");
-            //    }
-            //}
-
-            var uploadedFile = await uploadResponse.Content.ReadFromJsonAsync<FileModel>(new JsonSerializerOptions { PropertyNameCaseInsensitive = true }, cancellationToken);
-            if (uploadedFile != null)
-            {
-                return uploadedFile;//.StorageLocation;
-            }
-            else
-            {
-                throw new($"Failed to upload photo to DocumentService. Status code: {uploadResponse.StatusCode}");
-            }
-
+            throw new ValidationException(string.Format(NotificationMessages.NotFoundErrorMessage, photoFile?.Name));
         }
-        catch (HttpRequestException ex)
-        {
-            throw new($"Error communicating with DocumentService: {ex.Message}");
-        }
-        catch (JsonException ex)
-        {
-            throw new($"Error deserializing DocumentService response: {ex.Message}");
-        }
+
+        using var content = new MultipartFormDataContent();
+
+        using var streamContent = new StreamContent(photoFile.OpenReadStream());
+        streamContent.Headers.ContentType = new MediaTypeHeaderValue(photoFile.ContentType);
+        content.Add(streamContent, "file", photoFile.FileName);
+        content.Add(new StringContent(doctorId.ToString()), "referenceItemId");
+        content.Add(new StringContent("Photo"), "documentType");
+        content.Add(new StringContent($"{doctorId}.jpg"), "blobName");
+
+        HttpResponseMessage uploadResponse = await httpClient.PostAsync(
+            fileUrl,
+            content,
+            cancellationToken);
+
+        uploadResponse.EnsureSuccessStatusCode();
     }
 
     public async Task<DoctorModel> UpdateAsync(UpdateDoctorRequest request, CancellationToken cancellationToken)
@@ -120,35 +86,29 @@ public class DoctorService(IDoctorRepository doctorRepository, IMapper mapper, I
     {
         try
         {
-            // 1. Retrieve Doctor Information
             var doctorEntity = await doctorRepository.GetByIdAsync(id, cancellationToken);
             if (doctorEntity == null)
             {
-                return false; // Or throw an exception if you prefer
+                throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, id));
             }
-            var doctorModel = mapper.Map<DoctorModel>(doctorEntity);
 
-            string fileServiceBaseUrl = fileUrl;
-            string fileServiceDeleteEndpoint = $"{fileServiceBaseUrl}/reference?referenceItemId={doctorModel.Id}&blobName={doctorModel.Id}.jpg";
-
-            HttpResponseMessage deleteFileResponse = await httpClient.DeleteAsync(
-                $"{fileServiceDeleteEndpoint}", cancellationToken);
-            deleteFileResponse.EnsureSuccessStatusCode();
+            await DeletePhotoAsync(doctorEntity.Id, cancellationToken);
             bool doctorDeleted = await doctorRepository.DeleteAsync(id, cancellationToken);
             return doctorDeleted;
         }
-        catch (HttpRequestException ex)
-        {
-            //_logger.LogError(ex, $"Error communicating with FileService: {ex.Message}");
-            // Handle the exception, perhaps re-throw or return false
-            return false; // Or throw an exception
-        }
         catch (Exception ex)
         {
-            //_logger.LogError(ex, $"Error deleting doctor: {ex.Message}");
-            // Handle other exceptions
-            return false; // Or throw an exception
+            throw new Exception(NotificationMessages.NotDeletedErrorMessage);
         }
-        //return await doctorRepository.DeleteAsync(id, cancellationToken);
+    }
+
+    private async Task DeletePhotoAsync(Guid doctorId, CancellationToken cancellationToken)
+    {
+        string fileServiceBaseUrl = fileUrl;
+        string fileServiceDeleteEndpoint = $"{fileServiceBaseUrl}?referenceItemId={doctorId}";
+
+        HttpResponseMessage deleteFileResponse = await httpClient.DeleteAsync(
+            $"{fileServiceDeleteEndpoint}", cancellationToken);
+        deleteFileResponse.EnsureSuccessStatusCode();
     }
 }

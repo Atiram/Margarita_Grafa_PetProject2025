@@ -9,11 +9,15 @@ public class RabbitMqService : IRabbitMqService
 {
     private string hostName;
     private string queueName;
+    private const string RabbitMqSettingsHostName = "RabbitMqSettings:HostName";
+    private const string RabbitMqSettingsQueueName = "RabbitMqSettings:QueueName";
 
     public RabbitMqService(IConfiguration configuration)
     {
-        this.hostName = configuration.GetSection("RabbitMqSettings:HostName").Value ?? throw new ArgumentException(NotificationMessages.HostSectionMissingErrorMessage);
-        this.queueName = configuration.GetSection("RabbitMqSettings:QueueName").Value ?? throw new ArgumentException(NotificationMessages.QueueNameSectionMissingErrorMessage);
+        this.hostName = configuration.GetSection(RabbitMqSettingsHostName).Value ??
+            throw new ArgumentException(string.Format(NotificationMessages.SectionMissingErrorMessage, RabbitMqSettingsHostName));
+        this.queueName = configuration.GetSection(RabbitMqSettingsQueueName).Value ??
+            throw new ArgumentException(string.Format(NotificationMessages.SectionMissingErrorMessage, RabbitMqSettingsQueueName));
     }
     public void SendMessage(object obj)
     {

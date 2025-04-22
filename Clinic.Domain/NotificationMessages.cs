@@ -1,8 +1,6 @@
 ﻿namespace Clinic.Domain;
 public static class NotificationMessages
 {
-    public const string HostSectionMissingErrorMessage = "Section 'RabbitMqSettings:Host' is missing or empty in configuration.";
-    public const string QueueNameSectionMissingErrorMessage = "Section 'RabbitMqSettings:QueueName' is missing or empty in configuration.";
     public const string InvalidAuthErrorMessage = "Invalid username or password.";
     public const string NoArgumentAuthErrorMessage = "Username and Password are required.";
     public const string AuthUserErrorMessage = "Error authenticating user: {0}";
@@ -18,8 +16,7 @@ public static class NotificationMessages
     public const string NotDeletedErrorMessage = "File is not deleted";
     public const string NoBlobNameErrorMessage = "BlobName is required";
     public const string NoUrlErrorMessage = "Blob URL is invalid or missing.";
-    public const string ConnectionStringMissingErrorMessage = "Section AzureConnectionString is missing or empty in configuration.";
-    public const string ContainerNameMissingErrorMessage = "Section BlobStorageContainerName is missing or empty in configuration.";
+    public const string SectionMissingErrorMessage = "Section {0} is missing or empty in configuration.";
     public const string UploadingFileErrorMessage = "Error uploading file. Initiating rollback.";
     public const string WritingBlobErrorMessage = "Error writing to MongoDB. Initiating rollback.";
     public const string DeletingBlobErrorMessage = "Error deleting blob during rollback. Manual intervention required!";

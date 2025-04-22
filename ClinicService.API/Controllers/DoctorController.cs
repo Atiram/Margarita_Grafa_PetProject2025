@@ -33,7 +33,7 @@ public class DoctorController(IDoctorService doctorService, IMapper mapper) : Co
     }
 
     [HttpPost]
-    public async Task<DoctorViewModel> Post(CreateDoctorRequest request, CancellationToken cancellationToken)
+    public async Task<DoctorViewModel> Post([FromForm] CreateDoctorRequest request, CancellationToken cancellationToken)
     {
         var doctorModel = await doctorService.CreateAsync(request, cancellationToken);
         var doctorViewModel = mapper.Map<DoctorViewModel>(doctorModel);
