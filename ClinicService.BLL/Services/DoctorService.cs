@@ -22,11 +22,9 @@ public class DoctorService(IDoctorRepository doctorRepository, IMapper mapper, I
 
     public async Task<DoctorModel> GetById(Guid id, CancellationToken cancellationToken)
     {
-        var doctorEntity = await doctorRepository.GetByIdAsync(id, cancellationToken);
-        if (doctorEntity == null)
-        {
-            throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, id));
-        }
+        var doctorEntity = await doctorRepository.GetByIdAsync(id, cancellationToken)
+            ?? throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, id));
+
         string fileUrl = await GetPhotoAsync(doctorEntity.Id, cancellationToken);
         var doctorModel = mapper.Map<DoctorModel>(doctorEntity);
 
@@ -47,10 +45,8 @@ public class DoctorService(IDoctorRepository doctorRepository, IMapper mapper, I
         }
         var doctorEntity = await doctorRepository.CreateAsync(mapper.Map<DoctorEntity>(request), cancellationToken);
         await UploadPhotoAsync(doctorEntity.Id, request.Formfile, cancellationToken);
-        var doctorModel = mapper.Map<DoctorModel>(doctorEntity);
-        return doctorModel;
+        return mapper.Map<DoctorModel>(doctorEntity);
     }
-
 
     public async Task<DoctorModel> UpdateAsync(UpdateDoctorRequest request, CancellationToken cancellationToken)
     {
@@ -58,12 +54,8 @@ public class DoctorService(IDoctorRepository doctorRepository, IMapper mapper, I
         {
             throw new ValidationException(ClinicNotificationMessages.validationExeptionMessage);
         }
-
-        var doctor = await doctorRepository.GetByIdAsync(request.Id, cancellationToken);
-        if (doctor == null)
-        {
-            throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, request.Id));
-        }
+        var doctor = await doctorRepository.GetByIdAsync(request.Id, cancellationToken)
+            ?? throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, request.Id));
 
         var doctorEntity = mapper.Map(request, doctor);
         if (request.Formfile == null || request.Formfile.Length == 0)
@@ -78,22 +70,12 @@ public class DoctorService(IDoctorRepository doctorRepository, IMapper mapper, I
 
     public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
-        try
-        {
-            var doctorEntity = await doctorRepository.GetByIdAsync(id, cancellationToken);
-            if (doctorEntity == null)
-            {
-                throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, id));
-            }
+        var doctorEntity = await doctorRepository.GetByIdAsync(id, cancellationToken)
+            ?? throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, id));
 
-            await DeletePhotoAsync(doctorEntity.Id, cancellationToken);
-            bool doctorDeleted = await doctorRepository.DeleteAsync(id, cancellationToken);
-            return doctorDeleted;
-        }
-        catch (Exception ex)
-        {
-            throw new Exception(NotificationMessages.NotDeletedErrorMessage);
-        }
+        await DeletePhotoAsync(doctorEntity.Id, cancellationToken);
+        bool doctorDeleted = await doctorRepository.DeleteAsync(id, cancellationToken);
+        return doctorDeleted;
     }
 
     private async Task<string> GetPhotoAsync(Guid doctorId, CancellationToken cancellationToken)
@@ -127,6 +109,7 @@ public class DoctorService(IDoctorRepository doctorRepository, IMapper mapper, I
 
         uploadResponse.EnsureSuccessStatusCode();
     }
+
     private async Task DeletePhotoAsync(Guid doctorId, CancellationToken cancellationToken)
     {
         string fileServiceBaseUrl = this.fileServiceBaseUrl;

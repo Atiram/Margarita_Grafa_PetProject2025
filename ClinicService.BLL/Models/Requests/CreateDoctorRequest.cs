@@ -14,5 +14,4 @@ public class CreateDoctorRequest
     public required int CareerStartYear { get; set; }
     public required DoctorStatus Status { get; set; }
     public IFormFile? Formfile { get; set; }
-
 }

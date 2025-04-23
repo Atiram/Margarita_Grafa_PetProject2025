@@ -45,6 +45,7 @@ public class AzureBlobService : IAzureBlobService
         }
         return blobClient.Uri.ToString();
     }
+
     public async Task<string> UploadFileAsync(IFormFile file, string blobName, CancellationToken cancellationToken)
     {
         var blobClient = await GetBlobClientAsync(blobName);
