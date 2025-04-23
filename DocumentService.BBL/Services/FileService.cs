@@ -95,7 +95,7 @@ public class FileService(
 
     public async Task<bool> DeleteByReferenceItemIdAsync(string referenceItemId, CancellationToken cancellationToken)
     {
-        string blobName = referenceItemId + jpgFileExtension;
+        var blobName = referenceItemId + jpgFileExtension;
         var isFileDeleted = await blobStorageService.DeleteBlobAsync(blobName, cancellationToken);
         if (!isFileDeleted)
         {

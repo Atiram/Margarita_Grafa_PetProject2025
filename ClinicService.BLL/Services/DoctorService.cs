@@ -25,7 +25,7 @@ public class DoctorService(IDoctorRepository doctorRepository, IMapper mapper, I
         var doctorEntity = await doctorRepository.GetByIdAsync(id, cancellationToken)
             ?? throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, id));
 
-        string fileUrl = await GetPhotoAsync(doctorEntity.Id, cancellationToken);
+        var fileUrl = await GetPhotoAsync(doctorEntity.Id, cancellationToken);
         var doctorModel = mapper.Map<DoctorModel>(doctorEntity);
 
         return doctorModel;
@@ -74,14 +74,14 @@ public class DoctorService(IDoctorRepository doctorRepository, IMapper mapper, I
             ?? throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, id));
 
         await DeletePhotoAsync(doctorEntity.Id, cancellationToken);
-        bool doctorDeleted = await doctorRepository.DeleteAsync(id, cancellationToken);
+        var doctorDeleted = await doctorRepository.DeleteAsync(id, cancellationToken);
         return doctorDeleted;
     }
 
     private async Task<string> GetPhotoAsync(Guid doctorId, CancellationToken cancellationToken)
     {
-        string getFileByReferenceIdEndpoint = $"{fileServiceBaseUrl}/referenceId/{doctorId}";
-        HttpResponseMessage response = await httpClient.GetAsync(getFileByReferenceIdEndpoint, cancellationToken);
+        var getFileByReferenceIdEndpoint = $"{fileServiceBaseUrl}/referenceId/{doctorId}";
+        var response = await httpClient.GetAsync(getFileByReferenceIdEndpoint, cancellationToken);
         response.EnsureSuccessStatusCode();
         return response.Content.ReadAsStringAsync().Result;
     }
@@ -102,7 +102,7 @@ public class DoctorService(IDoctorRepository doctorRepository, IMapper mapper, I
         content.Add(new StringContent("Photo"), "documentType");
         content.Add(new StringContent($"{doctorId}.jpg"), "blobName");
 
-        HttpResponseMessage uploadResponse = await httpClient.PostAsync(
+        var uploadResponse = await httpClient.PostAsync(
             fileServiceBaseUrl,
             content,
             cancellationToken);
@@ -112,10 +112,10 @@ public class DoctorService(IDoctorRepository doctorRepository, IMapper mapper, I
 
     private async Task DeletePhotoAsync(Guid doctorId, CancellationToken cancellationToken)
     {
-        string fileServiceBaseUrl = this.fileServiceBaseUrl;
-        string fileServiceDeleteEndpoint = $"{fileServiceBaseUrl}?referenceItemId={doctorId}";
+        var fileServiceBaseUrl = this.fileServiceBaseUrl;
+        var fileServiceDeleteEndpoint = $"{fileServiceBaseUrl}?referenceItemId={doctorId}";
 
-        HttpResponseMessage deleteFileResponse = await httpClient.DeleteAsync(
+        var deleteFileResponse = await httpClient.DeleteAsync(
             fileServiceDeleteEndpoint, cancellationToken);
         deleteFileResponse.EnsureSuccessStatusCode();
     }
