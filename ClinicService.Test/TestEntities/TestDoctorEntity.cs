@@ -6,7 +6,7 @@ public static class TestDoctorEntity
 {
     public static DoctorEntity NewDoctorEntity => new()
     {
-        Id = Guid.NewGuid(),
+        Id = Guid.NewGuid(),//.Parse("8755A722-B6AA-4C9F-AFBB-08DD8243BC1C"),
         FirstName = "Test DoctorName",
         LastName = "Test LastName",
         MiddleName = "Test MiddleName",

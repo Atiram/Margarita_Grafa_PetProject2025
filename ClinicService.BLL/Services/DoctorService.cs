@@ -13,22 +13,29 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 
 namespace ClinicService.BLL.Services;
-public class DoctorService(IDoctorRepository doctorRepository, IMapper mapper, IConfiguration configuration) : IDoctorService
+public class DoctorService(IDoctorRepository doctorRepository,
+    IMapper mapper,
+    IConfiguration configuration,
+    IHttpClientFactory httpClientFactory
+    ) : IDoctorService
 {
     private const string FileServiceSectionName = "FileServiceBaseUrl";
     private readonly string fileServiceBaseUrl = configuration.GetSection(FileServiceSectionName).Value ??
         throw new ArgumentException(string.Format(NotificationMessages.SectionMissingErrorMessage, FileServiceSectionName));
-    private HttpClient httpClient = new HttpClient();
+    private HttpClient httpClient = httpClientFactory.CreateClient(); // new HttpClient();
 
     public async Task<DoctorModel> GetById(Guid id, CancellationToken cancellationToken)
     {
-        var doctorEntity = await doctorRepository.GetByIdAsync(id, cancellationToken)
-            ?? throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, id));
+        var doctorEntity = await doctorRepository.GetByIdAsync(id, cancellationToken);
+        // ?? throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, id));
+        if (doctorEntity != null)
+        {
+            var fileUrl = await GetPhotoAsync(doctorEntity.Id, cancellationToken);
+            var doctorModel = mapper.Map<DoctorModel>(doctorEntity);
 
-        var fileUrl = await GetPhotoAsync(doctorEntity.Id, cancellationToken);
-        var doctorModel = mapper.Map<DoctorModel>(doctorEntity);
-
-        return doctorModel;
+            return doctorModel;
+        }
+        return null;
     }
 
     public async Task<PagedResult<DoctorModel>> GetAll(GetAllDoctorsParams getAllDoctorsParams, CancellationToken cancellationToken)
