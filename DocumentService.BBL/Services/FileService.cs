@@ -45,6 +45,12 @@ public class FileService(
                 uploadSuccessful = true;
             }
 
+            if (createFileRequest.InMemoryFile != null && createFileRequest.InMemoryFile.Length > 0)
+            {
+                documentEntity.StorageLocation = await blobStorageService.UploadFileFromMemoryAsync(createFileRequest.InMemoryFile, createFileRequest.BlobName, cancellationToken);
+                uploadSuccessful = true;
+            }
+
             var createdDocumentEntity = await documentRepository.CreateAsync(documentEntity, cancellationToken);
             return mapper.Map<FileModel>(createdDocumentEntity);
         }

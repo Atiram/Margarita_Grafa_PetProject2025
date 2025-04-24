@@ -19,6 +19,7 @@ public static class ServicesConfiguration
             .AddScoped<IAppointmentResultService, AppointmentResultService>()
             .AddScoped<INotificationHttpClient, NotificationHttpClient>()
             .AddScoped<IRabbitMqService, RabbitMqService>()
+            .AddScoped<IGeneratePdfService, GeneratePdfService>()
             .AddHttpClient()
             .RegisterDataRepositories(configuration);
     }
