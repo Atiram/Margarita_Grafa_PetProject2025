@@ -41,7 +41,6 @@ public class AppMappingProfile : Profile
             .ForMember(dto => dto.CreatedAt, opt => opt.MapFrom((src, upd) => upd.CreatedAt))
             .ForMember(dto => dto.UpdatedAt, opt => opt.MapFrom((src, upd) => upd.UpdatedAt));
 
-
         CreateMap(typeof(PagedResult<>), typeof(PagedResult<>))
             .ForMember(nameof(PagedResult<object>.Results), opt => opt.MapFrom(nameof(PagedResult<object>.Results)));
     }

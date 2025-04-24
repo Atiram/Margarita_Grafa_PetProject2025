@@ -8,5 +8,5 @@ public interface IFileRepository
     Task<List<FileEntity>> GetAllAsync(CancellationToken cancellationToken);
     Task<FileEntity> CreateAsync(FileEntity fileEntity, CancellationToken cancellationToken);
     Task<bool> DeleteAsync(string id, CancellationToken cancellationToken);
-    Task<bool> DeleteByReferenceItemIdAsync(string id, CancellationToken cancellationToken);
+    Task<bool> DeleteByReferenceItemIdAsync(string referenceItemId, CancellationToken cancellationToken);
 }

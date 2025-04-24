@@ -73,7 +73,7 @@ public class DoctorIntegrationTests : IntegrationTests
 
         //Assert
         Assert.Equal(HttpStatusCode.OK, actualResult.StatusCode);
-        Assert.Equivalent(expectedPagedResult.TotalCount, responseResult.TotalCount);
+        Assert.Equivalent(expectedPagedResult.TotalCount, responseResult?.TotalCount);
     }
 
     [Fact]
@@ -106,7 +106,7 @@ public class DoctorIntegrationTests : IntegrationTests
 
         //Assert
         Assert.Equal(HttpStatusCode.OK, actualResult.StatusCode);
-        Assert.Equivalent(expectedPagedResult.TotalCount, responseResult.TotalCount);
+        Assert.Equivalent(expectedPagedResult.TotalCount, responseResult?.TotalCount);
     }
 
     [Fact]
@@ -142,7 +142,7 @@ public class DoctorIntegrationTests : IntegrationTests
 
         //Assert
         Assert.Equal(HttpStatusCode.OK, actualResult.StatusCode);
-        Assert.Equivalent(expectedPagedResult.TotalCount, responseResult.TotalCount);
+        Assert.Equivalent(expectedPagedResult.TotalCount, responseResult?.TotalCount);
     }
 
     [Fact]

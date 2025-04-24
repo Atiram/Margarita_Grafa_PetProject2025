@@ -46,9 +46,9 @@ public class FileRepository : IFileRepository
         return result.DeletedCount > 0;
     }
 
-    public async Task<bool> DeleteByReferenceItemIdAsync(string ReferenceItemId, CancellationToken cancellationToken)
+    public async Task<bool> DeleteByReferenceItemIdAsync(string referenceItemId, CancellationToken cancellationToken)
     {
-        var filter = Builders<FileEntity>.Filter.Eq(u => u.ReferenceItemId, ReferenceItemId);
+        var filter = Builders<FileEntity>.Filter.Eq(u => u.ReferenceItemId, referenceItemId);
         var result = await _mongoCollection.DeleteOneAsync(filter, cancellationToken);
         return result.DeletedCount > 0;
     }

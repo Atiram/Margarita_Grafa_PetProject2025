@@ -24,7 +24,7 @@ public class DoctorService(IDoctorRepository doctorRepository,
         throw new ArgumentException(string.Format(NotificationMessages.SectionMissingErrorMessage, FileServiceSectionName));
     private HttpClient httpClient = httpClientFactory.CreateClient("FileService");
 
-    public async Task<DoctorModel> GetById(Guid id, CancellationToken cancellationToken)
+    public async Task<DoctorModel?> GetById(Guid id, CancellationToken cancellationToken)
     {
         var doctorEntity = await doctorRepository.GetByIdAsync(id, cancellationToken);
         if (doctorEntity != null)
