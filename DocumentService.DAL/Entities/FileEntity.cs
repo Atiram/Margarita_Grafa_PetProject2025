@@ -1,4 +1,4 @@
-﻿using DocumentService.DAL.Enums;
+﻿using Clinic.Domain.Enums;
 using MongoDB.Bson;
 using MongoDB.Bson.Serialization.Attributes;
 

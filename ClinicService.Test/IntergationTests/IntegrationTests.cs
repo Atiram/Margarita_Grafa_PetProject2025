@@ -1,4 +1,6 @@
-﻿using System.Text;
+﻿using System.Net;
+using System.Net.Http.Headers;
+using System.Text;
 using System.Web;
 using ClinicService.BLL.Models.Requests;
 using ClinicService.DAL.Data;
@@ -10,7 +12,10 @@ using Microsoft.AspNetCore.TestHost;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
+using Moq;
+using Moq.Protected;
 using Newtonsoft.Json;
+
 
 namespace ClinicService.Test.IntergationTests;
 public class IntegrationTests
@@ -30,7 +35,25 @@ public class IntegrationTests
                 services.RemoveAll<DbContextOptions<ClinicDbContext>>();
 
                 services.AddDbContext<ClinicDbContext>(options => options.UseInMemoryDatabase("TestDb"));
+
+                var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
+                mockHttpMessageHandler.Protected()
+                         .Setup<Task<HttpResponseMessage>>(
+                             "SendAsync",
+                             ItExpr.IsAny<HttpRequestMessage>(),
+                             ItExpr.IsAny<CancellationToken>()
+                         )
+                         .ReturnsAsync(new HttpResponseMessage
+                         {
+                             StatusCode = HttpStatusCode.OK,
+                             Content = new StringContent(System.Text.Json.JsonSerializer.Serialize(new { storageLocation = "test_upload_url" })),
+                         });
+                var httpClient = new HttpClient(mockHttpMessageHandler.Object);
+                services.AddHttpClient("FileService")
+                    .ConfigurePrimaryHttpMessageHandler(() => mockHttpMessageHandler.Object);
             }));
+
+
         Server = Factory.Server;
         Client = Server.CreateClient();
         Context = Factory.Services.CreateScope().ServiceProvider.GetService<ClinicDbContext>()!;
@@ -38,7 +61,54 @@ public class IntegrationTests
 
     public static HttpRequestMessage AddContent<T>(T entity, HttpRequestMessage requestMessage)
     {
-        requestMessage.Content = new StringContent(JsonConvert.SerializeObject(entity), Encoding.UTF8, JsonContentType);
+        if (entity is UpdateDoctorRequest updateDoctorRequest)
+        {
+            var content = new MultipartFormDataContent();
+
+            content.Add(new StringContent(updateDoctorRequest.Id.ToString()), "Id");
+            content.Add(new StringContent(updateDoctorRequest.FirstName), "FirstName");
+            content.Add(new StringContent(updateDoctorRequest.LastName), "LastName");
+            content.Add(new StringContent(updateDoctorRequest.MiddleName ?? ""), "MiddleName");
+            content.Add(new StringContent(updateDoctorRequest.DateOfBirth.ToString("yyyy-MM-dd")), "DateOfBirth");
+            content.Add(new StringContent(updateDoctorRequest.Email), "Email");
+            content.Add(new StringContent(updateDoctorRequest.Specialization), "Specialization");
+            content.Add(new StringContent(updateDoctorRequest.Office), "Office");
+            content.Add(new StringContent(updateDoctorRequest.CareerStartYear.ToString()), "CareerStartYear");
+            content.Add(new StringContent(updateDoctorRequest.Status.ToString()), "Status");
+
+            if (updateDoctorRequest.Formfile != null)
+            {
+                var fileContent = new StreamContent(updateDoctorRequest.Formfile.OpenReadStream());
+                fileContent.Headers.ContentType = new MediaTypeHeaderValue(updateDoctorRequest.Formfile.ContentType);
+                content.Add(fileContent, "Formfile", updateDoctorRequest.Formfile.FileName);
+            }
+
+            requestMessage.Content = content;
+        }
+        else if (entity is CreateDoctorRequest createDoctorRequest && createDoctorRequest.Formfile != null)
+        {
+            var content = new MultipartFormDataContent();
+
+            content.Add(new StringContent(createDoctorRequest.FirstName), "FirstName");
+            content.Add(new StringContent(createDoctorRequest.LastName), "LastName");
+            content.Add(new StringContent(createDoctorRequest.MiddleName ?? ""), "MiddleName");
+            content.Add(new StringContent(createDoctorRequest.DateOfBirth.ToString("yyyy-MM-dd")), "DateOfBirth");
+            content.Add(new StringContent(createDoctorRequest.Email), "Email");
+            content.Add(new StringContent(createDoctorRequest.Specialization), "Specialization");
+            content.Add(new StringContent(createDoctorRequest.Office), "Office");
+            content.Add(new StringContent(createDoctorRequest.CareerStartYear.ToString()), "CareerStartYear");
+            content.Add(new StringContent(createDoctorRequest.Status.ToString()), "Status");
+
+            var fileContent = new StreamContent(createDoctorRequest.Formfile.OpenReadStream());
+            fileContent.Headers.ContentType = new MediaTypeHeaderValue(createDoctorRequest.Formfile.ContentType);
+            content.Add(fileContent, "Formfile", createDoctorRequest.Formfile.FileName);
+
+            requestMessage.Content = content;
+        }
+        else
+        {
+            requestMessage.Content = new StringContent(JsonConvert.SerializeObject(entity), Encoding.UTF8, JsonContentType);
+        }
         return requestMessage;
     }
 

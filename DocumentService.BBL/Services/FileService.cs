@@ -1,9 +1,7 @@
 ﻿using System.Diagnostics;
-using System.Text;
 using AutoMapper;
 using Clinic.Domain;
 using DocumentService.BBL.Models;
-using DocumentService.BBL.Models.Requests;
 using DocumentService.BBL.Services.Interfaces;
 using DocumentService.DAL.Entities;
 using DocumentService.DAL.Repositories.Interfaces;
@@ -15,9 +13,16 @@ public class FileService(
     IFileRepository documentRepository,
     IMapper mapper) : IFileService
 {
+    private readonly string jpgFileExtension = ".jpg";
     public async Task<FileModel> GetByIdAsync(string id, CancellationToken cancellationToken)
     {
         var documentEntity = await documentRepository.GetByIdAsync(id, cancellationToken);
+        return mapper.Map<FileModel>(documentEntity);
+    }
+
+    public async Task<FileModel> GetByReferenceItemIdAsync(string referenceItemId, CancellationToken cancellationToken)
+    {
+        var documentEntity = await documentRepository.GetByReferenceItemIdAsync(referenceItemId, cancellationToken);
         return mapper.Map<FileModel>(documentEntity);
     }
 
@@ -27,24 +32,19 @@ public class FileService(
         return mapper.Map<List<FileModel>>(documentEntities);
     }
 
-    public async Task<FileModel> CreateAsync(CreateFileRequest createFileRequest, string? localFilePath, CancellationToken cancellationToken)
+    public async Task<FileModel> CreateAsync(CreateFileRequest createFileRequest, CancellationToken cancellationToken)
     {
         var documentEntity = mapper.Map<FileEntity>(createFileRequest);
         bool uploadSuccessful = false;
 
         try
         {
-            if (!string.IsNullOrEmpty(localFilePath))
+            if (createFileRequest.File != null && createFileRequest.File.Length > 0)
             {
-                documentEntity.StorageLocation = await blobStorageService.UploadFileAsync(localFilePath, createFileRequest.BlobName, cancellationToken);
-            }
-            else
-            {
-                var fileBytes = GenerateInMemoryTextFile();
-                documentEntity.StorageLocation = await blobStorageService.UploadFileFromMemoryAsync(fileBytes, createFileRequest.BlobName, cancellationToken);
+                documentEntity.StorageLocation = await blobStorageService.UploadFileAsync(createFileRequest.File, createFileRequest.BlobName, cancellationToken);
+                uploadSuccessful = true;
             }
 
-            uploadSuccessful = true;
             var createdDocumentEntity = await documentRepository.CreateAsync(documentEntity, cancellationToken);
             return mapper.Map<FileModel>(createdDocumentEntity);
         }
@@ -93,6 +93,17 @@ public class FileService(
         return await documentRepository.DeleteAsync(id, cancellationToken);
     }
 
+    public async Task<bool> DeleteByReferenceItemIdAsync(string referenceItemId, CancellationToken cancellationToken)
+    {
+        var blobName = referenceItemId + jpgFileExtension;
+        var isFileDeleted = await blobStorageService.DeleteBlobAsync(blobName, cancellationToken);
+        if (!isFileDeleted)
+        {
+            throw new Exception(NotificationMessages.NotDeletedErrorMessage);
+        }
+        return await documentRepository.DeleteByReferenceItemIdAsync(referenceItemId, cancellationToken);
+    }
+
     public async Task<bool> DownloadFileAsync(string id, string? downloadFilePath, CancellationToken cancellationToken)
     {
         return string.IsNullOrEmpty(downloadFilePath)
@@ -123,12 +134,5 @@ public class FileService(
         }
         await blobStorageService.DownloadFileAsync(documentModel.BlobName, downloadFilePath, cancellationToken);
         return true;
-    }
-
-    //this method initates file content in memory, will be changed later
-    private byte[] GenerateInMemoryTextFile()
-    {
-        string fileContent = "Test file for container";
-        return Encoding.UTF8.GetBytes(fileContent);
     }
 }

@@ -1,6 +1,5 @@
 ﻿using Clinic.Domain;
 using DocumentService.BBL.Models;
-using DocumentService.BBL.Models.Requests;
 using DocumentService.BBL.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,6 +13,13 @@ public class FileController(IFileService fileService) : ControllerBase
     {
         var file = await fileService.GetByIdAsync(id, cancellationToken);
         return file;
+    }
+
+    [HttpGet("referenceId/{referenceItemId}")]
+    public async Task<string?> GetFileByReferenceItemIdAsync(string referenceItemId, CancellationToken cancellationToken = default)
+    {
+        var file = await fileService.GetByReferenceItemIdAsync(referenceItemId, cancellationToken);
+        return file.StorageLocation;
     }
 
     [HttpGet]
@@ -30,9 +36,9 @@ public class FileController(IFileService fileService) : ControllerBase
     }
 
     [HttpPost]
-    public async Task<FileModel> CreateFile(CreateFileRequest createFileRequest, string? localFilePath, CancellationToken cancellationToken = default)
+    public async Task<FileModel> CreateFile([FromForm] CreateFileRequest createFileRequest, CancellationToken cancellationToken = default)
     {
-        var createdFile = await fileService.CreateAsync(createFileRequest, localFilePath ?? string.Empty, cancellationToken);
+        var createdFile = await fileService.CreateAsync(createFileRequest, cancellationToken);
         return createdFile;
     }
 
@@ -41,6 +47,13 @@ public class FileController(IFileService fileService) : ControllerBase
     {
         var deleted = await fileService.DeleteAsync(id, cancellationToken);
         return deleted ? Ok() : NotFound(string.Format(NotificationMessages.NotFoundErrorMessage, id));
+    }
+
+    [HttpDelete]
+    public async Task<IActionResult> DeleteFileByReferenceItemId(string referenceItemId, CancellationToken cancellationToken = default)
+    {
+        var isDeleted = await fileService.DeleteByReferenceItemIdAsync(referenceItemId, cancellationToken);
+        return isDeleted ? Ok() : NotFound(string.Format(NotificationMessages.NotFoundErrorMessage, referenceItemId));
     }
 }
 

@@ -2,6 +2,7 @@
 using Azure.Storage.Blobs.Models;
 using Clinic.Domain;
 using DocumentService.BBL.Services.Interfaces;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
 
 namespace DocumentService.BBL.Services;
@@ -17,9 +18,9 @@ public class AzureBlobService : IAzureBlobService
     public AzureBlobService(IConfiguration configuration)
     {
         connectionString = configuration.GetConnectionString(AzureConnectionStringSectionName) ??
-            throw new InvalidOperationException(NotificationMessages.ConnectionStringMissingErrorMessage);
+            throw new InvalidOperationException(string.Format(NotificationMessages.SectionMissingErrorMessage, AzureConnectionStringSectionName));
         containerName = configuration.GetSection(AzureContainerNameSectionName)?.Value ??
-            throw new InvalidOperationException(NotificationMessages.ContainerNameMissingErrorMessage);
+            throw new InvalidOperationException(string.Format(NotificationMessages.SectionMissingErrorMessage, AzureContainerNameSectionName));
         blobServiceClient = new BlobServiceClient(connectionString);
         containerClient = blobServiceClient.GetBlobContainerClient(containerName);
     }
@@ -42,6 +43,23 @@ public class AzureBlobService : IAzureBlobService
         {
             throw new InvalidOperationException(NotificationMessages.NoUrlErrorMessage);
         }
+        return blobClient.Uri.ToString();
+    }
+
+    public async Task<string> UploadFileAsync(IFormFile file, string blobName, CancellationToken cancellationToken)
+    {
+        var blobClient = await GetBlobClientAsync(blobName);
+
+        using (var stream = file.OpenReadStream())
+        {
+            await blobClient.UploadAsync(stream, true, cancellationToken);
+        }
+
+        if (string.IsNullOrEmpty(blobClient.Uri?.ToString()))
+        {
+            throw new InvalidOperationException(NotificationMessages.NoUrlErrorMessage);
+        }
+
         return blobClient.Uri.ToString();
     }
 

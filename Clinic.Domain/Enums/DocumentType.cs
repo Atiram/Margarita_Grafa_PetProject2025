@@ -1,4 +1,4 @@
-﻿namespace DocumentService.DAL.Enums;
+﻿namespace Clinic.Domain.Enums;
 public enum DocumentType
 {
     Photo,

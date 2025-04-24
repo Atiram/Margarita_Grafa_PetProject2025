@@ -1,4 +1,5 @@
 ﻿using ClinicService.DAL.Enums;
+using Microsoft.AspNetCore.Http;
 
 namespace ClinicService.BLL.Models.Requests;
 public class CreateDoctorRequest
@@ -12,4 +13,5 @@ public class CreateDoctorRequest
     public required string Office { get; set; }
     public required int CareerStartYear { get; set; }
     public required DoctorStatus Status { get; set; }
+    public IFormFile? Formfile { get; set; }
 }

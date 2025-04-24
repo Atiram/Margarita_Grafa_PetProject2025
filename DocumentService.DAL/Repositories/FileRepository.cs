@@ -21,6 +21,12 @@ public class FileRepository : IFileRepository
         return await _mongoCollection.Find(filter).FirstOrDefaultAsync(cancellationToken);
     }
 
+    public async Task<FileEntity> GetByReferenceItemIdAsync(string ReferenceItemId, CancellationToken cancellationToken)
+    {
+        var filter = Builders<FileEntity>.Filter.Eq(u => u.ReferenceItemId, ReferenceItemId);
+        return await _mongoCollection.Find(filter).FirstOrDefaultAsync(cancellationToken);
+    }
+
     public async Task<List<FileEntity>> GetAllAsync(CancellationToken cancellationToken)
     {
         return await _mongoCollection.Find(Builders<FileEntity>.Filter.Empty).ToListAsync(cancellationToken);
@@ -36,6 +42,13 @@ public class FileRepository : IFileRepository
     public async Task<bool> DeleteAsync(string id, CancellationToken cancellationToken)
     {
         var filter = Builders<FileEntity>.Filter.Eq(u => u.Id, id);
+        var result = await _mongoCollection.DeleteOneAsync(filter, cancellationToken);
+        return result.DeletedCount > 0;
+    }
+
+    public async Task<bool> DeleteByReferenceItemIdAsync(string referenceItemId, CancellationToken cancellationToken)
+    {
+        var filter = Builders<FileEntity>.Filter.Eq(u => u.ReferenceItemId, referenceItemId);
         var result = await _mongoCollection.DeleteOneAsync(filter, cancellationToken);
         return result.DeletedCount > 0;
     }

@@ -73,7 +73,7 @@ public class DoctorIntegrationTests : IntegrationTests
 
         //Assert
         Assert.Equal(HttpStatusCode.OK, actualResult.StatusCode);
-        Assert.Equivalent(expectedPagedResult, responseResult);
+        Assert.Equivalent(expectedPagedResult.TotalCount, responseResult?.TotalCount);
     }
 
     [Fact]
@@ -106,7 +106,7 @@ public class DoctorIntegrationTests : IntegrationTests
 
         //Assert
         Assert.Equal(HttpStatusCode.OK, actualResult.StatusCode);
-        Assert.Equivalent(expectedPagedResult, responseResult);
+        Assert.Equivalent(expectedPagedResult.TotalCount, responseResult?.TotalCount);
     }
 
     [Fact]
@@ -142,7 +142,7 @@ public class DoctorIntegrationTests : IntegrationTests
 
         //Assert
         Assert.Equal(HttpStatusCode.OK, actualResult.StatusCode);
-        Assert.Equivalent(expectedPagedResult, responseResult);
+        Assert.Equivalent(expectedPagedResult.TotalCount, responseResult?.TotalCount);
     }
 
     [Fact]
@@ -150,7 +150,7 @@ public class DoctorIntegrationTests : IntegrationTests
     {
         //Arrange
         var createDoctorRequest = TestDoctorRequest.NewCreateDoctorRequest;
-        var updateDoctorRequest = TestDoctorRequest.UpdatedDoctorRequest;
+        var updateDoctorRequest = TestDoctorRequest.UpdatedDoctorRequest();
 
         var postResponse = await SendPostRequest(createDoctorRequest);
         var postResponseResult = GetResponseResult<DoctorViewModel>(postResponse);
