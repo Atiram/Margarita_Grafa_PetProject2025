@@ -35,17 +35,29 @@ public static class TestDoctorRequest
         }
     }
 
-    public static UpdateDoctorRequest UpdatedDoctorRequest => new()
+    public static UpdateDoctorRequest UpdatedDoctorRequest()
     {
-        Id = Guid.NewGuid(),
-        FirstName = "ChangedTest DoctorName",
-        LastName = "ChangedTest LastName",
-        MiddleName = "ChangedTest MiddleName",
-        DateOfBirth = new DateOnly(1999, 1, 1),
-        Email = "ChangedTest@email",
-        Specialization = "ChangedTestSpec",
-        Office = "ChangedTestOffice",
-        CareerStartYear = 2010,
-        Status = DoctorStatus.SickDay,
-    };
+        var mockFile = new Mock<IFormFile>();
+        var content = "Hello World from a Fake File";
+        var stream = new MemoryStream(System.Text.Encoding.UTF8.GetBytes(content));
+
+        mockFile.Setup(f => f.FileName).Returns("test.jpg");
+        mockFile.Setup(f => f.Length).Returns(stream.Length);
+        mockFile.Setup(f => f.OpenReadStream()).Returns(stream);
+        mockFile.Setup(f => f.ContentType).Returns("image/jpeg");
+        return new UpdateDoctorRequest
+        {
+            Id = Guid.NewGuid(),
+            FirstName = "ChangedTest DoctorName",
+            LastName = "ChangedTest LastName",
+            MiddleName = "ChangedTest MiddleName",
+            DateOfBirth = new DateOnly(1999, 1, 1),
+            Email = "ChangedTest@email",
+            Specialization = "ChangedTestSpec",
+            Office = "ChangedTestOffice",
+            CareerStartYear = 2010,
+            Status = DoctorStatus.SickDay,
+            Formfile = mockFile.Object
+        };
+    }
 }

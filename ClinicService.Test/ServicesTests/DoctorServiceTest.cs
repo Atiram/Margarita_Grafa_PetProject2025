@@ -164,8 +164,7 @@ public class DoctorServiceTest
     {
         //Arrange
         var doctorEntity = TestDoctorEntity.UpdatedDoctorEntity;
-        var updatedDoctorRequest = TestDoctorRequest.UpdatedDoctorRequest;
-        updatedDoctorRequest.Formfile = null;
+        var updatedDoctorRequest = TestDoctorRequest.UpdatedDoctorRequest();
 
         var mockRepository = new Mock<IDoctorRepository>();
         mockRepository.Setup(repo => repo.UpdateAsync(It.IsAny<DoctorEntity>(), CancellationToken.None)).ReturnsAsync(doctorEntity);
@@ -177,38 +176,24 @@ public class DoctorServiceTest
         configurationMock.Setup(c => c.GetSection("FileServiceBaseUrl").Value)
             .Returns("https://localhost:7049/api/File");
 
-        var mockUploadHttpMessageHandler = new Mock<HttpMessageHandler>();
-        mockUploadHttpMessageHandler.Protected()
-            .Setup<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.IsAny<HttpRequestMessage>(),
-                ItExpr.IsAny<CancellationToken>()
-            )
-            .ReturnsAsync(new HttpResponseMessage
-            {
-                StatusCode = HttpStatusCode.OK,
-                Content = new StringContent(JsonSerializer.Serialize(new { id = Guid.NewGuid().ToString(), storageLocation = "test_upload_url" })),
-            });
-        var uploadHttpClient = new HttpClient(mockUploadHttpMessageHandler.Object);
+        var mockHttpMessageHandler = new Mock<HttpMessageHandler>();
+        mockHttpMessageHandler.Protected()
+        .Setup<Task<HttpResponseMessage>>(
+            "SendAsync",
+            ItExpr.IsAny<HttpRequestMessage>(),
+            ItExpr.IsAny<CancellationToken>()
+        )
+        .ReturnsAsync(new HttpResponseMessage
+        {
+            StatusCode = HttpStatusCode.OK,
+            Content = new StringContent(JsonSerializer.Serialize(new { id = Guid.NewGuid().ToString(), storageLocation = "test_upload_url" })),
+        });
 
-        var mockDeleteHttpMessageHandler = new Mock<HttpMessageHandler>();
-        mockDeleteHttpMessageHandler.Protected()
-            .Setup<Task<HttpResponseMessage>>(
-                "SendAsync",
-                ItExpr.IsAny<HttpRequestMessage>(),
-                ItExpr.IsAny<CancellationToken>()
-            )
-            .ReturnsAsync(new HttpResponseMessage { StatusCode = HttpStatusCode.OK });
-        var deleteHttpClient = new HttpClient(mockDeleteHttpMessageHandler.Object);
+        var httpClient = new HttpClient(mockHttpMessageHandler.Object);
 
         var mockHttpClientFactory = new Mock<IHttpClientFactory>();
         mockHttpClientFactory.Setup(factory => factory.CreateClient(It.IsAny<string>()))
-            .Returns<string>(name =>
-            {
-                if (name.StartsWith("UploadPhoto")) return uploadHttpClient;
-                if (name.StartsWith("DeletePhoto")) return deleteHttpClient;
-                return new HttpClient();
-            });
+            .Returns(httpClient);
         var doctorService = new DoctorService(mockRepository.Object, mapper, configurationMock.Object, mockHttpClientFactory.Object);
 
         //Act

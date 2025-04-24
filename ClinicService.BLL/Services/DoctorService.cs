@@ -22,12 +22,11 @@ public class DoctorService(IDoctorRepository doctorRepository,
     private const string FileServiceSectionName = "FileServiceBaseUrl";
     private readonly string fileServiceBaseUrl = configuration.GetSection(FileServiceSectionName).Value ??
         throw new ArgumentException(string.Format(NotificationMessages.SectionMissingErrorMessage, FileServiceSectionName));
-    private HttpClient httpClient = httpClientFactory.CreateClient(); // new HttpClient();
+    private HttpClient httpClient = httpClientFactory.CreateClient("FileService");
 
     public async Task<DoctorModel> GetById(Guid id, CancellationToken cancellationToken)
     {
         var doctorEntity = await doctorRepository.GetByIdAsync(id, cancellationToken);
-        // ?? throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, id));
         if (doctorEntity != null)
         {
             var fileUrl = await GetPhotoAsync(doctorEntity.Id, cancellationToken);
@@ -65,7 +64,7 @@ public class DoctorService(IDoctorRepository doctorRepository,
             ?? throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, request.Id));
 
         var doctorEntity = mapper.Map(request, doctor);
-        if (request.Formfile == null || request.Formfile.Length == 0)
+        if (request.Formfile != null && request.Formfile.Length != 0)
         {
             await DeletePhotoAsync(doctorEntity.Id, cancellationToken);
             await UploadPhotoAsync(doctorEntity.Id, request.Formfile, cancellationToken);
