@@ -1,5 +1,4 @@
 ﻿using AutoMapper;
-using Azure.Core;
 using Clinic.Domain;
 using ClinicService.BLL.Models;
 using ClinicService.BLL.Models.Requests;
@@ -8,7 +7,9 @@ using ClinicService.DAL.Entities;
 using ClinicService.DAL.Repositories.Interfaces;
 
 namespace ClinicService.BLL.Services;
-public class AppointmentResultService(IAppointmentResultRepository appointmentResultRepository, IMapper mapper) : IAppointmentResultService
+public class AppointmentResultService(IAppointmentResultRepository appointmentResultRepository,
+    IGeneratePdfService generatePdfService,
+    IMapper mapper) : IAppointmentResultService
 {
     public async Task<AppointmentResultModel> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
@@ -29,6 +30,12 @@ public class AppointmentResultService(IAppointmentResultRepository appointmentRe
     public async Task<AppointmentResultModel> CreateAsync(CreateAppointmentResultRequest request, CancellationToken cancellationToken)
     {
         var appointmentResultEntity = await appointmentResultRepository.CreateAsync(mapper.Map<AppointmentResultEntity>(request), cancellationToken);
+        var pdfBytes = await generatePdfService.SaveToPdfAsync(appointmentResultEntity.Id, cancellationToken);
+        if (pdfBytes == null)
+        {
+            throw new InvalidOperationException(string.Format(NotificationMessages.NotFoundErrorMessage, appointmentResultEntity.Id));
+        }
+        await generatePdfService.UploadPdfToStorageAsync(pdfBytes, appointmentResultEntity.Id, cancellationToken);
         return mapper.Map<AppointmentResultModel>(appointmentResultEntity);
     }
 
