@@ -1,8 +1,8 @@
 ﻿using System.Net.Http.Headers;
 using AutoMapper;
 using Clinic.Domain;
-using ClinicService.BLL.Models;
 using ClinicService.BLL.Services.Interfaces;
+using ClinicService.DAL.Entities;
 using ClinicService.DAL.Repositories.Interfaces;
 using Microsoft.Extensions.Configuration;
 using PdfSharp.Drawing;
@@ -28,8 +28,7 @@ public class GeneratePdfService(IAppointmentResultRepository appointmentResultRe
         {
             throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, id));
         }
-        var appointmentResultModel = mapper.Map<AppointmentResultModel>(appointmentResultEntity);
-        return GeneratePdfBytes(appointmentResultModel);
+        return GeneratePdfBytes(appointmentResultEntity);
     }
 
     public async Task UploadPdfToStorageAsync(byte[] pdfBytes, Guid referenseItemId, CancellationToken cancellationToken)
@@ -46,7 +45,7 @@ public class GeneratePdfService(IAppointmentResultRepository appointmentResultRe
         response.EnsureSuccessStatusCode();
     }
 
-    private byte[] GeneratePdfBytes(AppointmentResultModel result)
+    private byte[] GeneratePdfBytes(AppointmentResultEntity result)
     {
         using (var document = new PdfDocument())
         {

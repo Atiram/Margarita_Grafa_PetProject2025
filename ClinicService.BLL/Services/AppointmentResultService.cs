@@ -7,7 +7,9 @@ using ClinicService.DAL.Entities;
 using ClinicService.DAL.Repositories.Interfaces;
 
 namespace ClinicService.BLL.Services;
-public class AppointmentResultService(IAppointmentResultRepository appointmentResultRepository, IGeneratePdfService generatePdfService, IMapper mapper) : IAppointmentResultService
+public class AppointmentResultService(IAppointmentResultRepository appointmentResultRepository,
+    IGeneratePdfService generatePdfService,
+    IMapper mapper) : IAppointmentResultService
 {
     public async Task<AppointmentResultModel> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
