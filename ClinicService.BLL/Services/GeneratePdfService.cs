@@ -1,5 +1,4 @@
 ﻿using System.Net.Http.Headers;
-using AutoMapper;
 using Clinic.Domain;
 using ClinicService.BLL.Services.Interfaces;
 using ClinicService.DAL.Entities;
@@ -10,7 +9,6 @@ using PdfSharp.Pdf;
 
 namespace ClinicService.BLL.Services;
 public class GeneratePdfService(IAppointmentResultRepository appointmentResultRepository,
-    IMapper mapper,
     IConfiguration configuration,
     IHttpClientFactory httpClientFactory) : IGeneratePdfService
 
