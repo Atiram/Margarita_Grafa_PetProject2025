@@ -8,11 +8,8 @@ using Microsoft.AspNetCore.Mvc;
 namespace ClinicService.API.Controllers;
 [Route("[controller]")]
 [ApiController]
-public class AppointmentResultController(IAppointmentResultService appointmentResultService, IGeneratePdfService generatePdfService, IMapper mapper) : ControllerBase
+public class AppointmentResultController(IAppointmentResultService appointmentResultService, IMapper mapper) : ControllerBase
 {
-    private const string fileContentType = "application/pdf";
-    private const string fileDownloadName = "AppointmentResult_{0}.pdf";
-
     [HttpGet("{id}")]
     public async Task<AppointmentResultViewModel> Get([FromRoute] Guid id, CancellationToken cancellationToken)
     {
@@ -54,22 +51,5 @@ public class AppointmentResultController(IAppointmentResultService appointmentRe
     {
         var isDeleted = await appointmentResultService.DeleteAsync(id, cancellationToken);
         return isDeleted ? Ok() : NotFound(string.Format(NotificationMessages.NotFoundErrorMessage, id));
-    }
-
-    [HttpGet("{id}/pdf")]
-    public async Task<IActionResult> GetAppointmentResultPdfAsync(Guid id, CancellationToken cancellationToken)
-    {
-        var pdfBytes = await generatePdfService.SaveToPdfAsync(id, cancellationToken);
-        if (pdfBytes == null)
-        {
-            return NotFound(string.Format(NotificationMessages.NotFoundErrorMessage, id));
-        }
-
-        //var blobName = string.Format(fileDownloadName, id);
-
-
-        var t =  File(pdfBytes, fileContentType, string.Format(fileDownloadName, id));
-        await generatePdfService.UploadPdfToStorageAsync(pdfBytes, id, cancellationToken);
-        return Ok(t);
     }
 }

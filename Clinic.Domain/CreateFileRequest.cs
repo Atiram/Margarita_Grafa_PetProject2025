@@ -8,5 +8,4 @@ public class CreateFileRequest
     public required string BlobName { get; set; }
     public required string ReferenceItemId { get; set; }
     public IFormFile? File { get; set; }
-    public byte[]? InMemoryFile { get; set; }
 }

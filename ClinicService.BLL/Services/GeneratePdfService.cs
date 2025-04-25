@@ -9,15 +9,17 @@ using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 
 namespace ClinicService.BLL.Services;
-public class GeneratePdfService(IAppointmentResultRepository appointmentResultRepository, IMapper mapper, IConfiguration configuration, IHttpClientFactory httpClientFactory) : IGeneratePdfService
+public class GeneratePdfService(IAppointmentResultRepository appointmentResultRepository,
+    IMapper mapper,
+    IConfiguration configuration,
+    IHttpClientFactory httpClientFactory) : IGeneratePdfService
+
 {
     private const string FileServiceSectionName = "FileServiceBaseUrl";
+    private const string fileContentType = "application/pdf";
     private readonly string fileServiceBaseUrl = configuration.GetSection(FileServiceSectionName).Value ??
         throw new ArgumentException(string.Format(NotificationMessages.SectionMissingErrorMessage, FileServiceSectionName));
-
     private HttpClient httpClient = httpClientFactory.CreateClient("FileService");
-    private const string fileContentType = "application/pdf";
-    private const string fileDownloadName = "AppointmentResult_{0}.pdf";
 
     public async Task<byte[]> SaveToPdfAsync(Guid id, CancellationToken cancellationToken)
     {
@@ -32,61 +34,17 @@ public class GeneratePdfService(IAppointmentResultRepository appointmentResultRe
 
     public async Task UploadPdfToStorageAsync(byte[] pdfBytes, Guid referenseItemId, CancellationToken cancellationToken)
     {
-
         using var content = new MultipartFormDataContent();
-
-        // Добавляем byte[] как ByteArrayContent
-        //var byteArrayContent = new ByteArrayContent(pdfBytes);
-        //byteArrayContent.Headers.ContentType = new MediaTypeHeaderValue(fileContentType);
-        //content.Add(byteArrayContent, "inMemoryFile", blobName); // "fileBytes" - имя параметра, ожидаемое FileService
-
-
-        // Создаем StreamContent из byte[]
-        using var streamContent = new StreamContent(new MemoryStream(pdfBytes));
-
-        // **Ключевой момент:** Устанавливаем Content-Type
-        streamContent.Headers.ContentType = new MediaTypeHeaderValue("application/pdf");
-
-        // Добавляем StreamContent в MultipartFormDataContent
-        content.Add(streamContent, "inMemoryFile", $"{referenseItemId}.pdf"); // "file" - имя параметра, ожидаемое сервером
-
-
-
-        // content.Add(new ByteArrayContent(pdfBytes), "inMemoryFile");
-        //content.Add(new StringContent(pdfBytes.ToString()), "inMemoryFile");
+        var fileContent = new ByteArrayContent(pdfBytes);
+        fileContent.Headers.ContentType = new MediaTypeHeaderValue(fileContentType);
+        content.Add(fileContent, "file", $"{referenseItemId}.pdf");
         content.Add(new StringContent(referenseItemId.ToString()), "referenceItemId");
-        content.Add(new StringContent("Pdf"), "documentType");
+        content.Add(new StringContent("PdfFile"), "documentType");
         content.Add(new StringContent($"{referenseItemId}.pdf"), "blobName");
 
         HttpResponseMessage response = await httpClient.PostAsync(fileServiceBaseUrl, content, cancellationToken);
         response.EnsureSuccessStatusCode();
     }
-
-    //public async Task<string> CreateAndSavePdfAsync(Guid id, CancellationToken cancellationToken)
-    //{
-    //    var pdfBytes = await SaveToPdfAsync(id, cancellationToken);
-    //    var blobName = string.Format(fileDownloadName, id); // Use the consistent file name
-    //    await UploadPdfToStorageAsync(pdfBytes, blobName, cancellationToken);
-    //    return blobName; // Return the blobName (or the StorageLocation if your FileService returns it)
-    //}
-
-    //private async Task UploadFileAsync(byte[] fileBytes, Guid referenceItemId, CancellationToken cancellationToken)
-    //{
-    //    if (fileBytes == null || fileBytes.Length == 0)
-    //    {
-    //        throw new ValidationException(NotificationMessages.NotFoundErrorMessage);
-    //    }
-    //    using var content = new MultipartFormDataContent();
-
-
-    //    var uploadResponse = await httpClient.PostAsync(
-    //        fileServiceBaseUrl,
-    //        content,
-    //        cancellationToken);
-
-    //    uploadResponse.EnsureSuccessStatusCode();
-
-    //}
 
     private byte[] GeneratePdfBytes(AppointmentResultModel result)
     {
