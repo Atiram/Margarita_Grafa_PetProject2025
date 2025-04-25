@@ -7,6 +7,7 @@ using ClinicService.DAL.Entities;
 using ClinicService.DAL.Repositories.Interfaces;
 using ClinicService.Test.TestEntities;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using Moq;
 using Moq.Protected;
 
@@ -47,8 +48,9 @@ public class DoctorServiceTest
         var mockHttpClientFactory = new Mock<IHttpClientFactory>();
         mockHttpClientFactory.Setup(factory => factory.CreateClient(It.IsAny<string>()))
             .Returns(httpClient);
+        var mockLogger = new Mock<ILogger<DoctorService>>();
 
-        var doctorService = new DoctorService(mockRepository.Object, mapper, configurationMock.Object, mockHttpClientFactory.Object);
+        var doctorService = new DoctorService(mockRepository.Object, mapper, configurationMock.Object, mockHttpClientFactory.Object, mockLogger.Object);
 
         //Act 
         var result = await doctorService.GetById(doctorEntity.Id, CancellationToken.None);
@@ -79,8 +81,9 @@ public class DoctorServiceTest
         var mockHttpClientFactory = new Mock<IHttpClientFactory>();
         mockHttpClientFactory.Setup(factory => factory.CreateClient(It.IsAny<string>()))
             .Returns(new HttpClient());
+        var mockLogger = new Mock<ILogger<DoctorService>>();
 
-        var doctorService = new DoctorService(mockRepository.Object, mapper, configurationMock.Object, mockHttpClientFactory.Object);
+        var doctorService = new DoctorService(mockRepository.Object, mapper, configurationMock.Object, mockHttpClientFactory.Object, mockLogger.Object);
 
         // Act
         var result = await doctorService.GetById(doctorId, CancellationToken.None);
@@ -107,8 +110,9 @@ public class DoctorServiceTest
         var mockHttpClientFactory = new Mock<IHttpClientFactory>();
         mockHttpClientFactory.Setup(factory => factory.CreateClient(It.IsAny<string>()))
             .Returns(new HttpClient());
+        var mockLogger = new Mock<ILogger<DoctorService>>();
 
-        var doctorService = new DoctorService(mockRepository.Object, mapper, configurationMock.Object, mockHttpClientFactory.Object);
+        var doctorService = new DoctorService(mockRepository.Object, mapper, configurationMock.Object, mockHttpClientFactory.Object, mockLogger.Object);
 
         // Act & Assert
         await Assert.ThrowsAsync<Exception>(async () => await doctorService.GetById(doctorId, CancellationToken.None));
@@ -147,8 +151,9 @@ public class DoctorServiceTest
         var mockHttpClientFactory = new Mock<IHttpClientFactory>();
         mockHttpClientFactory.Setup(factory => factory.CreateClient(It.IsAny<string>()))
             .Returns(httpClient);
+        var mockLogger = new Mock<ILogger<DoctorService>>();
 
-        var doctorService = new DoctorService(mockRepository.Object, mapper, configurationMock.Object, mockHttpClientFactory.Object);
+        var doctorService = new DoctorService(mockRepository.Object, mapper, configurationMock.Object, mockHttpClientFactory.Object, mockLogger.Object);
 
         //Act
         var result = await doctorService.CreateAsync(createDoctorRequest, CancellationToken.None);
@@ -194,7 +199,9 @@ public class DoctorServiceTest
         var mockHttpClientFactory = new Mock<IHttpClientFactory>();
         mockHttpClientFactory.Setup(factory => factory.CreateClient(It.IsAny<string>()))
             .Returns(httpClient);
-        var doctorService = new DoctorService(mockRepository.Object, mapper, configurationMock.Object, mockHttpClientFactory.Object);
+        var mockLogger = new Mock<ILogger<DoctorService>>();
+
+        var doctorService = new DoctorService(mockRepository.Object, mapper, configurationMock.Object, mockHttpClientFactory.Object, mockLogger.Object);
 
         //Act
         var result = await doctorService.UpdateAsync(updatedDoctorRequest, CancellationToken.None);
@@ -239,7 +246,9 @@ public class DoctorServiceTest
         var mockHttpClientFactory = new Mock<IHttpClientFactory>();
         mockHttpClientFactory.Setup(factory => factory.CreateClient(It.IsAny<string>()))
             .Returns(httpClient);
-        var doctorService = new DoctorService(mockRepository.Object, mapper, configurationMock.Object, mockHttpClientFactory.Object);
+        var mockLogger = new Mock<ILogger<DoctorService>>();
+
+        var doctorService = new DoctorService(mockRepository.Object, mapper, configurationMock.Object, mockHttpClientFactory.Object, mockLogger.Object);
 
         //Act
         var result = await doctorService.DeleteAsync(doctorModel.Id, CancellationToken.None);
