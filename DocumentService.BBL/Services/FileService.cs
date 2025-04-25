@@ -9,7 +9,7 @@ using MongoDB.Driver;
 
 namespace DocumentService.BBL.Services;
 public class FileService(
-    IAzureBlobService blobStorageService,
+    IAzureBlobService azureBlobService,
     IFileRepository documentRepository,
     IMapper mapper) : IFileService
 {
@@ -41,7 +41,7 @@ public class FileService(
         {
             if (createFileRequest.File != null && createFileRequest.File.Length > 0)
             {
-                documentEntity.StorageLocation = await blobStorageService.UploadFileAsync(createFileRequest.File, createFileRequest.BlobName, cancellationToken);
+                documentEntity.StorageLocation = await azureBlobService.UploadFileAsync(createFileRequest.File, createFileRequest.BlobName, cancellationToken);
                 uploadSuccessful = true;
             }
 
@@ -70,7 +70,7 @@ public class FileService(
     {
         try
         {
-            await blobStorageService.DeleteBlobAsync(blobName, cancellationToken);
+            await azureBlobService.DeleteBlobAsync(blobName, cancellationToken);
         }
         catch (Exception deleteEx)
         {
@@ -85,7 +85,7 @@ public class FileService(
         {
             throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, id));
         }
-        var isFileDeleted = await blobStorageService.DeleteBlobAsync(documentEntity.BlobName, cancellationToken);
+        var isFileDeleted = await azureBlobService.DeleteBlobAsync(documentEntity.BlobName, cancellationToken);
         if (!isFileDeleted)
         {
             throw new Exception(NotificationMessages.NotDeletedErrorMessage);
@@ -96,7 +96,7 @@ public class FileService(
     public async Task<bool> DeleteByReferenceItemIdAsync(string referenceItemId, CancellationToken cancellationToken)
     {
         var blobName = referenceItemId + jpgFileExtension;
-        var isFileDeleted = await blobStorageService.DeleteBlobAsync(blobName, cancellationToken);
+        var isFileDeleted = await azureBlobService.DeleteBlobAsync(blobName, cancellationToken);
         if (!isFileDeleted)
         {
             throw new Exception(NotificationMessages.NotDeletedErrorMessage);
@@ -132,7 +132,7 @@ public class FileService(
         {
             throw new InvalidOperationException(NotificationMessages.NoBlobNameErrorMessage);
         }
-        await blobStorageService.DownloadFileAsync(documentModel.BlobName, downloadFilePath, cancellationToken);
+        await azureBlobService.DownloadFileAsync(documentModel.BlobName, downloadFilePath, cancellationToken);
         return true;
     }
 }

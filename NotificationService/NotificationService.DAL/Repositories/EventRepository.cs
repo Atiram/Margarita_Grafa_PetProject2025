@@ -1,4 +1,5 @@
 ﻿using System.Data;
+using Clinic.Domain;
 using Dapper;
 using Microsoft.Data.SqlClient;
 using Microsoft.Extensions.Configuration;
@@ -8,10 +9,12 @@ using NotificationService.DAL.Repositories.Interfaces;
 namespace NotificationService.DAL.Repositories;
 public class EventRepository : IEventRepository
 {
+    private const string connectionStringNameSection = "DBConnection";
     private string? connectionString;
     public EventRepository(IConfiguration configuration)
     {
-        this.connectionString = configuration.GetConnectionString("DBConnection") ?? throw new ArgumentException("Connection string 'DBConnection' is missing or empty in configuration.");
+        this.connectionString = configuration.GetConnectionString(connectionStringNameSection) ??
+            throw new ArgumentException(string.Format(NotificationMessages.SectionMissingErrorMessage, connectionStringNameSection));
     }
     public async Task<EventEntity?> GetByIdAsync(Guid id)
     {
@@ -22,7 +25,7 @@ public class EventRepository : IEventRepository
         }
     }
 
-    public async Task<List<EventEntity>?> GetEventsAsync()
+    public async Task<List<EventEntity>?> GetAllAsync()
     {
         using (IDbConnection db = new SqlConnection(connectionString))
         {
@@ -31,7 +34,7 @@ public class EventRepository : IEventRepository
         }
     }
 
-    public async Task<EventEntity?> CreateAsync(EventEntity eventEntity)
+    public async Task<EventEntity> CreateAsync(EventEntity eventEntity)
     {
         using (IDbConnection db = new SqlConnection(connectionString))
         {
@@ -44,7 +47,7 @@ public class EventRepository : IEventRepository
         }
     }
 
-    public async Task<EventEntity?> UpdateAsync(EventEntity eventEntity)
+    public async Task<EventEntity> UpdateAsync(EventEntity eventEntity)
     {
         using (IDbConnection db = new SqlConnection(connectionString))
         {

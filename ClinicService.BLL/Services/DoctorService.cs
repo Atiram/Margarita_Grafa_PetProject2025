@@ -5,18 +5,19 @@ using Clinic.Domain;
 using ClinicService.BLL.Models;
 using ClinicService.BLL.Models.Requests;
 using ClinicService.BLL.Services.Interfaces;
-using ClinicService.BLL.Utilities.Messages;
 using ClinicService.DAL.Entities;
 using ClinicService.DAL.Repositories.Interfaces;
 using ClinicService.DAL.Utilities.Pagination;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 
 namespace ClinicService.BLL.Services;
 public class DoctorService(IDoctorRepository doctorRepository,
     IMapper mapper,
     IConfiguration configuration,
-    IHttpClientFactory httpClientFactory
+    IHttpClientFactory httpClientFactory,
+    ILogger<DoctorService> logger
     ) : IDoctorService
 {
     private const string FileServiceSectionName = "FileServiceBaseUrl";
@@ -34,6 +35,7 @@ public class DoctorService(IDoctorRepository doctorRepository,
 
             return doctorModel;
         }
+        logger.LogWarning(string.Format(NotificationMessages.NotFoundErrorMessage, id));
         return null;
     }
 
@@ -45,10 +47,6 @@ public class DoctorService(IDoctorRepository doctorRepository,
 
     public async Task<DoctorModel> CreateAsync(CreateDoctorRequest request, CancellationToken cancellationToken)
     {
-        if (request.FirstName.Length <= 3 || request.LastName.Length <= 3)
-        {
-            throw new ValidationException(ClinicNotificationMessages.validationExeptionMessage);
-        }
         var doctorEntity = await doctorRepository.CreateAsync(mapper.Map<DoctorEntity>(request), cancellationToken);
         await UploadPhotoAsync(doctorEntity.Id, request.Formfile, cancellationToken);
         return mapper.Map<DoctorModel>(doctorEntity);
@@ -56,12 +54,12 @@ public class DoctorService(IDoctorRepository doctorRepository,
 
     public async Task<DoctorModel> UpdateAsync(UpdateDoctorRequest request, CancellationToken cancellationToken)
     {
-        if (request.FirstName.Length <= 3 || request.LastName.Length <= 3)
+        var doctor = await doctorRepository.GetByIdAsync(request.Id, cancellationToken);
+        if (doctor == null)
         {
-            throw new ValidationException(ClinicNotificationMessages.validationExeptionMessage);
+            logger.LogWarning(string.Format(NotificationMessages.NotFoundErrorMessage, request.Id));
+            throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, request.Id));
         }
-        var doctor = await doctorRepository.GetByIdAsync(request.Id, cancellationToken)
-            ?? throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, request.Id));
 
         var doctorEntity = mapper.Map(request, doctor);
         if (request.Formfile != null && request.Formfile.Length != 0)
@@ -88,14 +86,19 @@ public class DoctorService(IDoctorRepository doctorRepository,
     {
         var getFileByReferenceIdEndpoint = $"{fileServiceBaseUrl}/referenceId/{doctorId}";
         var response = await httpClient.GetAsync(getFileByReferenceIdEndpoint, cancellationToken);
-        response.EnsureSuccessStatusCode();
-        return response.Content.ReadAsStringAsync().Result;
+        if (response.IsSuccessStatusCode)
+        {
+            return response.Content.ReadAsStringAsync().Result;
+        }
+        logger.LogWarning(NotificationMessages.UploadingFileErrorMessage);
+        throw new InvalidOperationException(NotificationMessages.UploadingFileErrorMessage);
     }
 
     private async Task UploadPhotoAsync(Guid doctorId, IFormFile? photoFile, CancellationToken cancellationToken)
     {
         if (photoFile == null || photoFile.Length == 0)
         {
+            logger.LogWarning(string.Format(NotificationMessages.NotFoundErrorMessage, photoFile?.Name));
             throw new ValidationException(string.Format(NotificationMessages.NotFoundErrorMessage, photoFile?.Name));
         }
 
@@ -118,8 +121,7 @@ public class DoctorService(IDoctorRepository doctorRepository,
 
     private async Task DeletePhotoAsync(Guid doctorId, CancellationToken cancellationToken)
     {
-        var fileServiceBaseUrl = this.fileServiceBaseUrl;
-        var fileServiceDeleteEndpoint = $"{fileServiceBaseUrl}?referenceItemId={doctorId}";
+        var fileServiceDeleteEndpoint = $"{fileServiceBaseUrl}/referenceId/{doctorId}";
 
         var deleteFileResponse = await httpClient.DeleteAsync(
             fileServiceDeleteEndpoint, cancellationToken);

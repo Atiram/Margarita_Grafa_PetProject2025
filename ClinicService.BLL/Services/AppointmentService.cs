@@ -13,7 +13,6 @@ public class AppointmentService(
     IAppointmentRepository appointmentRepository,
     IDoctorRepository doctorRepository,
     IPatientRepository patientRepository,
-    INotificationHttpClient notificationHttpClient,
     IMapper mapper,
     IRabbitMqService rabbitMqService
     ) : IAppointmentService
@@ -25,23 +24,29 @@ public class AppointmentService(
         return mapper.Map<AppointmentModel>(appointmentEntity);
     }
 
+    public async Task<List<AppointmentModel>> GetAllAsync(CancellationToken cancellationToken)
+    {
+        var appointmentEntity = await appointmentRepository.GetAllAsync(cancellationToken);
+
+        return mapper.Map<List<AppointmentModel>>(appointmentEntity);
+    }
+
     public async Task<AppointmentModel> CreateAsync(CreateAppointmentRequest request, CancellationToken cancellationToken)
     {
         var appointmentEntity = await appointmentRepository.CreateAsync(mapper.Map<AppointmentEntity>(request), cancellationToken);
 
-        var doctorEntity = await doctorRepository.GetByIdAsync((Guid)request.DoctorId, cancellationToken);
-        string emailAddress = doctorEntity.Email;
-        var patientEntity = await patientRepository.GetByIdAsync((Guid)request.PatientId, cancellationToken);
+        var doctorEntity = await doctorRepository.GetByIdAsync(request.DoctorId, cancellationToken);
+        var patientEntity = await patientRepository.GetByIdAsync(request.PatientId, cancellationToken);
 
         CreateEventMail createEventMail = new CreateEventMail()
         {
-            Email = emailAddress,
-            Subject = ClinicNotificationMessages.emailSubject,
-            Message = string.Format(ClinicNotificationMessages.emailMessageTemplate, appointmentEntity.Date, appointmentEntity.Slots, patientEntity?.FirstName, patientEntity?.LastName),
+            Email = doctorEntity?.Email ?? string.Empty,
+            Subject = ClinicNotificationMessages.EmailSubject,
+            Message = string.Format(ClinicNotificationMessages.EmailMessageTemplate, appointmentEntity.Date, appointmentEntity.Slots, patientEntity?.FirstName, patientEntity?.LastName),
             CreatedAt = DateTime.UtcNow
         };
         rabbitMqService.SendMessage(createEventMail);
-        
+
         return mapper.Map<AppointmentModel>(appointmentEntity);
     }
 

@@ -2,7 +2,11 @@ using System.Reflection;
 using System.Text.Json.Serialization;
 using ClinicService.API.Middleware;
 using ClinicService.API.Utilities.Mapping;
+using ClinicService.API.Validators;
 using ClinicService.BLL.DI;
+using FluentValidation;
+using FluentValidation.AspNetCore;
+using Serilog;
 
 namespace ClinicServiceApi
 {
@@ -12,10 +16,15 @@ namespace ClinicServiceApi
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
             var services = builder.Services;
             var configuration = builder.Configuration;
 
+            Log.Logger = new LoggerConfiguration()
+            .WriteTo.Console()
+            .MinimumLevel.Warning()
+            .CreateLogger();
+
+            builder.Host.UseSerilog();
             services.AddControllers()
                 .AddJsonOptions(options =>
                     {
@@ -25,7 +34,9 @@ namespace ClinicServiceApi
                         jsonOptions.Converters.Add(enumConverter);
                     });
 
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            services.AddFluentValidationAutoValidation();
+            services.AddValidatorsFromAssemblyContaining<CreateDoctorRequestValidator>();
+            services.AddValidatorsFromAssemblyContaining<CreatePatientRequestValidator>();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 
@@ -44,7 +55,6 @@ namespace ClinicServiceApi
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();

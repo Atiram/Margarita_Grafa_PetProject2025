@@ -4,8 +4,8 @@ namespace NotificationService.DAL.Repositories.Interfaces;
 public interface IEventRepository
 {
     Task<EventEntity?> GetByIdAsync(Guid id);
-    Task<List<EventEntity>?> GetEventsAsync();
-    Task<EventEntity?> CreateAsync(EventEntity eventEntity);
-    Task<EventEntity?> UpdateAsync(EventEntity eventEntity);
+    Task<List<EventEntity>?> GetAllAsync();
+    Task<EventEntity> CreateAsync(EventEntity eventEntity);
+    Task<EventEntity> UpdateAsync(EventEntity eventEntity);
     Task DeleteAsync(Guid id);
 }

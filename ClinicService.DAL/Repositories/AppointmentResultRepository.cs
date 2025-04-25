@@ -17,6 +17,7 @@ public class AppointmentResultRepository(ClinicDbContext context) : GenericRepos
     {
         return context.Set<AppointmentResultEntity>()
             .Include(a => a.Appointment)
+            .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
 }

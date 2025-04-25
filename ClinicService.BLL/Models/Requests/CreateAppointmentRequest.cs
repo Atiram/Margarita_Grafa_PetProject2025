@@ -2,8 +2,8 @@
 
 public class CreateAppointmentRequest
 {
-    public Guid? DoctorId { get; set; }
-    public Guid? PatientId { get; set; }
+    public required Guid DoctorId { get; set; }
+    public required Guid PatientId { get; set; }
     public required DateOnly Date { get; set; }
     public required TimeOnly Slots { get; set; }
 }
