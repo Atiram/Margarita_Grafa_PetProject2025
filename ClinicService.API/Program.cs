@@ -19,12 +19,9 @@ namespace ClinicServiceApi
             var services = builder.Services;
             var configuration = builder.Configuration;
 
-            Log.Logger = new LoggerConfiguration()
-            .WriteTo.Console()
-            .MinimumLevel.Warning()
-            .CreateLogger();
+            builder.Host.UseSerilog((context, loggerConfig) =>
+                loggerConfig.WriteTo.Console());
 
-            builder.Host.UseSerilog();
             services.AddControllers()
                 .AddJsonOptions(options =>
                     {

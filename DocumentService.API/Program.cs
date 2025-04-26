@@ -1,5 +1,6 @@
 using DocumentService.BBL.DI;
 using DocumentService.DAL.MongoDb;
+using Serilog;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,6 +9,10 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.RegisterBusinessLogicServices(builder.Configuration);
 builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("MongoSettings"));
+
+builder.Host.UseSerilog((context, loggerConfig) =>
+    loggerConfig.WriteTo.Console());
+
 
 var app = builder.Build();
 

@@ -4,13 +4,15 @@ using ClinicService.BLL.Services.Interfaces;
 using ClinicService.DAL.Entities;
 using ClinicService.DAL.Repositories.Interfaces;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Logging;
 using PdfSharp.Drawing;
 using PdfSharp.Pdf;
 
 namespace ClinicService.BLL.Services;
 public class GeneratePdfService(IAppointmentResultRepository appointmentResultRepository,
     IConfiguration configuration,
-    IHttpClientFactory httpClientFactory) : IGeneratePdfService
+    IHttpClientFactory httpClientFactory,
+    ILogger<GeneratePdfService> logger) : IGeneratePdfService
 
 {
     private const string FileServiceSectionName = "FileServiceBaseUrl";
@@ -24,7 +26,9 @@ public class GeneratePdfService(IAppointmentResultRepository appointmentResultRe
         var appointmentResultEntity = await appointmentResultRepository.GetByIdAsync(id, cancellationToken);
         if (appointmentResultEntity == null)
         {
-            throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, id));
+            var errorMessage = string.Format(NotificationMessages.NotFoundErrorMessage, id);
+            logger.LogError(errorMessage);
+            throw new InvalidDataException(errorMessage);
         }
         return GeneratePdfBytes(appointmentResultEntity);
     }
@@ -38,9 +42,16 @@ public class GeneratePdfService(IAppointmentResultRepository appointmentResultRe
         content.Add(new StringContent(referenseItemId.ToString()), "referenceItemId");
         content.Add(new StringContent("PdfFile"), "documentType");
         content.Add(new StringContent($"{referenseItemId}.pdf"), "blobName");
-
-        HttpResponseMessage response = await httpClient.PostAsync(fileServiceBaseUrl, content, cancellationToken);
-        response.EnsureSuccessStatusCode();
+        try
+        {
+            HttpResponseMessage response = await httpClient.PostAsync(fileServiceBaseUrl, content, cancellationToken);
+            response.EnsureSuccessStatusCode();
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, NotificationMessages.UploadingFileErrorMessage);
+            throw;
+        }
     }
 
     private byte[] GeneratePdfBytes(AppointmentResultEntity result)
