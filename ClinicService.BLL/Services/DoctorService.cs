@@ -15,12 +15,6 @@ public class DoctorService(IDoctorRepository doctorRepository,
     ILogger<DoctorService> logger
     ) : IDoctorService
 {
-    //private readonly int maxRetries = 3;
-    //private readonly TimeSpan delay = TimeSpan.FromSeconds(2);
-    //private const string FileServiceSectionName = "FileServiceBaseUrl";
-    //private readonly string fileServiceBaseUrl = configuration.GetSection(FileServiceSectionName).Value ??
-    //    throw new ArgumentException(string.Format(NotificationMessages.SectionMissingErrorMessage, FileServiceSectionName));
-    //private HttpClient httpClient = httpClientFactory.CreateClient("FileService");
 
     public async Task<DoctorModel?> GetById(Guid id, CancellationToken cancellationToken)
     {
