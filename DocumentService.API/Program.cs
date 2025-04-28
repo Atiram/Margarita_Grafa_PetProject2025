@@ -13,7 +13,6 @@ builder.Services.Configure<MongoDbSettings>(builder.Configuration.GetSection("Mo
 builder.Host.UseSerilog((context, loggerConfig) =>
     loggerConfig.WriteTo.Console());
 
-
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

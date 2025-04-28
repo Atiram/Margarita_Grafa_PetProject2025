@@ -43,7 +43,7 @@ public class GeneratePdfService(IAppointmentResultRepository appointmentResultRe
         content.Add(new StringContent($"{referenseItemId}.pdf"), "blobName");
         try
         {
-            HttpResponseMessage response = await httpClient.PostAsync(fileServiceBaseUrl, content, cancellationToken);
+            var response = await httpClient.PostAsync(fileServiceBaseUrl, content, cancellationToken);
             response.EnsureSuccessStatusCode();
         }
         catch (Exception ex)

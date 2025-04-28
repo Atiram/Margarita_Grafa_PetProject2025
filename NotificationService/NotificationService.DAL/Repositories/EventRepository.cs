@@ -10,7 +10,7 @@ namespace NotificationService.DAL.Repositories;
 public class EventRepository : IEventRepository
 {
     private readonly string connectionStringNameSection = "DBConnection";
-    private string? connectionString;
+    private readonly string? connectionString;
     public EventRepository(IConfiguration configuration)
     {
         this.connectionString = configuration.GetConnectionString(connectionStringNameSection) ??

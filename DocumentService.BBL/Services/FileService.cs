@@ -55,7 +55,7 @@ public class FileService(
             {
                 await RollbackFileUpload(createFileRequest.BlobName, cancellationToken);
             }
-            logger.LogError(string.Format(NotificationMessages.WritingBlobErrorMessage, mongoEx));
+            logger.LogError(string.Format(NotificationMessages.WritingBlobErrorMessage), mongoEx);
             throw new MongoException(string.Format(NotificationMessages.WritingBlobErrorMessage, mongoEx));
         }
         catch (Exception ex)
@@ -64,7 +64,7 @@ public class FileService(
             {
                 await RollbackFileUpload(createFileRequest.BlobName, cancellationToken);
             }
-            logger.LogError(NotificationMessages.UploadingFileErrorMessage);
+            logger.LogError(string.Format(NotificationMessages.UploadingFileErrorMessage), ex);
             throw new Exception(NotificationMessages.UploadingFileErrorMessage, ex);
         }
     }

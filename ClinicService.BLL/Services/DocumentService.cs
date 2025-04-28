@@ -23,7 +23,7 @@ public class DocumentService(
     public async Task<string> GetPhotoAsync(Guid doctorId, CancellationToken cancellationToken)
     {
         var getFileByReferenceIdEndpoint = $"{fileServiceBaseUrl}/referenceId/{doctorId}";
-        var response = await ExecuteHttpRequestWithRetryAsync(
+        var response = await ExecuteRequestWithRetryAsync(
             () => httpClient.GetAsync(getFileByReferenceIdEndpoint, cancellationToken),
             nameof(GetPhotoAsync),
             doctorId);
@@ -46,7 +46,7 @@ public class DocumentService(
         content.Add(new StringContent("Photo"), "documentType");
         content.Add(new StringContent($"{doctorId}.jpg"), "blobName");
 
-        await ExecuteHttpRequestWithRetryAsync(
+        await ExecuteRequestWithRetryAsync(
           () => httpClient.PostAsync(fileServiceBaseUrl, content, cancellationToken),
           nameof(UploadPhotoAsync),
           doctorId);
@@ -56,13 +56,13 @@ public class DocumentService(
     {
         var fileServiceDeleteEndpoint = $"{fileServiceBaseUrl}/referenceId/{doctorId}";
 
-        await ExecuteHttpRequestWithRetryAsync(
+        await ExecuteRequestWithRetryAsync(
           () => httpClient.DeleteAsync(fileServiceDeleteEndpoint, cancellationToken),
           nameof(DeletePhotoAsync),
           doctorId);
     }
 
-    private async Task<HttpResponseMessage> ExecuteHttpRequestWithRetryAsync(Func<Task<HttpResponseMessage>> httpRequest, string errorMessage, Guid? doctorId = null)
+    private async Task<HttpResponseMessage> ExecuteRequestWithRetryAsync(Func<Task<HttpResponseMessage>> httpRequest, string errorMessage, Guid? doctorId = null)
     {
         for (int i = 0; i <= maxRetries; i++)
         {
