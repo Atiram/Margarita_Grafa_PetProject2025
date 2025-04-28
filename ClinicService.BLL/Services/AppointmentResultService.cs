@@ -18,9 +18,8 @@ public class AppointmentResultService(IAppointmentResultRepository appointmentRe
         var appointmentResultEntity = await appointmentResultRepository.GetByIdAsync(id, cancellationToken);
         if (appointmentResultEntity == null)
         {
-            var errorMessage = string.Format(NotificationMessages.NotFoundErrorMessage, id);
-            logger.LogError(errorMessage);
-            throw new Exception(errorMessage);
+            logger.LogError(string.Format(NotificationMessages.NotFoundErrorMessage, id));
+            throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, id));
         }
         return mapper.Map<AppointmentResultModel>(appointmentResultEntity);
     }
@@ -37,9 +36,8 @@ public class AppointmentResultService(IAppointmentResultRepository appointmentRe
         var pdfBytes = await generatePdfService.SaveToPdfAsync(appointmentResultEntity.Id, cancellationToken);
         if (pdfBytes == null)
         {
-            var errorMessage = string.Format(NotificationMessages.NotFoundErrorMessage, appointmentResultEntity.Id);
-            logger.LogError(errorMessage);
-            throw new InvalidOperationException(errorMessage);
+            logger.LogError(string.Format(NotificationMessages.NotFoundErrorMessage, appointmentResultEntity.Id));
+            throw new InvalidOperationException(string.Format(NotificationMessages.NotFoundErrorMessage, appointmentResultEntity.Id));
         }
         await generatePdfService.UploadPdfToStorageAsync(pdfBytes, appointmentResultEntity.Id, cancellationToken);
         return mapper.Map<AppointmentResultModel>(appointmentResultEntity);
@@ -51,9 +49,8 @@ public class AppointmentResultService(IAppointmentResultRepository appointmentRe
         var appointmentResult = await appointmentResultRepository.GetByIdAsync(request.Id, cancellationToken);
         if (appointmentResult == null)
         {
-            var errorMessage = string.Format(NotificationMessages.NotFoundErrorMessage, request.Id);
-            logger.LogError(errorMessage);
-            throw new Exception(errorMessage);
+            logger.LogError(string.Format(NotificationMessages.NotFoundErrorMessage, request.Id));
+            throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, request.Id));
         }
         var appointmentResultEntity = mapper.Map(request, appointmentResult);
         var updatedAppointmentResultEntity = await appointmentResultRepository.UpdateAsync(appointmentResultEntity, cancellationToken);

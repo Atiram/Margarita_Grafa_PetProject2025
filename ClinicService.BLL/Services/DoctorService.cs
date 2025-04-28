@@ -20,6 +20,8 @@ public class DoctorService(IDoctorRepository doctorRepository,
     ILogger<DoctorService> logger
     ) : IDoctorService
 {
+    private readonly int maxRetries = 3;
+    private readonly TimeSpan delay = TimeSpan.FromSeconds(2);
     private const string FileServiceSectionName = "FileServiceBaseUrl";
     private readonly string fileServiceBaseUrl = configuration.GetSection(FileServiceSectionName).Value ??
         throw new ArgumentException(string.Format(NotificationMessages.SectionMissingErrorMessage, FileServiceSectionName));
@@ -35,7 +37,7 @@ public class DoctorService(IDoctorRepository doctorRepository,
 
             return doctorModel;
         }
-        logger.LogWarning(string.Format(NotificationMessages.NotFoundErrorMessage, id));
+        logger.LogError(string.Format(NotificationMessages.NotFoundErrorMessage, id));
         return null;
     }
 
@@ -57,7 +59,7 @@ public class DoctorService(IDoctorRepository doctorRepository,
         var doctor = await doctorRepository.GetByIdAsync(request.Id, cancellationToken);
         if (doctor == null)
         {
-            logger.LogWarning(string.Format(NotificationMessages.NotFoundErrorMessage, request.Id));
+            logger.LogError(string.Format(NotificationMessages.NotFoundErrorMessage, request.Id));
             throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, request.Id));
         }
 
@@ -85,13 +87,11 @@ public class DoctorService(IDoctorRepository doctorRepository,
     private async Task<string> GetPhotoAsync(Guid doctorId, CancellationToken cancellationToken)
     {
         var getFileByReferenceIdEndpoint = $"{fileServiceBaseUrl}/referenceId/{doctorId}";
-        var response = await httpClient.GetAsync(getFileByReferenceIdEndpoint, cancellationToken);
-        if (response.IsSuccessStatusCode)
-        {
-            return response.Content.ReadAsStringAsync().Result;
-        }
-        logger.LogWarning(NotificationMessages.UploadingFileErrorMessage);
-        throw new InvalidOperationException(NotificationMessages.UploadingFileErrorMessage);
+        var response = await ExecuteHttpRequestWithRetryAsync(
+            () => httpClient.GetAsync(getFileByReferenceIdEndpoint, cancellationToken),
+            nameof(GetPhotoAsync),
+            doctorId);
+        return await response.Content.ReadAsStringAsync();
     }
 
     private async Task UploadPhotoAsync(Guid doctorId, IFormFile? photoFile, CancellationToken cancellationToken)
@@ -103,7 +103,6 @@ public class DoctorService(IDoctorRepository doctorRepository,
         }
 
         using var content = new MultipartFormDataContent();
-
         using var streamContent = new StreamContent(photoFile.OpenReadStream());
         streamContent.Headers.ContentType = new MediaTypeHeaderValue(photoFile.ContentType);
         content.Add(streamContent, "file", photoFile.FileName);
@@ -111,20 +110,39 @@ public class DoctorService(IDoctorRepository doctorRepository,
         content.Add(new StringContent("Photo"), "documentType");
         content.Add(new StringContent($"{doctorId}.jpg"), "blobName");
 
-        var uploadResponse = await httpClient.PostAsync(
-            fileServiceBaseUrl,
-            content,
-            cancellationToken);
-
-        uploadResponse.EnsureSuccessStatusCode();
+        await ExecuteHttpRequestWithRetryAsync(
+          () => httpClient.PostAsync(fileServiceBaseUrl, content, cancellationToken),
+          nameof(UploadPhotoAsync),
+          doctorId);
     }
 
     private async Task DeletePhotoAsync(Guid doctorId, CancellationToken cancellationToken)
     {
-        var fileServiceDeleteEndpoint = $"{fileServiceBaseUrl}/referenceId/{doctorId}";
+        var fileServiceDeleteEndpoint = $"{fileServiceBaseUrl}/referenceId22/{doctorId}";
 
-        var deleteFileResponse = await httpClient.DeleteAsync(
-            fileServiceDeleteEndpoint, cancellationToken);
-        deleteFileResponse.EnsureSuccessStatusCode();
+        await ExecuteHttpRequestWithRetryAsync(
+          () => httpClient.DeleteAsync(fileServiceDeleteEndpoint, cancellationToken),
+          nameof(DeletePhotoAsync),
+          doctorId);
+    }
+
+    private async Task<HttpResponseMessage> ExecuteHttpRequestWithRetryAsync(Func<Task<HttpResponseMessage>> httpRequest, string errorMessage, Guid? doctorId = null)
+    {
+        for (int i = 0; i <= maxRetries; i++)
+        {
+            try
+            {
+                var response = await httpRequest();
+                response.EnsureSuccessStatusCode();
+                return response;
+            }
+            catch (HttpRequestException ex) when (i < maxRetries)
+            {
+                logger.LogError(ex, string.Format(NotificationMessages.RetryingExecuteHttpRequestErrorMessage, i + 1, errorMessage, doctorId));
+                await Task.Delay(delay);
+            }
+        }
+        logger.LogError(string.Format(NotificationMessages.FailedExecuteHttpRequestErrorMessage, errorMessage, maxRetries));
+        throw new InvalidOperationException(string.Format(NotificationMessages.FailedExecuteHttpRequestErrorMessage, errorMessage, maxRetries));
     }
 }

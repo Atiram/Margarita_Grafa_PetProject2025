@@ -1,11 +1,9 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
+using ClinicService.API.DI;
 using ClinicService.API.Middleware;
 using ClinicService.API.Utilities.Mapping;
-using ClinicService.API.Validators;
 using ClinicService.BLL.DI;
-using FluentValidation;
-using FluentValidation.AspNetCore;
 using Serilog;
 
 namespace ClinicServiceApi
@@ -31,9 +29,7 @@ namespace ClinicServiceApi
                         jsonOptions.Converters.Add(enumConverter);
                     });
 
-            services.AddFluentValidationAutoValidation();
-            services.AddValidatorsFromAssemblyContaining<CreateDoctorRequestValidator>();
-            services.AddValidatorsFromAssemblyContaining<CreatePatientRequestValidator>();
+            services.RegisterDependencies();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 

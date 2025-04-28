@@ -66,5 +66,5 @@ public class DoctorRepository(ClinicDbContext context) : GenericRepository<Docto
         return sortOrder is null || sortOrder == SortOrderType.Asc
             ? query.OrderBy(keySelector)
             : query.OrderByDescending(keySelector);
-    }    
+    }
 }

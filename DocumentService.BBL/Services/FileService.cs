@@ -55,9 +55,8 @@ public class FileService(
             {
                 await RollbackFileUpload(createFileRequest.BlobName, cancellationToken);
             }
-            var errorMessage = string.Format(NotificationMessages.WritingBlobErrorMessage, mongoEx);
-            logger.LogError(errorMessage);
-            throw new MongoException(errorMessage);
+            logger.LogError(string.Format(NotificationMessages.WritingBlobErrorMessage, mongoEx));
+            throw new MongoException(string.Format(NotificationMessages.WritingBlobErrorMessage, mongoEx));
         }
         catch (Exception ex)
         {
@@ -65,9 +64,8 @@ public class FileService(
             {
                 await RollbackFileUpload(createFileRequest.BlobName, cancellationToken);
             }
-            var errorMessage = NotificationMessages.UploadingFileErrorMessage;
-            logger.LogError(errorMessage);
-            throw new Exception(errorMessage, ex);
+            logger.LogError(NotificationMessages.UploadingFileErrorMessage);
+            throw new Exception(NotificationMessages.UploadingFileErrorMessage, ex);
         }
     }
 
@@ -79,9 +77,8 @@ public class FileService(
         }
         catch (Exception deleteEx)
         {
-            var errorMessage = NotificationMessages.DeletingBlobErrorMessage;
-            logger.LogError(errorMessage);
-            throw new Exception(errorMessage, deleteEx);
+            logger.LogError(NotificationMessages.DeletingBlobErrorMessage);
+            throw new Exception(NotificationMessages.DeletingBlobErrorMessage, deleteEx);
         }
     }
 
@@ -90,16 +87,14 @@ public class FileService(
         var documentEntity = await documentRepository.GetByIdAsync(id, cancellationToken);
         if (documentEntity == null)
         {
-            var errorMessage = string.Format(NotificationMessages.NotFoundErrorMessage, id);
-            logger.LogError(errorMessage);
-            throw new Exception(errorMessage);
+            logger.LogError(string.Format(NotificationMessages.NotFoundErrorMessage, id));
+            throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, id));
         }
         var isFileDeleted = await azureBlobService.DeleteBlobAsync(documentEntity.BlobName, cancellationToken);
         if (!isFileDeleted)
         {
-            var errorMessage = NotificationMessages.NotDeletedErrorMessage;
-            logger.LogError(errorMessage);
-            throw new Exception(errorMessage);
+            logger.LogError(NotificationMessages.NotDeletedErrorMessage);
+            throw new Exception(NotificationMessages.NotDeletedErrorMessage);
         }
         return await documentRepository.DeleteAsync(id, cancellationToken);
     }
@@ -110,9 +105,8 @@ public class FileService(
         var isFileDeleted = await azureBlobService.DeleteBlobAsync(blobName, cancellationToken);
         if (!isFileDeleted)
         {
-            var errorMessage = NotificationMessages.NotDeletedErrorMessage;
-            logger.LogError(errorMessage);
-            throw new Exception(errorMessage);
+            logger.LogError(NotificationMessages.NotDeletedErrorMessage);
+            throw new Exception(NotificationMessages.NotDeletedErrorMessage);
         }
         return await documentRepository.DeleteByReferenceItemIdAsync(referenceItemId, cancellationToken);
     }
@@ -143,6 +137,7 @@ public class FileService(
 
         if (string.IsNullOrEmpty(documentModel.BlobName))
         {
+            logger.LogError(NotificationMessages.NoBlobNameErrorMessage);
             throw new InvalidOperationException(NotificationMessages.NoBlobNameErrorMessage);
         }
         await azureBlobService.DownloadFileAsync(documentModel.BlobName, downloadFilePath, cancellationToken);

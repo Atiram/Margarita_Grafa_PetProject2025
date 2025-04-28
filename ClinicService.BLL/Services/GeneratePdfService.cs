@@ -26,9 +26,8 @@ public class GeneratePdfService(IAppointmentResultRepository appointmentResultRe
         var appointmentResultEntity = await appointmentResultRepository.GetByIdAsync(id, cancellationToken);
         if (appointmentResultEntity == null)
         {
-            var errorMessage = string.Format(NotificationMessages.NotFoundErrorMessage, id);
-            logger.LogError(errorMessage);
-            throw new InvalidDataException(errorMessage);
+            logger.LogError(string.Format(NotificationMessages.NotFoundErrorMessage, id));
+            throw new InvalidDataException(string.Format(NotificationMessages.NotFoundErrorMessage, id));
         }
         return GeneratePdfBytes(appointmentResultEntity);
     }

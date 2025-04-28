@@ -2,9 +2,10 @@
 using AuthenticationService.DAL.Entities;
 using AuthenticationService.DAL.Repositories.Interfaces;
 using Clinic.Domain;
+using Microsoft.Extensions.Logging;
 
 namespace AuthenticationService.BLL.Services;
-public class UserService(IUserRepository userRepository) : IUserService
+public class UserService(IUserRepository userRepository, ILogger<UserService> logger) : IUserService
 {
     public async Task<UserEntity> GetUserByIdAsync(string id)
     {
@@ -14,6 +15,7 @@ public class UserService(IUserRepository userRepository) : IUserService
         }
         catch (Exception ex)
         {
+            logger.LogError(string.Format(NotificationMessages.GettingUserErrorMessage, id));
             throw new InvalidOperationException(string.Format(NotificationMessages.GettingUserErrorMessage, id), ex);
         }
     }
@@ -26,7 +28,8 @@ public class UserService(IUserRepository userRepository) : IUserService
         }
         catch (Exception ex)
         {
-            throw new InvalidOperationException(NotificationMessages.GettingAllUserErrorMessage);
+            logger.LogError(NotificationMessages.GettingAllUserErrorMessage);
+            throw new InvalidOperationException(NotificationMessages.GettingAllUserErrorMessage, ex);
         }
     }
 
@@ -36,6 +39,7 @@ public class UserService(IUserRepository userRepository) : IUserService
         {
             if (string.IsNullOrEmpty(user.Username) || string.IsNullOrEmpty(user.Password))
             {
+                logger.LogError(NotificationMessages.NoArgumentAuthErrorMessage);
                 throw new ArgumentException(NotificationMessages.NoArgumentAuthErrorMessage);
             }
             var hashedPassword = BCrypt.Net.BCrypt.HashPassword(user.Password);
@@ -45,6 +49,7 @@ public class UserService(IUserRepository userRepository) : IUserService
         }
         catch (Exception ex)
         {
+            logger.LogError(string.Format(NotificationMessages.CreatingUserErrorMessage, user.Username));
             throw new InvalidOperationException(string.Format(NotificationMessages.CreatingUserErrorMessage, user.Username), ex);
         }
     }
@@ -57,6 +62,7 @@ public class UserService(IUserRepository userRepository) : IUserService
         }
         catch (Exception ex)
         {
+            logger.LogError(string.Format(NotificationMessages.UpdatingUserErrorMessage, id));
             throw new InvalidOperationException(string.Format(NotificationMessages.UpdatingUserErrorMessage, id), ex);
         }
     }
@@ -69,6 +75,7 @@ public class UserService(IUserRepository userRepository) : IUserService
         }
         catch (Exception ex)
         {
+            logger.LogError(string.Format(NotificationMessages.DeletingUserErrorMessage, id));
             throw new InvalidOperationException(string.Format(NotificationMessages.DeletingUserErrorMessage, id), ex);
         }
     }
