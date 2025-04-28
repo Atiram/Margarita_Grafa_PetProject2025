@@ -16,7 +16,7 @@ public class UserService(IUserRepository userRepository, ILogger<UserService> lo
         }
         catch (Exception ex)
         {
-            logger.LogError(string.Format(NotificationMessages.GettingUserErrorMessage, id), ex);
+            logger.LogError(ex, NotificationMessages.GettingUserErrorMessage, id);
             throw new InvalidOperationException(string.Format(NotificationMessages.GettingUserErrorMessage, id), ex);
         }
     }
@@ -29,7 +29,7 @@ public class UserService(IUserRepository userRepository, ILogger<UserService> lo
         }
         catch (Exception ex)
         {
-            logger.LogError(string.Format(NotificationMessages.GettingAllUserErrorMessage), ex);
+            logger.LogError(ex, NotificationMessages.GettingAllUserErrorMessage);
             throw new InvalidOperationException(NotificationMessages.GettingAllUserErrorMessage, ex);
         }
     }
@@ -50,7 +50,7 @@ public class UserService(IUserRepository userRepository, ILogger<UserService> lo
         }
         catch (Exception ex)
         {
-            logger.LogError(string.Format(NotificationMessages.CreatingUserErrorMessage, user.Username));
+            logger.LogError(ex, NotificationMessages.CreatingUserErrorMessage, user.Username);
             throw new InvalidOperationException(string.Format(NotificationMessages.CreatingUserErrorMessage, user.Username), ex);
         }
     }
@@ -63,7 +63,7 @@ public class UserService(IUserRepository userRepository, ILogger<UserService> lo
         }
         catch (Exception ex)
         {
-            logger.LogError(string.Format(NotificationMessages.UpdatingUserErrorMessage, id));
+            logger.LogError(ex, NotificationMessages.UpdatingUserErrorMessage, id);
             throw new InvalidOperationException(string.Format(NotificationMessages.UpdatingUserErrorMessage, id), ex);
         }
     }
