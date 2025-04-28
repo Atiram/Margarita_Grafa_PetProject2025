@@ -13,10 +13,11 @@ public class AppointmentResultRepository(ClinicDbContext context) : GenericRepos
           .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
         return new ValueTask<AppointmentResultEntity?>(task);
     }
-    public Task<List<AppointmentResultEntity>> GetAllAsync(CancellationToken cancellationToken)
+    public new Task<List<AppointmentResultEntity>> GetAllAsync(CancellationToken cancellationToken)
     {
         return context.Set<AppointmentResultEntity>()
             .Include(a => a.Appointment)
+            .AsNoTracking()
             .ToListAsync(cancellationToken);
     }
 }

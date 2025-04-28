@@ -49,7 +49,7 @@ public class FileController(IFileService fileService) : ControllerBase
         return deleted ? Ok() : NotFound(string.Format(NotificationMessages.NotFoundErrorMessage, id));
     }
 
-    [HttpDelete]
+    [HttpDelete("referenceId/{referenceItemId}")]
     public async Task<IActionResult> DeleteFileByReferenceItemId(string referenceItemId, CancellationToken cancellationToken = default)
     {
         var isDeleted = await fileService.DeleteByReferenceItemIdAsync(referenceItemId, cancellationToken);

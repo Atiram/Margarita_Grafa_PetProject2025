@@ -8,6 +8,6 @@ public class GetAllEventsHandler(IEventRepository eventRepository) : IRequestHan
 {
     public async Task<List<EventEntity>?> Handle(GetAllEventsRequest request, CancellationToken cancellationToken)
     {
-        return await eventRepository.GetEventsAsync();
+        return await eventRepository.GetAllAsync();
     }
 }

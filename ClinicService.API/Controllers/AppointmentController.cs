@@ -12,7 +12,16 @@ namespace ClinicService.API.Controllers;
 public class AppointmentController(IAppointmentService appointmentService, IMapper mapper) : ControllerBase
 {
     [HttpGet]
-    public async Task<AppointmentViewModel> Get(Guid id, CancellationToken cancellationToken)
+    public async Task<List<AppointmentViewModel>> GetAll(CancellationToken cancellationToken)
+    {
+        var appointmentModels = await appointmentService.GetAllAsync(cancellationToken);
+        var appointmentViewModels = mapper.Map<List<AppointmentViewModel>>(appointmentModels);
+
+        return appointmentViewModels;
+    }
+
+    [HttpGet("{id}")]
+    public async Task<AppointmentViewModel> GetById(Guid id, CancellationToken cancellationToken)
     {
         var appointmentModel = await appointmentService.GetById(id, cancellationToken);
         var appointmentViewModel = mapper.Map<AppointmentViewModel>(appointmentModel);

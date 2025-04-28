@@ -3,6 +3,6 @@
 namespace AuthenticationService.BLL.Services.Interfaces;
 public interface IAuthService
 {
-    Task<string> AuthenticateAsync(string username, string password);
+    Task<string?> AuthenticateAsync(string username, string password);
     Task<UserEntity> RegisterAsync(UserEntity user);
 }

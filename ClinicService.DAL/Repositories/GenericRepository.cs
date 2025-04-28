@@ -1,6 +1,7 @@
 ﻿using ClinicService.DAL.Data;
 using ClinicService.DAL.Entities;
 using ClinicService.DAL.Repositories.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 namespace ClinicService.DAL.Repositories;
 
@@ -9,6 +10,13 @@ public class GenericRepository<TEntity>(ClinicDbContext context) : IGenericRepos
     public ValueTask<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         return context.Set<TEntity>().FindAsync([id], cancellationToken);
+    }
+
+    public Task<List<TEntity>> GetAllAsync(CancellationToken cancellationToken)
+    {
+        return context.Set<TEntity>()
+          .AsNoTracking()
+          .ToListAsync(cancellationToken);
     }
 
     public async Task<TEntity> CreateAsync(TEntity entity, CancellationToken cancellationToken)

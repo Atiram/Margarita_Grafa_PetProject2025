@@ -20,6 +20,7 @@ public static class ServicesConfiguration
             .AddScoped<INotificationHttpClient, NotificationHttpClient>()
             .AddScoped<IRabbitMqService, RabbitMqService>()
             .AddScoped<IGeneratePdfService, GeneratePdfService>()
+            .AddScoped<IDocumentService, DocumentService>()
             .AddHttpClient()
             .RegisterDataRepositories(configuration);
     }

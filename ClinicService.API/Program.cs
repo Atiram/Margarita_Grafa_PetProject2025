@@ -1,8 +1,10 @@
 using System.Reflection;
 using System.Text.Json.Serialization;
+using ClinicService.API.DI;
 using ClinicService.API.Middleware;
 using ClinicService.API.Utilities.Mapping;
 using ClinicService.BLL.DI;
+using Serilog;
 
 namespace ClinicServiceApi
 {
@@ -12,9 +14,11 @@ namespace ClinicServiceApi
         {
             var builder = WebApplication.CreateBuilder(args);
 
-            // Add services to the container.
             var services = builder.Services;
             var configuration = builder.Configuration;
+
+            builder.Host.UseSerilog((context, loggerConfig) =>
+                loggerConfig.WriteTo.Console());
 
             services.AddControllers()
                 .AddJsonOptions(options =>
@@ -25,7 +29,7 @@ namespace ClinicServiceApi
                         jsonOptions.Converters.Add(enumConverter);
                     });
 
-            // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+            services.RegisterDependencies();
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 
@@ -44,7 +48,6 @@ namespace ClinicServiceApi
 
             var app = builder.Build();
 
-            // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();

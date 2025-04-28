@@ -10,34 +10,6 @@ namespace ClinicService.DAL.Repositories;
 
 public class DoctorRepository(ClinicDbContext context) : GenericRepository<DoctorEntity>(context), IDoctorRepository
 {
-    private static IQueryable<DoctorEntity> AddOrdering(IQueryable<DoctorEntity> query, DoctorSortingParams? sortBy, SortOrderType? sortOrder)
-    {
-        return sortBy switch
-        {
-            DoctorSortingParams.FirstName => ApplyOrdering(query, x => x.FirstName, sortOrder),
-            DoctorSortingParams.LastName => ApplyOrdering(query, x => x.LastName, sortOrder),
-            DoctorSortingParams.MiddleName => ApplyOrdering(query, x => x.MiddleName, sortOrder),
-            DoctorSortingParams.DateOfBirth => ApplyOrdering(query, x => x.DateOfBirth, sortOrder),
-            DoctorSortingParams.Email => ApplyOrdering(query, x => x.Email, sortOrder),
-            DoctorSortingParams.Specialization => ApplyOrdering(query, x => x.Specialization, sortOrder),
-            DoctorSortingParams.Office => ApplyOrdering(query, x => x.Office, sortOrder),
-            DoctorSortingParams.CareerStartYear => ApplyOrdering(query, x => x.CareerStartYear, sortOrder),
-            DoctorSortingParams.Status => ApplyOrdering(query, x => x.Status, sortOrder),
-            DoctorSortingParams.CreatedAt => ApplyOrdering(query, x => x.CreatedAt, sortOrder),
-            null => query.OrderByDescending(x => x.CreatedAt),
-            _ => query
-        };
-    }
-    private static IQueryable<DoctorEntity> ApplyOrdering(
-        IQueryable<DoctorEntity> query,
-        Expression<Func<DoctorEntity, object>> keySelector,
-        SortOrderType? sortOrder)
-    {
-        return sortOrder is null || sortOrder == SortOrderType.Asc
-            ? query.OrderBy(keySelector)
-            : query.OrderByDescending(keySelector);
-    }
-
     public async Task<PagedResult<DoctorEntity>> GetAllAsync(GetAllDoctorsParams getAllDoctorsParams, CancellationToken cancellationToken)
     {
         var entities = context.Set<DoctorEntity>();
@@ -63,8 +35,36 @@ public class DoctorRepository(ClinicDbContext context) : GenericRepository<Docto
         pagedResult.Results = await filteredEntities
           .Skip((getAllDoctorsParams.PageNumber - 1) * getAllDoctorsParams.PageSize)
           .Take(getAllDoctorsParams.PageSize)
+          .AsNoTracking()
           .ToListAsync(cancellationToken);
 
         return pagedResult;
+    }
+    private static IQueryable<DoctorEntity> AddOrdering(IQueryable<DoctorEntity> query, DoctorSortingParams? sortBy, SortOrderType? sortOrder)
+    {
+        return sortBy switch
+        {
+            DoctorSortingParams.FirstName => ApplyOrdering(query, x => x.FirstName, sortOrder),
+            DoctorSortingParams.LastName => ApplyOrdering(query, x => x.LastName, sortOrder),
+            DoctorSortingParams.MiddleName => ApplyOrdering(query, x => x.MiddleName ?? string.Empty, sortOrder),
+            DoctorSortingParams.DateOfBirth => ApplyOrdering(query, x => x.DateOfBirth, sortOrder),
+            DoctorSortingParams.Email => ApplyOrdering(query, x => x.Email, sortOrder),
+            DoctorSortingParams.Specialization => ApplyOrdering(query, x => x.Specialization, sortOrder),
+            DoctorSortingParams.Office => ApplyOrdering(query, x => x.Office, sortOrder),
+            DoctorSortingParams.CareerStartYear => ApplyOrdering(query, x => x.CareerStartYear, sortOrder),
+            DoctorSortingParams.Status => ApplyOrdering(query, x => x.Status, sortOrder),
+            DoctorSortingParams.CreatedAt => ApplyOrdering(query, x => x.CreatedAt, sortOrder),
+            null => query.OrderByDescending(x => x.CreatedAt),
+            _ => query
+        };
+    }
+    private static IQueryable<DoctorEntity> ApplyOrdering(
+        IQueryable<DoctorEntity> query,
+        Expression<Func<DoctorEntity, object>> keySelector,
+        SortOrderType? sortOrder)
+    {
+        return sortOrder is null || sortOrder == SortOrderType.Asc
+            ? query.OrderBy(keySelector)
+            : query.OrderByDescending(keySelector);
     }
 }

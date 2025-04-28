@@ -8,7 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace AuthenticationService.API.Controllers;
 [Route("api/[controller]")]
 [ApiController]
-public class AuthController(IAuthService authService, IUserService userService) : ControllerBase
+public class AuthController(IAuthService authService) : ControllerBase
 {
     [HttpPost("register")]
     public async Task<IActionResult> Register([FromBody] UserRegistrationModel model)

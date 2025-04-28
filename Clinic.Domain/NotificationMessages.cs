@@ -18,6 +18,9 @@ public static class NotificationMessages
     public const string NoUrlErrorMessage = "Blob URL is invalid or missing.";
     public const string SectionMissingErrorMessage = "Section {0} is missing or empty in configuration.";
     public const string UploadingFileErrorMessage = "Error uploading file. Initiating rollback.";
+    public const string RetryingExecuteHttpRequestErrorMessage = "Retrying {0} after {1} with DoctorId: {2}";
+    public const string FailedExecuteHttpRequestErrorMessage = "Failed to perform {0} after {1} attempts";
     public const string WritingBlobErrorMessage = "Error writing to MongoDB. Initiating rollback.";
     public const string DeletingBlobErrorMessage = "Error deleting blob during rollback. Manual intervention required!";
+
 }

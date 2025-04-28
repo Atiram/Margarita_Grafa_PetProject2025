@@ -6,12 +6,13 @@ using AuthenticationService.BLL.Services.Interfaces;
 using AuthenticationService.DAL.Entities;
 using AuthenticationService.DAL.Repositories.Interfaces;
 using Clinic.Domain;
+using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
 namespace AuthenticationService.BLL.Services;
-public class AuthService(IUserRepository userRepository) : IAuthService
+public class AuthService(IUserRepository userRepository, ILogger<AuthService> logger) : IAuthService
 {
-    public async Task<string> AuthenticateAsync(string username, string password)
+    public async Task<string?> AuthenticateAsync(string username, string password)
     {
         try
         {
@@ -26,6 +27,7 @@ public class AuthService(IUserRepository userRepository) : IAuthService
         }
         catch (Exception ex)
         {
+            logger.LogError(string.Format(NotificationMessages.AuthUserErrorMessage, username), ex);
             throw new InvalidOperationException(string.Format(NotificationMessages.AuthUserErrorMessage, username), ex);
         }
     }
@@ -36,6 +38,7 @@ public class AuthService(IUserRepository userRepository) : IAuthService
         {
             if (string.IsNullOrEmpty(user.Username) || string.IsNullOrEmpty(user.Password))
             {
+                logger.LogError(NotificationMessages.NoArgumentAuthErrorMessage);
                 throw new ArgumentException(NotificationMessages.NoArgumentAuthErrorMessage);
             }
 
@@ -46,6 +49,7 @@ public class AuthService(IUserRepository userRepository) : IAuthService
         }
         catch (Exception ex)
         {
+            logger.LogError(string.Format(NotificationMessages.RegUserErrorMessage, user.Username));
             throw new InvalidOperationException(string.Format(NotificationMessages.RegUserErrorMessage, user.Username), ex);
         }
     }
@@ -55,6 +59,7 @@ public class AuthService(IUserRepository userRepository) : IAuthService
         var identity = GetIdentity(user.Username, user.Password);
         if (identity == null)
         {
+            logger.LogError(NotificationMessages.InvalidAuthErrorMessage);
             throw new ValidationException(NotificationMessages.InvalidAuthErrorMessage);
         }
         var now = DateTime.UtcNow;

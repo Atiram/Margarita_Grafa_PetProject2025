@@ -16,4 +16,13 @@ public class AppointmentRepository(ClinicDbContext context)
           .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
         return new ValueTask<AppointmentEntity?>(task);
     }
+
+    public new Task<List<AppointmentEntity>> GetAllAsync(CancellationToken cancellationToken)
+    {
+        return context.Set<AppointmentEntity>()
+          .Include(a => a.Doctor)
+          .Include(a => a.Patient)
+          .AsNoTracking()
+          .ToListAsync(cancellationToken);
+    }
 }
