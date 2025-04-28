@@ -27,7 +27,7 @@ public class AuthService(IUserRepository userRepository, ILogger<AuthService> lo
         }
         catch (Exception ex)
         {
-            logger.LogError(string.Format(NotificationMessages.AuthUserErrorMessage, username));
+            logger.LogError(string.Format(NotificationMessages.AuthUserErrorMessage, username), ex);
             throw new InvalidOperationException(string.Format(NotificationMessages.AuthUserErrorMessage, username), ex);
         }
     }

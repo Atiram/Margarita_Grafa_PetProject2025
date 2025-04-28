@@ -2,6 +2,7 @@
 using AuthenticationService.DAL.Entities;
 using AuthenticationService.DAL.Repositories.Interfaces;
 using Clinic.Domain;
+using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Logging;
 
 namespace AuthenticationService.BLL.Services;
@@ -15,7 +16,7 @@ public class UserService(IUserRepository userRepository, ILogger<UserService> lo
         }
         catch (Exception ex)
         {
-            logger.LogError(string.Format(NotificationMessages.GettingUserErrorMessage, id));
+            logger.LogError(string.Format(NotificationMessages.GettingUserErrorMessage, id), ex);
             throw new InvalidOperationException(string.Format(NotificationMessages.GettingUserErrorMessage, id), ex);
         }
     }
@@ -28,7 +29,7 @@ public class UserService(IUserRepository userRepository, ILogger<UserService> lo
         }
         catch (Exception ex)
         {
-            logger.LogError(NotificationMessages.GettingAllUserErrorMessage);
+            logger.LogError(string.Format(NotificationMessages.GettingAllUserErrorMessage), ex);
             throw new InvalidOperationException(NotificationMessages.GettingAllUserErrorMessage, ex);
         }
     }

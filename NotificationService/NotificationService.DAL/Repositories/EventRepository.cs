@@ -9,7 +9,7 @@ using NotificationService.DAL.Repositories.Interfaces;
 namespace NotificationService.DAL.Repositories;
 public class EventRepository : IEventRepository
 {
-    private const string connectionStringNameSection = "DBConnection";
+    private readonly string connectionStringNameSection = "DBConnection";
     private string? connectionString;
     public EventRepository(IConfiguration configuration)
     {

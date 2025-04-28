@@ -46,7 +46,7 @@ public class DoctorRepository(ClinicDbContext context) : GenericRepository<Docto
         {
             DoctorSortingParams.FirstName => ApplyOrdering(query, x => x.FirstName, sortOrder),
             DoctorSortingParams.LastName => ApplyOrdering(query, x => x.LastName, sortOrder),
-            DoctorSortingParams.MiddleName => ApplyOrdering(query, x => x.MiddleName, sortOrder),
+            DoctorSortingParams.MiddleName => ApplyOrdering(query, x => x.MiddleName ?? string.Empty, sortOrder),
             DoctorSortingParams.DateOfBirth => ApplyOrdering(query, x => x.DateOfBirth, sortOrder),
             DoctorSortingParams.Email => ApplyOrdering(query, x => x.Email, sortOrder),
             DoctorSortingParams.Specialization => ApplyOrdering(query, x => x.Specialization, sortOrder),
