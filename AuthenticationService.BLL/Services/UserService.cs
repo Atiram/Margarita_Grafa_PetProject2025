@@ -76,7 +76,7 @@ public class UserService(IUserRepository userRepository, ILogger<UserService> lo
         }
         catch (Exception ex)
         {
-            logger.LogError(string.Format(NotificationMessages.DeletingUserErrorMessage, id));
+            logger.LogError(ex, NotificationMessages.DeletingUserErrorMessage, id);
             throw new InvalidOperationException(string.Format(NotificationMessages.DeletingUserErrorMessage, id), ex);
         }
     }
