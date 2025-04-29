@@ -21,6 +21,8 @@ public static class ServicesConfiguration
             .AddScoped<IRabbitMqService, RabbitMqService>()
             .AddScoped<IGeneratePdfService, GeneratePdfService>()
             .AddScoped<IDocumentService, DocumentService>()
+            .AddScoped<IAppointmentReminderService, AppointmentReminderService>()
+            .AddScoped<IBackgroundWorkerService, BackgroundWorkerService>()
             .AddHttpClient()
             .RegisterDataRepositories(configuration);
     }
