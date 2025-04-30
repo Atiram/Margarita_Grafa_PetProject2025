@@ -4,6 +4,7 @@ using ClinicService.API.DI;
 using ClinicService.API.Middleware;
 using ClinicService.API.Utilities.Mapping;
 using ClinicService.BLL.DI;
+using ClinicService.BLL.Services.Interfaces;
 using Hangfire;
 using Serilog;
 
@@ -53,6 +54,12 @@ namespace ClinicServiceApi
             {
                 app.UseSwagger();
                 app.UseSwaggerUI();
+            }
+
+            using (var scope = app.Services.CreateScope())
+            {
+                var appointmentReminderService = scope.ServiceProvider.GetRequiredService<IAppointmentReminderService>();
+                RecurringJob.AddOrUpdate("SendAppointmentReminders", () => appointmentReminderService.SendRemindersJob(CancellationToken.None), Cron.Hourly());
             }
 
             app.UseHangfireDashboard();
