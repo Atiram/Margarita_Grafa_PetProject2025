@@ -7,7 +7,7 @@ namespace ClinicService.BLL.Services;
 
 public class HangfireInitializer(IServiceProvider _serviceProvider) : IHostedService
 {
-    public async Task StartAsync(CancellationToken cancellationToken)
+    public Task StartAsync(CancellationToken cancellationToken)
     {
         using (var scope = _serviceProvider.CreateScope())
         {
@@ -15,6 +15,7 @@ public class HangfireInitializer(IServiceProvider _serviceProvider) : IHostedSer
 
             RecurringJob.AddOrUpdate("SendAppointmentReminders", () => appointmentReminderService.SendRemindersJob(CancellationToken.None), Cron.Hourly());
         }
+        return Task.CompletedTask;
     }
 
     public Task StopAsync(CancellationToken cancellationToken)

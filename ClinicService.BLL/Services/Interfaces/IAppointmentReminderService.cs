@@ -6,7 +6,7 @@ namespace ClinicService.BLL.Services.Interfaces
     {
         Task SendRemindersJob(CancellationToken cancellationToken);
 
-        Task<List<AppointmentModel>> GetUpcomingAppointments(DateTime reminderTimeThreshold, CancellationToken stoppingToken);
+        Task<List<AppointmentModel>> GetUpcomingAppointments(DateTime reminderTimeThreshold, CancellationToken cancellationToken);
 
         void SendReminderMessage(AppointmentModel appointment);
     }

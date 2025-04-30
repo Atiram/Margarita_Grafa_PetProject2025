@@ -32,9 +32,9 @@ public class AppointmentReminderService(
         logger.LogInformation(NotificationMessages.HangfireJobCompletedMessage);
     }
 
-    public async Task<List<AppointmentModel>> GetUpcomingAppointments(DateTime reminderTimeThreshold, CancellationToken stoppingToken)
+    public async Task<List<AppointmentModel>> GetUpcomingAppointments(DateTime reminderTimeThreshold, CancellationToken cancellationToken)
     {
-        var allAppointments = await appointmentService.GetAllAsync(stoppingToken);
+        var allAppointments = await appointmentService.GetAllAsync(cancellationToken);
         return allAppointments
             .Where(a => a.Date.ToDateTime(a.Slots) > DateTime.Now)
             .OrderBy(a => a.Date)
@@ -58,6 +58,7 @@ public class AppointmentReminderService(
         };
 
         rabbitMqService.SendMessage(doctorEmailEvent);
-        logger.LogInformation(string.Format(NotificationMessages.RabbitMQSettMessage, appointment.Doctor.Id, appointment.Id));
+        var logMessage = string.Format(NotificationMessages.RabbitMQSettMessage, appointment.Doctor.Id, appointment.Id);
+        logger.LogInformation(logMessage);
     }
 }
