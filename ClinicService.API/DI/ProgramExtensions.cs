@@ -25,6 +25,8 @@ public static class ProgramExtensions
             .UseRecommendedSerializerSettings()
             .UseSqlServerStorage(configuration.GetConnectionString("HangfireConnection")));
 
+        services.AddHostedService<HangfireInitializer>();
+
         services.AddHangfireServer();
     }
 
