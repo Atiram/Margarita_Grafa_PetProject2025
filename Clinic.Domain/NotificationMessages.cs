@@ -22,5 +22,9 @@ public static class NotificationMessages
     public const string FailedExecuteHttpRequestErrorMessage = "Failed to perform {0} after {1} attempts";
     public const string WritingBlobErrorMessage = "Error writing to MongoDB. Initiating rollback.";
     public const string DeletingBlobErrorMessage = "Error deleting blob during rollback. Manual intervention required!";
-
+    public const string ReminderAppointmentMessageSubject = "Reminder about the upcoming appointment";
+    public const string ReminderAppointmentMessageTemplate = "Dear {0} {1}, we remind you about the upcoming appointment {4} at {5} with {3} {2}";
+    public const string HangfireJobStartedMessage = "Hangfire job 'SendAppointmentReminders' has started.";
+    public const string HangfireJobCompletedMessage = "Hangfire job 'SendAppointmentReminders' has completed.";
+    public const string RabbitMQSettMessage = "Message sent to RabbitMQ for doctor {0} regarding appointment {1}";
 }

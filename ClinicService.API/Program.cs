@@ -4,6 +4,7 @@ using ClinicService.API.DI;
 using ClinicService.API.Middleware;
 using ClinicService.API.Utilities.Mapping;
 using ClinicService.BLL.DI;
+using Hangfire;
 using Serilog;
 
 namespace ClinicServiceApi
@@ -29,7 +30,7 @@ namespace ClinicServiceApi
                         jsonOptions.Converters.Add(enumConverter);
                     });
 
-            services.RegisterDependencies();
+            services.RegisterDependencies(configuration);
             services.AddEndpointsApiExplorer();
             services.AddSwaggerGen();
 
@@ -57,6 +58,8 @@ namespace ClinicServiceApi
             app.UseHttpsRedirection();
 
             app.UseMiddleware<ExceptionMiddleware>();
+
+            app.UseHangfireDashboard();
 
             app.UseAuthorization();
 
