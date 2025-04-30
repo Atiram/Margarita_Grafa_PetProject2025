@@ -67,8 +67,6 @@ namespace ClinicServiceApi
 
             app.UseCors("AllowReactApp");
 
-
-
             app.Run();
         }
     }

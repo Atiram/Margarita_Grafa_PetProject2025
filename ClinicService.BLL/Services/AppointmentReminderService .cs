@@ -18,7 +18,7 @@ public class AppointmentReminderService(
     {
         logger.LogInformation(NotificationMessages.HangfireJobStartedMessage);
         var now = DateTime.Now;
-        var reminderTimeThreshold = now.AddMinutes(5);// .AddHours(1);
+        var reminderTimeThreshold = now.AddHours(1);
         var upcomingAppointments = await GetUpcomingAppointments(reminderTimeThreshold, cancellationToken);
 
         foreach (var appointment in upcomingAppointments)
