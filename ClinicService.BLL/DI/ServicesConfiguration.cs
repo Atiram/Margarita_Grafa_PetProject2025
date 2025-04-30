@@ -25,6 +25,5 @@ public static class ServicesConfiguration
             .AddScoped<IBackgroundWorkerService, BackgroundWorkerService>()
             .AddHttpClient()
             .RegisterDataRepositories(configuration);
-        services.AddHostedService<HangfireInitializer>();
     }
 }

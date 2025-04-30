@@ -13,7 +13,7 @@ public class HangfireInitializer(IServiceProvider _serviceProvider) : IHostedSer
         {
             var appointmentReminderService = scope.ServiceProvider.GetRequiredService<IAppointmentReminderService>();
 
-            RecurringJob.AddOrUpdate("SendAppointmentReminders", () => SendRemindersJobScoped(), Cron.Hourly());
+            RecurringJob.AddOrUpdate("SendAppointmentReminders", () => appointmentReminderService.SendRemindersJob(CancellationToken.None), Cron.Hourly());
         }
         return Task.CompletedTask;
     }
@@ -21,14 +21,5 @@ public class HangfireInitializer(IServiceProvider _serviceProvider) : IHostedSer
     public Task StopAsync(CancellationToken cancellationToken)
     {
         return Task.CompletedTask;
-    }
-
-    public void SendRemindersJobScoped()
-    {
-        using (var scope = _serviceProvider.CreateScope())
-        {
-            var appointmentReminderService = scope.ServiceProvider.GetRequiredService<IAppointmentReminderService>();
-            appointmentReminderService.SendRemindersJob(CancellationToken.None).Wait();
-        }
     }
 }
