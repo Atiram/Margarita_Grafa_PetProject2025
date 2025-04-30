@@ -4,7 +4,6 @@ using ClinicService.API.DI;
 using ClinicService.API.Middleware;
 using ClinicService.API.Utilities.Mapping;
 using ClinicService.BLL.DI;
-using ClinicService.BLL.Services.Interfaces;
 using Hangfire;
 using Serilog;
 
