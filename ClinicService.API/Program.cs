@@ -56,12 +56,6 @@ namespace ClinicServiceApi
                 app.UseSwaggerUI();
             }
 
-            using (var scope = app.Services.CreateScope())
-            {
-                var appointmentReminderService = scope.ServiceProvider.GetRequiredService<IAppointmentReminderService>();
-                RecurringJob.AddOrUpdate("SendAppointmentReminders", () => appointmentReminderService.SendRemindersJob(CancellationToken.None), Cron.Hourly());
-            }
-
             app.UseHangfireDashboard();
 
             app.UseHttpsRedirection();
