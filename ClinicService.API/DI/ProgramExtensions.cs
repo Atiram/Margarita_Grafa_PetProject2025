@@ -1,4 +1,5 @@
 ﻿using ClinicService.API.Validators;
+using ClinicService.BLL.Services;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Hangfire;
@@ -25,6 +26,9 @@ public static class ProgramExtensions
             .UseSqlServerStorage(configuration.GetConnectionString("HangfireConnection")));
 
         services.AddHangfireServer();
+
+        services.AddHostedService<HangfireInitializer>();
+
     }
 
     static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
