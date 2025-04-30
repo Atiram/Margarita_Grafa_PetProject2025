@@ -26,9 +26,6 @@ public static class ProgramExtensions
             .UseSqlServerStorage(configuration.GetConnectionString("HangfireConnection")));
 
         services.AddHangfireServer();
-
-        services.AddHostedService<HangfireInitializer>();
-
     }
 
     static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()

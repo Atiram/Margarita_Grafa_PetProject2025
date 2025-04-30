@@ -55,11 +55,11 @@ namespace ClinicServiceApi
                 app.UseSwaggerUI();
             }
 
+            app.UseHangfireDashboard();
+
             app.UseHttpsRedirection();
 
             app.UseMiddleware<ExceptionMiddleware>();
-
-            app.UseHangfireDashboard();
 
             app.UseAuthorization();
 
