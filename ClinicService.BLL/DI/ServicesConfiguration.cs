@@ -23,7 +23,7 @@ public static class ServicesConfiguration
             .AddScoped<IDocumentService, DocumentService>()
             .AddScoped<IAppointmentReminderService, AppointmentReminderService>()
             .AddScoped<IBackgroundWorkerService, BackgroundWorkerService>()
-            .AddHttpClient()
+            .AddHttpClient()            
             .RegisterDataRepositories(configuration);
     }
 }

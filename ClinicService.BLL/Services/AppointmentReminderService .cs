@@ -19,7 +19,7 @@ public class AppointmentReminderService(
         logger.LogInformation(NotificationMessages.HangfireJobStartedMessage);
         var now = DateTime.Now;
         var reminderTimeThreshold = now.AddHours(1);
-        var upcomingAppointments = await GetUpcomingAppointments(reminderTimeThreshold, cancellationToken);
+        var upcomingAppointments = await GetUpcomingAppointments(cancellationToken);
 
         foreach (var appointment in upcomingAppointments)
         {
@@ -32,14 +32,9 @@ public class AppointmentReminderService(
         logger.LogInformation(NotificationMessages.HangfireJobCompletedMessage);
     }
 
-    public async Task<List<AppointmentModel>> GetUpcomingAppointments(DateTime reminderTimeThreshold, CancellationToken cancellationToken)
+    public async Task<List<AppointmentModel>> GetUpcomingAppointments(CancellationToken cancellationToken)
     {
-        var allAppointments = await appointmentService.GetAllAsync(cancellationToken);
-        return allAppointments
-            .Where(a => a.Date.ToDateTime(a.Slots) > DateTime.Now)
-            .OrderBy(a => a.Date)
-            .ThenBy(a => a.Slots)
-            .ToList();
+        return await appointmentService.GetSortedAsync(cancellationToken);
     }
 
     public void SendReminderMessage(AppointmentModel appointment)

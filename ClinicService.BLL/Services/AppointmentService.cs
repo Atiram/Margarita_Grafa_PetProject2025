@@ -31,6 +31,13 @@ public class AppointmentService(
         return mapper.Map<List<AppointmentModel>>(appointmentEntity);
     }
 
+    public async Task<List<AppointmentModel>> GetSortedAsync(CancellationToken cancellationToken)
+    {
+        var appointmentEntity = await appointmentRepository.GetSortedAsync(cancellationToken);
+
+        return mapper.Map<List<AppointmentModel>>(appointmentEntity);
+    }
+
     public async Task<AppointmentModel> CreateAsync(CreateAppointmentRequest request, CancellationToken cancellationToken)
     {
         var appointmentEntity = await appointmentRepository.CreateAsync(mapper.Map<AppointmentEntity>(request), cancellationToken);

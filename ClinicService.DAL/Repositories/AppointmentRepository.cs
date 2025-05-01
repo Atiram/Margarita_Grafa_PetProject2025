@@ -17,12 +17,25 @@ public class AppointmentRepository(ClinicDbContext context)
         return new ValueTask<AppointmentEntity?>(task);
     }
 
-    public new Task<List<AppointmentEntity>> GetAllAsync(CancellationToken cancellationToken)
+    public async new Task<List<AppointmentEntity>> GetAllAsync(CancellationToken cancellationToken)
     {
-        return context.Set<AppointmentEntity>()
-          .Include(a => a.Doctor)
-          .Include(a => a.Patient)
-          .AsNoTracking()
-          .ToListAsync(cancellationToken);
+        return await context.Set<AppointmentEntity>()
+                 .Include(a => a.Doctor)
+                 .Include(a => a.Patient)
+                 .AsNoTracking()                 
+                 .ToListAsync(cancellationToken);
+    }
+
+    public async Task<List<AppointmentEntity>> GetSortedAsync(CancellationToken cancellationToken)
+    {
+        return await context.Set<AppointmentEntity>()
+                 .Include(a => a.Doctor)
+                 .Include(a => a.Patient)
+                 .AsNoTracking()
+                 .Where(a => a.Date >= DateOnly.FromDateTime(DateTime.Now) &&
+                             a.Slots > TimeOnly.FromTimeSpan(DateTime.Now.TimeOfDay))
+                 .OrderBy(a => a.Date)
+                 .ThenBy(a => a.Slots)
+                 .ToListAsync(cancellationToken);
     }
 }
