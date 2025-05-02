@@ -22,20 +22,21 @@ public class AppointmentRepository(ClinicDbContext context)
         return await context.Set<AppointmentEntity>()
                  .Include(a => a.Doctor)
                  .Include(a => a.Patient)
-                 .AsNoTracking()                 
+                 .AsNoTracking()
                  .ToListAsync(cancellationToken);
     }
 
-    public async Task<List<AppointmentEntity>> GetSortedAsync(CancellationToken cancellationToken)
+    public async Task<List<AppointmentEntity>> GetFilteredAsync(DateTime filterStartDate, bool isDescending, CancellationToken cancellationToken)
     {
-        return await context.Set<AppointmentEntity>()
-                 .Include(a => a.Doctor)
-                 .Include(a => a.Patient)
-                 .AsNoTracking()
-                 .Where(a => a.Date >= DateOnly.FromDateTime(DateTime.Now) &&
-                             a.Slots > TimeOnly.FromTimeSpan(DateTime.Now.TimeOfDay))
-                 .OrderBy(a => a.Date)
-                 .ThenBy(a => a.Slots)
-                 .ToListAsync(cancellationToken);
+        IQueryable<AppointmentEntity> query = context.Set<AppointmentEntity>()
+            .Include(a => a.Doctor)
+            .Include(a => a.Patient)
+            .AsNoTracking()
+            .Where(a => a.Date == DateOnly.FromDateTime(DateTime.Now));
+
+        query = isDescending ? query.OrderByDescending(a => a.Date).ThenByDescending(a => a.Slots)
+            : query.OrderBy(a => a.Date).ThenBy(a => a.Slots);
+
+        return await query.ToListAsync(cancellationToken);
     }
 }

@@ -31,9 +31,9 @@ public class AppointmentService(
         return mapper.Map<List<AppointmentModel>>(appointmentEntity);
     }
 
-    public async Task<List<AppointmentModel>> GetSortedAsync(CancellationToken cancellationToken)
+    public async Task<List<AppointmentModel>> GetFilteredAsync(DateTime filterStartDate, bool isDescending, CancellationToken cancellationToken)
     {
-        var appointmentEntity = await appointmentRepository.GetSortedAsync(cancellationToken);
+        var appointmentEntity = await appointmentRepository.GetFilteredAsync(filterStartDate, isDescending, cancellationToken);
 
         return mapper.Map<List<AppointmentModel>>(appointmentEntity);
     }

@@ -8,5 +8,5 @@ public interface IAppointmentRepository : IGenericRepository<AppointmentEntity>
 
     new Task<List<AppointmentEntity>> GetAllAsync(CancellationToken cancellationToken);
 
-    Task<List<AppointmentEntity>> GetSortedAsync(CancellationToken cancellationToken);
+    Task<List<AppointmentEntity>> GetFilteredAsync(DateTime filterStartDate, bool isDescending, CancellationToken cancellationToken);
 }

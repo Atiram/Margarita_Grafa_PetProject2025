@@ -26,7 +26,7 @@ public class BackgroundWorkerService(
                 var now = DateTime.Now;
                 var reminderTimeThreshold = now.AddHours(1);
 
-                var upcomingAppointments = await appointmentReminderService.GetUpcomingAppointments(cancellationToken);
+                var upcomingAppointments = await appointmentReminderService.GetUpcomingAppointments(now, false, cancellationToken);
 
                 foreach (var appointment in upcomingAppointments)
                 {
