@@ -61,7 +61,8 @@ public class AppointmentService(
     {
         var appointment = await appointmentRepository.GetByIdAsync(request.Id, cancellationToken);
         var appointmentEntity = mapper.Map(request, appointment);
-        var updatedAppointmentEntity = await appointmentRepository.UpdateAsync(appointmentEntity, cancellationToken);
+        var updatedAppointmentEntity = appointmentEntity != null ? await appointmentRepository.UpdateAsync(appointmentEntity, cancellationToken) :
+            throw new InvalidOperationException(string.Format(NotificationMessages.NotFoundErrorMessage, request.Id));
 
         return mapper.Map<AppointmentModel>(updatedAppointmentEntity);
     }

@@ -10,4 +10,3 @@ public interface IBackgroundWorkerService
 {
     Task SendReminder(CancellationToken cancellationToken);
 }
-
