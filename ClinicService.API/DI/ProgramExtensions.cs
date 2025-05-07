@@ -1,6 +1,8 @@
 ﻿using ClinicService.API.Validators;
+using ClinicService.BLL.Services;
 using FluentValidation;
 using FluentValidation.AspNetCore;
+using Hangfire;
 using Polly;
 using Polly.Extensions.Http;
 
@@ -8,7 +10,7 @@ namespace ClinicService.API.DI;
 
 public static class ProgramExtensions
 {
-    public static void RegisterDependencies(this IServiceCollection services)
+    public static void RegisterDependencies(this IServiceCollection services, IConfiguration configuration)
     {
         services.AddFluentValidationAutoValidation()
             .AddValidatorsFromAssemblyContaining<CreateDoctorRequestValidator>()
@@ -16,7 +18,16 @@ public static class ProgramExtensions
             .AddHttpClient("MyHttpClient")
                 .SetHandlerLifetime(TimeSpan.FromMinutes(5))
                 .AddPolicyHandler(GetRetryPolicy());
+
+        services.AddHangfire(hangfireConfiguration => hangfireConfiguration
+            .SetDataCompatibilityLevel(CompatibilityLevel.Version_170)
+            .UseSimpleAssemblyNameTypeSerializer()
+            .UseRecommendedSerializerSettings()
+            .UseSqlServerStorage(configuration.GetConnectionString("HangfireConnection")));
+
+        services.AddHangfireServer();
     }
+
     static IAsyncPolicy<HttpResponseMessage> GetRetryPolicy()
     {
         return HttpPolicyExtensions
