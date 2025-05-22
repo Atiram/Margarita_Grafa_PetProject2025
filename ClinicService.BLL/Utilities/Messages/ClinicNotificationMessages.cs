@@ -1,6 +1,4 @@
-﻿using static System.Runtime.InteropServices.JavaScript.JSType;
-
-namespace ClinicService.BLL.Utilities.Messages;
+﻿namespace ClinicService.BLL.Utilities.Messages;
 public static class ClinicNotificationMessages
 {
     public const string EmailSubject = "New appointment is created";
@@ -14,5 +12,4 @@ public static class ClinicNotificationMessages
     public const string ValidationInvalidPhoneMessage = "Invalid phone number format";
     public const string ValidationInvalidPhoneLengthMessage = "Phone number must not exceed 20 characters";
     public const string ValidationInvalidDateOfBirthMessage = "Invalid date of birth";
-
 }

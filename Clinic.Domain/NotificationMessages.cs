@@ -1,4 +1,5 @@
 ﻿namespace Clinic.Domain;
+
 public static class NotificationMessages
 {
     public const string InvalidAuthErrorMessage = "Invalid username or password.";

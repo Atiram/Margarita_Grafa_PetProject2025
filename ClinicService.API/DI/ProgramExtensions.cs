@@ -1,5 +1,4 @@
 ﻿using ClinicService.API.Validators;
-using ClinicService.BLL.Services;
 using FluentValidation;
 using FluentValidation.AspNetCore;
 using Hangfire;
