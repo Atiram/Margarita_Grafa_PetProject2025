@@ -19,7 +19,7 @@ public class FileController(IFileService fileService) : ControllerBase
     public async Task<string?> GetFileByReferenceItemIdAsync(string referenceItemId, CancellationToken cancellationToken = default)
     {
         var file = await fileService.GetByReferenceItemIdAsync(referenceItemId, cancellationToken);
-        return file.StorageLocation;
+        return file?.StorageLocation;
     }
 
     [HttpGet]

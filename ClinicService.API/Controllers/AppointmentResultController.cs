@@ -46,7 +46,7 @@ public class AppointmentResultController(IAppointmentResultService appointmentRe
         return appointmentResultViewModel;
     }
 
-    [HttpDelete]
+    [HttpDelete("{id}")]
     public async Task<IActionResult> Delete(Guid id, CancellationToken cancellationToken)
     {
         var isDeleted = await appointmentResultService.DeleteAsync(id, cancellationToken);

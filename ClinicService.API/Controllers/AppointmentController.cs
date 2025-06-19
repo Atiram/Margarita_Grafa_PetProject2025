@@ -47,7 +47,7 @@ public class AppointmentController(IAppointmentService appointmentService, IMapp
         return appointmentViewModel;
     }
 
-    [HttpDelete]
+    [HttpDelete("{id}")]
     public async Task Delete(Guid id, CancellationToken cancellationToken)
     {
         await appointmentService.DeleteAsync(id, cancellationToken);

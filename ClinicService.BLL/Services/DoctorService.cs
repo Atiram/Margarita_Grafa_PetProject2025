@@ -71,7 +71,7 @@ public class DoctorService(IDoctorRepository doctorRepository,
         var doctorEntity = await doctorRepository.GetByIdAsync(id, cancellationToken)
             ?? throw new Exception(string.Format(NotificationMessages.NotFoundErrorMessage, id));
 
-        var isPhotoDeleted = await documentService.DeletePhotoAsync(doctorEntity.Id, cancellationToken);
+        await documentService.DeletePhotoAsync(doctorEntity.Id, cancellationToken);
         var doctorDeleted = await doctorRepository.DeleteAsync(id, cancellationToken);
         return doctorDeleted;
     }
