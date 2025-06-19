@@ -6,16 +6,15 @@ using Microsoft.EntityFrameworkCore;
 namespace ClinicService.DAL.Repositories;
 public class AppointmentResultRepository(ClinicDbContext context) : GenericRepository<AppointmentResultEntity>(context), IAppointmentResultRepository
 {
-    public new ValueTask<AppointmentResultEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    public async new ValueTask<AppointmentResultEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        var task = context.Set<AppointmentResultEntity>()
+        return await context.Set<AppointmentResultEntity>()
           .Include(a => a.Appointment)
           .FirstOrDefaultAsync(a => a.Id == id, cancellationToken);
-        return new ValueTask<AppointmentResultEntity?>(task);
     }
-    public new Task<List<AppointmentResultEntity>> GetAllAsync(CancellationToken cancellationToken)
+    public async new Task<List<AppointmentResultEntity>> GetAllAsync(CancellationToken cancellationToken)
     {
-        return context.Set<AppointmentResultEntity>()
+        return await context.Set<AppointmentResultEntity>()
             .Include(a => a.Appointment)
             .AsNoTracking()
             .ToListAsync(cancellationToken);

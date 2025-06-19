@@ -103,7 +103,7 @@ public class DoctorServiceTest
         var mapper = new Mapper(config);
         var mockDocumentService = new Mock<IDocumentService>();
         mockDocumentService.Setup(service => service.UploadPhotoAsync(doctorEntity.Id, updatedDoctorRequest.Formfile, CancellationToken.None)).Returns(Task.CompletedTask);
-        mockDocumentService.Setup(service => service.DeletePhotoAsync(doctorEntity.Id, CancellationToken.None)).Returns(Task.CompletedTask);
+        mockDocumentService.Setup(service => service.DeletePhotoAsync(doctorEntity.Id, CancellationToken.None)).ReturnsAsync(true);
         var mockLogger = new Mock<ILogger<DoctorService>>();
 
         var doctorService = new DoctorService(mockRepository.Object, mockDocumentService.Object, mapper, mockLogger.Object);
@@ -130,7 +130,7 @@ public class DoctorServiceTest
         var config = new MapperConfiguration(cfg => cfg.AddProfile<AppMappingProfile>());
         var mapper = new Mapper(config);
         var mockDocumentService = new Mock<IDocumentService>();
-        mockDocumentService.Setup(service => service.DeletePhotoAsync(doctorEntity.Id, CancellationToken.None)).Returns(Task.CompletedTask);
+        mockDocumentService.Setup(service => service.DeletePhotoAsync(doctorEntity.Id, CancellationToken.None)).ReturnsAsync(true);
         var mockLogger = new Mock<ILogger<DoctorService>>();
 
         var doctorService = new DoctorService(mockRepository.Object, mockDocumentService.Object, mapper, mockLogger.Object);

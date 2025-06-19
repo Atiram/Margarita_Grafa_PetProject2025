@@ -94,7 +94,7 @@ public class FileService(
         if (!isFileDeleted)
         {
             logger.LogError(NotificationMessages.NotDeletedErrorMessage);
-            throw new Exception(NotificationMessages.NotDeletedErrorMessage);
+            return false;
         }
         return await documentRepository.DeleteAsync(id, cancellationToken);
     }
@@ -106,7 +106,7 @@ public class FileService(
         if (!isFileDeleted)
         {
             logger.LogError(NotificationMessages.NotDeletedErrorMessage);
-            throw new Exception(NotificationMessages.NotDeletedErrorMessage);
+            return false;
         }
         return await documentRepository.DeleteByReferenceItemIdAsync(referenceItemId, cancellationToken);
     }

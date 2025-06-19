@@ -20,14 +20,19 @@ public class DocumentService(
         throw new ArgumentException(string.Format(NotificationMessages.SectionMissingErrorMessage, FileServiceSectionName));
     private HttpClient httpClient = httpClientFactory.CreateClient("FileService");
 
-    public async Task<string> GetPhotoAsync(Guid doctorId, CancellationToken cancellationToken)
+    public async Task<string?> GetPhotoAsync(Guid doctorId, CancellationToken cancellationToken)
     {
         var getFileByReferenceIdEndpoint = $"{fileServiceBaseUrl}/referenceId/{doctorId}";
         var response = await ExecuteRequestWithRetryAsync(
             () => httpClient.GetAsync(getFileByReferenceIdEndpoint, cancellationToken),
             nameof(GetPhotoAsync),
             doctorId);
-        return await response.Content.ReadAsStringAsync();
+        if (response == null || response.Content == null)
+        {
+            logger.LogWarning(string.Format(NotificationMessages.NoPhotoFoundErrorMessage, doctorId));
+            return null;
+        }
+        return await response.Content.ReadAsStringAsync(cancellationToken);
     }
 
     public async Task UploadPhotoAsync(Guid doctorId, IFormFile? photoFile, CancellationToken cancellationToken)
@@ -52,19 +57,20 @@ public class DocumentService(
           doctorId);
     }
 
-    public async Task DeletePhotoAsync(Guid doctorId, CancellationToken cancellationToken)
+    public async Task<bool> DeletePhotoAsync(Guid doctorId, CancellationToken cancellationToken)
     {
         var fileServiceDeleteEndpoint = $"{fileServiceBaseUrl}/referenceId/{doctorId}";
 
-        await ExecuteRequestWithRetryAsync(
+        var response = await ExecuteRequestWithRetryAsync(
           () => httpClient.DeleteAsync(fileServiceDeleteEndpoint, cancellationToken),
           nameof(DeletePhotoAsync),
           doctorId);
+        return response != null && response.IsSuccessStatusCode;
     }
 
-    private async Task<HttpResponseMessage> ExecuteRequestWithRetryAsync(Func<Task<HttpResponseMessage>> httpRequest, string errorMessage, Guid? doctorId = null)
+    private async Task<HttpResponseMessage?> ExecuteRequestWithRetryAsync(Func<Task<HttpResponseMessage>> httpRequest, string errorMessage, Guid? doctorId = null)
     {
-        for (int i = 0; i <= maxRetries; i++)
+        for (int i = 0; i < maxRetries; i++)
         {
             try
             {
@@ -79,6 +85,6 @@ public class DocumentService(
             }
         }
         logger.LogError(string.Format(NotificationMessages.FailedExecuteHttpRequestErrorMessage, errorMessage, maxRetries));
-        throw new InvalidOperationException(string.Format(NotificationMessages.FailedExecuteHttpRequestErrorMessage, errorMessage, maxRetries));
+        return null;
     }
 }

@@ -56,4 +56,3 @@ public class DoctorController(IDoctorService doctorService, IMapper mapper) : Co
         await doctorService.DeleteAsync(id, cancellationToken);
     }
 }
-
