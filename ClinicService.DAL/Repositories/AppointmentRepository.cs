@@ -8,6 +8,7 @@ namespace ClinicService.DAL.Repositories;
 public class AppointmentRepository(ClinicDbContext context)
   : GenericRepository<AppointmentEntity>(context), IAppointmentRepository
 {
+    private static readonly TimeSpan AppointmentDuration = TimeSpan.FromMinutes(30);
     public new ValueTask<AppointmentEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         var task = context.Set<AppointmentEntity>()
@@ -38,5 +39,43 @@ public class AppointmentRepository(ClinicDbContext context)
             : query.OrderBy(a => a.Date).ThenBy(a => a.Slots);
 
         return await query.ToListAsync(cancellationToken);
+    }
+
+    public async Task<bool> HasDoctorAppointmentAtTimeAsync(Guid doctorId, DateOnly date, TimeOnly slots, CancellationToken cancellationToken)
+    {
+        DateTime proposedAppointmentStart = date.ToDateTime(slots);
+        DateTime proposedAppointmentEnd = proposedAppointmentStart.Add(AppointmentDuration);
+
+        var appointmentsOnDate = await context.Set<AppointmentEntity>()
+            .AsNoTracking()
+            .Where(a => a.DoctorId == doctorId && a.Date == date)
+            .ToListAsync(cancellationToken);
+
+        return appointmentsOnDate.Any(existingAppointment =>
+        {
+            DateTime existingStartDateTime = existingAppointment.Date.ToDateTime(existingAppointment.Slots);
+            DateTime existingEndDateTime = existingStartDateTime.Add(AppointmentDuration);
+
+            return proposedAppointmentStart < existingEndDateTime && proposedAppointmentEnd > existingStartDateTime;
+        });
+    }
+
+    public async Task<bool> HasPatientAppointmentAtTimeAsync(Guid patientId, DateOnly date, TimeOnly slots, CancellationToken cancellationToken)
+    {
+        DateTime proposedAppointmentStart = date.ToDateTime(slots);
+        DateTime proposedAppointmentEnd = proposedAppointmentStart.Add(AppointmentDuration);
+
+        var appointmentsOnDate = await context.Set<AppointmentEntity>()
+            .AsNoTracking()
+            .Where(a => a.PatientId == patientId && a.Date == date)
+            .ToListAsync(cancellationToken);
+
+        return appointmentsOnDate.Any(existingAppointment =>
+        {
+            DateTime existingStartDateTime = existingAppointment.Date.ToDateTime(existingAppointment.Slots);
+            DateTime existingEndDateTime = existingStartDateTime.Add(AppointmentDuration);
+
+            return proposedAppointmentStart < existingEndDateTime && proposedAppointmentEnd > existingStartDateTime;
+        });
     }
 }

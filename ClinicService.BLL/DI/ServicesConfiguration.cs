@@ -22,8 +22,9 @@ public static class ServicesConfiguration
             .AddScoped<IGeneratePdfService, GeneratePdfService>()
             .AddScoped<IDocumentService, DocumentService>()
             .AddScoped<IAppointmentReminderService, AppointmentReminderService>()
+            .AddScoped<IAppointmentValidationService, AppointmentValidationService>()
             .AddScoped<IBackgroundWorkerService, BackgroundWorkerService>()
-            .AddHttpClient()            
+            .AddHttpClient()
             .RegisterDataRepositories(configuration);
     }
 }

@@ -27,4 +27,6 @@ public static class NotificationMessages
     public const string HangfireJobStartedMessage = "Hangfire job 'SendAppointmentReminders' has started.";
     public const string HangfireJobCompletedMessage = "Hangfire job 'SendAppointmentReminders' has completed.";
     public const string RabbitMQSettMessage = "Message sent to RabbitMQ for doctor {0} regarding appointment {1}";
+    public const string DoctorAlreadyBookedErrorMessage = "Doctor is already booked for the selected date and time. DoctorId: {0}, Date: {1}, Slots: {2}";
+    public const string PatientAlreadyBookedErrorMessage = "Patient already has an appointment for the selected date and time.  PatientId: {0}, Date: {1}, Slots: {2}";
 }
