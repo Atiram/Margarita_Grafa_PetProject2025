@@ -21,7 +21,7 @@ public class AppointmentController(IAppointmentService appointmentService, IMapp
     }
 
     [HttpGet("{id}")]
-    public async Task<AppointmentViewModel> GetById(Guid id, CancellationToken cancellationToken)
+    public async Task<AppointmentViewModel> GetById([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var appointmentModel = await appointmentService.GetById(id, cancellationToken);
         var appointmentViewModel = mapper.Map<AppointmentViewModel>(appointmentModel);
@@ -47,7 +47,7 @@ public class AppointmentController(IAppointmentService appointmentService, IMapp
         return appointmentViewModel;
     }
 
-    [HttpDelete]
+    [HttpDelete("{id}")]
     public async Task Delete(Guid id, CancellationToken cancellationToken)
     {
         await appointmentService.DeleteAsync(id, cancellationToken);

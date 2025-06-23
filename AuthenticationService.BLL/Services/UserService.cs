@@ -2,7 +2,6 @@
 using AuthenticationService.DAL.Entities;
 using AuthenticationService.DAL.Repositories.Interfaces;
 using Clinic.Domain;
-using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.Logging;
 
 namespace AuthenticationService.BLL.Services;

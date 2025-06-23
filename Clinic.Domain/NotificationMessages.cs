@@ -1,4 +1,5 @@
 ﻿namespace Clinic.Domain;
+
 public static class NotificationMessages
 {
     public const string InvalidAuthErrorMessage = "Invalid username or password.";
@@ -13,6 +14,7 @@ public static class NotificationMessages
     public const string DeletingUserSuccessMessage = "User deleted successfully.";
     public const string InternalServerErrorMessage = "Internal Server Error";
     public const string NotFoundErrorMessage = "Item with id {0} not found";
+    public const string NoPhotoFoundErrorMessage = "Failed to get photo response or content for DoctorId: {0}.";
     public const string NotDeletedErrorMessage = "File is not deleted";
     public const string NoBlobNameErrorMessage = "BlobName is required";
     public const string NoUrlErrorMessage = "Blob URL is invalid or missing.";

@@ -3,7 +3,7 @@
 namespace ClinicService.BLL.Services.Interfaces;
 public interface IDocumentService
 {
-    Task<string> GetPhotoAsync(Guid doctorId, CancellationToken cancellationToken);
+    Task<string?> GetPhotoAsync(Guid doctorId, CancellationToken cancellationToken);
     Task UploadPhotoAsync(Guid doctorId, IFormFile? photoFile, CancellationToken cancellationToken);
-    Task DeletePhotoAsync(Guid doctorId, CancellationToken cancellationToken);
+    Task<bool> DeletePhotoAsync(Guid doctorId, CancellationToken cancellationToken);
 }
