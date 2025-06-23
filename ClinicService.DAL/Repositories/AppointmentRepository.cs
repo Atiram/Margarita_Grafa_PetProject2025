@@ -9,7 +9,7 @@ public class AppointmentRepository(ClinicDbContext context)
   : GenericRepository<AppointmentEntity>(context), IAppointmentRepository
 {
     private static readonly TimeSpan AppointmentDuration = TimeSpan.FromMinutes(30);
-    public async new ValueTask<AppointmentEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    public new ValueTask<AppointmentEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
         return await context.Set<AppointmentEntity>()
           .Include(a => a.Doctor)
