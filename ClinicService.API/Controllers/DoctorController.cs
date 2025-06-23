@@ -50,10 +50,9 @@ public class DoctorController(IDoctorService doctorService, IMapper mapper) : Co
         return doctorViewModel;
     }
 
-    [HttpDelete]
+    [HttpDelete("{id}")]
     public async Task Delete(Guid id, CancellationToken cancellationToken)
     {
         await doctorService.DeleteAsync(id, cancellationToken);
     }
 }
-

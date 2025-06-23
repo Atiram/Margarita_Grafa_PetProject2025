@@ -39,7 +39,10 @@ public class DoctorService(IDoctorRepository doctorRepository,
     public async Task<DoctorModel> CreateAsync(CreateDoctorRequest request, CancellationToken cancellationToken)
     {
         var doctorEntity = await doctorRepository.CreateAsync(mapper.Map<DoctorEntity>(request), cancellationToken);
-        await documentService.UploadPhotoAsync(doctorEntity.Id, request.Formfile, cancellationToken);
+        if (request.Formfile != null)
+        {
+            await documentService.UploadPhotoAsync(doctorEntity.Id, request.Formfile, cancellationToken);
+        }
         return mapper.Map<DoctorModel>(doctorEntity);
     }
 

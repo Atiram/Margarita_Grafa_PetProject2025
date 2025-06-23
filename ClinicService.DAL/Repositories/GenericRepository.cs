@@ -7,9 +7,9 @@ namespace ClinicService.DAL.Repositories;
 
 public class GenericRepository<TEntity>(ClinicDbContext context) : IGenericRepository<TEntity> where TEntity : GenericEntity
 {
-    public ValueTask<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
+    public async ValueTask<TEntity?> GetByIdAsync(Guid id, CancellationToken cancellationToken)
     {
-        return context.Set<TEntity>().FindAsync([id], cancellationToken);
+        return await context.Set<TEntity>().FindAsync(id, cancellationToken);
     }
 
     public async Task<List<TEntity>> GetAllAsync(CancellationToken cancellationToken)
@@ -41,7 +41,7 @@ public class GenericRepository<TEntity>(ClinicDbContext context) : IGenericRepos
 
     public async Task<bool> DeleteAsync(Guid id, CancellationToken cancellationToken)
     {
-        var entity = await context.Set<TEntity>().FindAsync([id], cancellationToken);
+        var entity = await context.Set<TEntity>().FindAsync(id, cancellationToken);
 
         if (entity is not null)
         {

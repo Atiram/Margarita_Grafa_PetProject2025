@@ -183,7 +183,8 @@ public class DoctorIntegrationTests : IntegrationTests
         Assert.NotNull(postResponseResult);
 
         //Act
-        using var request = new HttpRequestMessage(HttpMethod.Delete, $"{BaseUrl}?id={postResponseResult.Id}");
+        var deleteUrl = Path.Combine(BaseUrl, postResponseResult.Id.ToString());
+        using var request = new HttpRequestMessage(HttpMethod.Delete, deleteUrl);
         var actualResult = await Client.SendAsync(request);
 
         //Assert

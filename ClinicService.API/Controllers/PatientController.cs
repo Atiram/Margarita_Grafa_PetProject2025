@@ -11,8 +11,8 @@ namespace ClinicService.API.Controllers;
 [EnableCors("AllowReactApp")]
 public class PatientController(IPatientService patientService, IMapper mapper) : ControllerBase
 {
-    [HttpGet]
-    public async Task<PatientViewModel> Get(Guid id, CancellationToken cancellationToken)
+    [HttpGet("{id}")]
+    public async Task<PatientViewModel> Get([FromRoute] Guid id, CancellationToken cancellationToken)
     {
         var patientModel = await patientService.GetById(id, cancellationToken);
         var patientViewModel = mapper.Map<PatientViewModel>(patientModel);
