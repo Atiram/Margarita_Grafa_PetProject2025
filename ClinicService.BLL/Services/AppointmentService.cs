@@ -14,7 +14,8 @@ public class AppointmentService(
     IDoctorRepository doctorRepository,
     IPatientRepository patientRepository,
     IMapper mapper,
-    IRabbitMqService rabbitMqService
+    IRabbitMqService rabbitMqService,
+    IAppointmentValidationService appointmentValidationService
     ) : IAppointmentService
 {
     public async Task<AppointmentModel> GetById(Guid id, CancellationToken cancellationToken)
@@ -40,6 +41,9 @@ public class AppointmentService(
 
     public async Task<AppointmentModel> CreateAsync(CreateAppointmentRequest request, CancellationToken cancellationToken)
     {
+
+        await appointmentValidationService.ValidateAppointmentAvailabilityAsync(request, cancellationToken);
+
         var appointmentEntity = await appointmentRepository.CreateAsync(mapper.Map<AppointmentEntity>(request), cancellationToken);
 
         var doctorEntity = await doctorRepository.GetByIdAsync(request.DoctorId, cancellationToken);
