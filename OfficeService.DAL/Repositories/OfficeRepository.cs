@@ -26,6 +26,12 @@ public class OfficeRepository : IOfficeRepository
         return await _mongoCollection.Find(Builders<OfficeEntity>.Filter.Empty).ToListAsync(cancellationToken);
     }
 
+    public async Task<OfficeEntity> CreateAsync(OfficeEntity officeEntity, CancellationToken cancellationToken)
+    {
+        await _mongoCollection.InsertOneAsync(officeEntity, new InsertOneOptions(), cancellationToken);
+        return officeEntity;
+    }
+
     public async Task<OfficeEntity?> UpdateAsync(OfficeEntity officeEntity, CancellationToken cancellationToken)
     {
         var filter = Builders<OfficeEntity>.Filter.Eq(o => o.Id, officeEntity.Id);
@@ -36,18 +42,11 @@ public class OfficeRepository : IOfficeRepository
             .Set(o => o.OfficeNumber, officeEntity.OfficeNumber)
             .Set(o => o.RegistryPhoneNumber, officeEntity.RegistryPhoneNumber)
             .Set(o => o.Status, officeEntity.Status)
-            .Set(o => o.UpdatedAt, DateTime.UtcNow);
+            .Set(o => o.UpdatedAt, officeEntity.UpdatedAt);
 
         var result = await _mongoCollection.UpdateOneAsync(filter, updateDefinition, null, cancellationToken);
 
         return result.MatchedCount != 0 ? officeEntity : null;
-    }
-
-    public async Task<OfficeEntity> CreateAsync(OfficeEntity officeEntity, CancellationToken cancellationToken)
-    {
-        officeEntity.CreatedAt = DateTime.UtcNow;
-        await _mongoCollection.InsertOneAsync(officeEntity, new InsertOneOptions(), cancellationToken);
-        return officeEntity;
     }
 
     public async Task<bool> DeleteAsync(string id, CancellationToken cancellationToken)

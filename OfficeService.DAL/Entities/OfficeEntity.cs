@@ -14,8 +14,6 @@ public class OfficeEntity
     public required string OfficeNumber { get; set; }
     public required string RegistryPhoneNumber { get; set; }
     public OfficeStatus Status { get; set; }
-
-    [BsonDateTimeOptions(Kind = DateTimeKind.Utc)]
     public DateTime CreatedAt { get; set; }
     public DateTime UpdatedAt { get; set; }
 }

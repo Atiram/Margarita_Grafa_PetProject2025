@@ -33,6 +33,7 @@ public class OfficeService(IOfficeRepository officeRepository,
     public async Task<OfficeModel> CreateAsync(CreateOfficeRequest request, CancellationToken cancellationToken)
     {
         var officeEntity = mapper.Map<OfficeEntity>(request);
+        officeEntity.CreatedAt = DateTime.UtcNow;
         var createdOfficeEntity = await officeRepository.CreateAsync(officeEntity, cancellationToken);
         return mapper.Map<OfficeModel>(createdOfficeEntity);
     }
@@ -47,6 +48,7 @@ public class OfficeService(IOfficeRepository officeRepository,
         }
 
         var officeEntityToUpdate = mapper.Map(request, existingOfficeEntity);
+        officeEntityToUpdate.UpdatedAt = DateTime.UtcNow;
         var updatedOfficeEntity = await officeRepository.UpdateAsync(officeEntityToUpdate, cancellationToken);
         return mapper.Map<OfficeModel>(updatedOfficeEntity);
     }
