@@ -55,4 +55,33 @@ public class OfficeRepository : IOfficeRepository
         var result = await _mongoCollection.DeleteOneAsync(filter, cancellationToken);
         return result.DeletedCount > 0;
     }
+
+    public async Task<List<string>> GetAllCitiesAsync(CancellationToken cancellationToken)
+    {
+        var filter = Builders<OfficeEntity>.Filter.Empty;
+
+        var cities = await _mongoCollection.Distinct(
+            o => o.City,
+            filter,
+            null,
+            cancellationToken)
+        .ToListAsync(cancellationToken);
+
+        return cities;
+    }
+
+    public async Task<List<CityStreetPair>> GetAllCitiesAndStreetsAsync(CancellationToken cancellationToken)
+    {
+        var filter = Builders<OfficeEntity>.Filter.Empty;
+
+        var cityStreetPairs = await _mongoCollection.Find(filter)
+                                                    .Project(o => new { o.City, o.Street })
+                                                    .ToListAsync(cancellationToken);
+
+        var uniqueCityStreetPairs = cityStreetPairs.Select(p => new CityStreetPair { City = p.City, Street = p.Street })
+                                                   .Distinct()
+                                                   .ToList();
+
+        return uniqueCityStreetPairs;
+    }
 }

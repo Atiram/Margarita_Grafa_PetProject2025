@@ -42,4 +42,11 @@ public class OfficeController(IOfficeService officeService) : ControllerBase
         var isDeleted = await officeService.DeleteAsync(id, cancellationToken);
         return isDeleted ? Ok() : NotFound(string.Format(NotificationMessages.NotFoundErrorMessage, id));
     }
+
+    [HttpGet("/cities")]
+    public async Task<IActionResult> GetCitiesAsync(CancellationToken cancellationToken)
+    {
+        var cities = await officeService.GetAllCitiesAsync(cancellationToken);
+        return Ok(cities);
+    }
 }

@@ -1,0 +1,72 @@
+syntax = "proto3";
+
+option csharp_namespace = "GrpcOffice"; // Пространство имен для сгенерированного C# кода
+
+package office;
+
+// Сообщение, представляющее сущность OfficeEntity
+message Office {
+  string id = 1;
+  string city = 2;
+  string street = 3;
+  string house_number = 4;
+  string office_number = 5;
+  string registry_phone_number = 6;
+  string status = 7; 
+  string created_at = 8; 
+  string updated_at = 9; 
+}
+
+// Сообщения запроса и ответа для методов сервиса
+message GetOfficeByIdRequest {
+  string id = 1;
+}
+
+message OfficeResponse {
+  Office office = 1; // Возвращает один офис
+}
+
+message GetAllOfficesResponse {
+  repeated Office offices = 1; // Возвращает список офисов
+}
+
+message CreateOfficeRequest {
+  string city = 1;
+  string street = 2;
+  string house_number = 3;
+  string office_number = 4;
+  string registry_phone_number = 5;
+  string status = 6;
+}
+
+message UpdateOfficeRequest {
+  string id = 1;
+  string city = 2;
+  string street = 3;
+  string house_number = 4;
+  string office_number = 5;
+  string registry_phone_number = 6;
+  string status = 7;
+}
+
+message DeleteOfficeRequest {
+  string id = 1;
+}
+
+message DeleteOfficeResponse {
+  bool is_success = 1;
+}
+
+
+// Определение gRPC сервиса
+service OfficeServiceGrpc {
+  rpc GetOfficeById (GetOfficeByIdRequest) returns (OfficeResponse);
+  rpc GetAllOffices (google.protobuf.Empty) returns (GetAllOfficesResponse); // Используем Empty для запросов без параметров
+  rpc CreateOffice (CreateOfficeRequest) returns (OfficeResponse);
+  rpc UpdateOffice (UpdateOfficeRequest) returns (OfficeResponse);
+  rpc DeleteOffice (DeleteOfficeRequest) returns (DeleteOfficeResponse);
+}
+
+// Для использования google.protobuf.Empty, добавьте в .csproj:
+// <Protobuf Include="Google/Protobuf/empty.proto" GrpcServices="None" />
+// и установите пакет Google.Protobuf.WellKnownTypes

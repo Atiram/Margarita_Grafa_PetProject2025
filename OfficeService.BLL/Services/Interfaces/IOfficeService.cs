@@ -13,4 +13,6 @@ public interface IOfficeService
     Task<OfficeModel> UpdateAsync(UpdateOfficeRequest request, CancellationToken cancellationToken);
 
     Task<bool> DeleteAsync(string id, CancellationToken cancellationToken);
+
+    Task<List<string>> GetAllCitiesAsync(CancellationToken cancellationToken);
 }

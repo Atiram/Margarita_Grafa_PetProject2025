@@ -12,4 +12,8 @@ public interface IOfficeRepository
     Task<OfficeEntity?> UpdateAsync(OfficeEntity officeEntity, CancellationToken cancellationToken);
 
     Task<bool> DeleteAsync(string id, CancellationToken cancellationToken);
+
+    Task<List<string>> GetAllCitiesAsync(CancellationToken cancellationToken);
+
+    Task<List<CityStreetPair>> GetAllCitiesAndStreetsAsync(CancellationToken cancellationToken);
 }

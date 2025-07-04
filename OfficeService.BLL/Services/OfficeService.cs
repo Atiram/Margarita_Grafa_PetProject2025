@@ -65,4 +65,11 @@ public class OfficeService(IOfficeRepository officeRepository,
         var isDeleted = await officeRepository.DeleteAsync(id, cancellationToken);
         return isDeleted;
     }
+
+    public async Task<List<string>> GetAllCitiesAsync(CancellationToken cancellationToken)
+    {
+        var officeEntities = await officeRepository.GetAllCitiesAsync(cancellationToken);
+        var t = await officeRepository.GetAllCitiesAndStreetsAsync(cancellationToken);
+        return officeEntities;
+    }
 }
